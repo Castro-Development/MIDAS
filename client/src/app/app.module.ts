@@ -5,18 +5,6 @@ import { Component, OnInit, inject } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AccountComponent } from './pages/account/account.component';
-import { ChangePasswordComponent } from './pages/change-password/change-password.component';
-import { ForgetPasswordComponent } from './pages/forget-password/forget-password.component';
-import { HomeComponent } from './pages/home/home.component';
-import { LoginComponent } from './pages/login/login.component';
-import { RegisterComponent } from './pages/register/register.component';
-import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
-import { RoleComponent } from './pages/role/role.component';
-import { UsersComponent } from './pages/users/users.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
-import { RoleFormComponent } from './components/role-form/role-form.component';
-import { RoleListComponent } from './components/role-list/role-list.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -35,32 +23,27 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common/http';
-import { ChartComponent } from './pages/chart/chart.component';
-import { UserProfileComponent } from './pages/user-profile/user-profile.component';
-import { AccountProfileComponent } from './pages/account-profile/account-profile.component';
-import { CalendarComponent } from './pages/calendar/calendar.component';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { CalendarModule } from './userModule/calendar/calendar.module';
+import { UserModule } from './userModule/user-module.module';
+import { AdminModule } from './adminModule/admin-module.module';
+import { NavbarComponent } from './shared/navbar/navbar.component';
+import { NavbarModule } from './shared/navbar/navbar.module';
+import { UserService } from './shared/userService/data-access/user.service';
+import { EventBusService } from './shared/services/event-bus.service';
+import { ErrorHandlingService } from './shared/services/error-handling.service';
+import { AccountBalanceFacade } from './shared/facades/accountFacades/account-balance.facade';
+import { JournalEntryFacade } from './shared/facades/transactionManagementFacades/journal-entries.facade';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    AccountComponent,
-    ChangePasswordComponent,
-    ForgetPasswordComponent,
-    HomeComponent,
-    LoginComponent,
-    RegisterComponent,
-    ResetPasswordComponent,
-    RoleComponent,
-    UsersComponent,
     NavbarComponent,
-    RoleFormComponent,
-    RoleListComponent,
-    ChartComponent,
-    UserProfileComponent,
-    AccountProfileComponent,
-    CalendarComponent,
   ],
   imports: [
     BrowserModule,
@@ -80,11 +63,24 @@ import { CalendarComponent } from './pages/calendar/calendar.component';
     FormsModule,
     HttpClientModule,
     MatFormField,
+    UserModule,
+    AdminModule,
+    
+    
+
 
   ],
   providers: [
     provideClientHydration(),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    provideFirebaseApp(() => initializeApp({"projectId":"midas-app-239bc","appId":"1:880947371935:web:1e02db79c3e04b0be567aa","storageBucket":"midas-app-239bc.appspot.com","apiKey":"AIzaSyBefPwnb0z3xR2KZrgQ11pLVaK4guxiwp8","authDomain":"midas-app-239bc.firebaseapp.com","messagingSenderId":"880947371935"})),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
+    EventBusService,
+    ErrorHandlingService,
+    AccountBalanceFacade,
+    JournalEntryFacade,
+    provideStorage(() => getStorage()),
   ],
   bootstrap: [AppComponent]
 })

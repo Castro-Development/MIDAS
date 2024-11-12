@@ -1,0 +1,33 @@
+Use Case                         | Requirements Covered
+--------------------------------|--------------------------------------------
+View Account Ledger Details      | R#3.43 (Show date, description, debit/credit columns)
+                                | R#3.43 (Balance after each transaction)
+--------------------------------|--------------------------------------------
+View Ledger Entry via Post Ref  | R#3.14/32/42 (Click PR to view journal entry)
+                                | R#3.43 (Transaction details)
+--------------------------------|--------------------------------------------
+Filter Ledger Transactions      | R#3.44 (Filter by date/date range)
+                                | R#3.44 (Search by account name/amount)
+--------------------------------|--------------------------------------------
+Manage Account Access           | R#2.1 (Modify accounts)
+                                | R#2.2 (Assign account permissions)
+--------------------------------|--------------------------------------------
+View Account Ledger Event Log   | R#2.15 (Event logging)
+                                | R#3.29 (View account changes)
+--------------------------------|--------------------------------------------
+Navigate to Account Reporting   | Supports Financial Statement Requirements
+                                | Links to reporting functionality
+--------------------------------|--------------------------------------------
+Calculate Period Balances       | R#3.43 (Accurate balances)
+                                | R#3.44 (Date range calculations)
+--------------------------------|--------------------------------------------
+View Related Journal Entries    | R#3.14 (View source entries)
+                                | R#3.32 (Entry relationship tracking)
+--------------------------------|--------------------------------------------
+View Entry Supporting Documents | R#3.22 (View attached source documents)
+--------------------------------|--------------------------------------------
+Edit Account Details           | R#2.1 (Modify accounts)
+                               | R#2.15 (Event logging for changes)
+--------------------------------|--------------------------------------------
+View Unapproved Entries        | R#2.6 (Check pending transactions)
+                               | R#3.26 (View entry status)

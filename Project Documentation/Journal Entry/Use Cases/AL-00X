@@ -1,0 +1,64 @@
+{
+    "id": "AL-00X",
+    "name": "",
+    "description": "",
+    "category": "",
+  
+    "actors": {
+      "primary": [],
+      "secondary": []
+    },
+    "permissions": {
+      "required": [],
+      "restricted": []
+    },
+  
+    "dataAccess": {
+      "read": [],
+      "write": [],
+      "delete": []
+    },
+    "dataValidation": {
+      "rules": [],
+      "constraints": []
+    },
+  
+    "securityControls": {
+      "authentication": [],
+      "authorization": [],
+      "audit": []
+    },
+  
+    "preconditions": [],
+    "postconditions": [],
+    "triggers": [],
+    "mainFlow": [],
+    "alternateFlows": [
+      {
+        "condition": "",
+        "steps": []
+      }
+    ],
+  
+    "performance": {
+      "expectations": [],
+      "constraints": []
+    },
+    "errorHandling": {
+      "scenarios": [],
+      "responses": []
+    },
+  
+    "relatedRequirements": [],
+    "dependencies": {
+      "facades": [],
+      "services": [],
+      "components": []
+    },
+  
+    "testCriteria": {
+      "acceptance": [],
+      "validation": [],
+      "edge_cases": []
+    }
+  }

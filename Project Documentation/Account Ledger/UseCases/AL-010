@@ -1,0 +1,207 @@
+{
+  "id": "AL-010",
+  "name": "Edit Account Details",
+  "description": "Authorized users modify account information while maintaining data integrity, version history, and complete audit trails of all changes",
+  "category": "maintenance",
+
+  "actors": {
+    "primary": ["Administrator"],
+    "secondary": ["Manager"]
+  },
+  "permissions": {
+    "required": [
+      "EDIT_ACCOUNT_DETAILS",
+      "VIEW_ACCOUNT_HISTORY",
+      "MODIFY_METADATA"
+    ],
+    "restricted": [
+      "Cannot modify account number",
+      "Cannot change category if transactions exist",
+      "Cannot modify system-required fields"
+    ]
+  },
+
+  "dataAccess": {
+    "read": [
+      "Account",
+      "AccountMetadata",
+      "AccountHistory",
+      "ValidationRules",
+      "CategoryDefinitions",
+      "AccountRelationships"
+    ],
+    "write": [
+      "Account",
+      "AccountMetadata",
+      "ChangeHistory",
+      "EventLog"
+    ],
+    "delete": []
+  },
+  "dataValidation": {
+    "rules": [
+      "Account must exist and be active",
+      "Changes must follow accounting rules",
+      "Category changes must be valid",
+      "Description changes must be meaningful",
+      "Version history must be maintained"
+    ],
+    "constraints": [
+      "Field length limits",
+      "Valid category combinations",
+      "Change frequency limits",
+      "Version retention requirements"
+    ]
+  },
+
+  "securityControls": {
+    "authentication": [
+      "Valid admin session required",
+      "Recent authentication check",
+      "Change authorization verification"
+    ],
+    "authorization": [
+      "Edit permission verification",
+      "Field-level access check",
+      "Change approval validation"
+    ],
+    "audit": [
+      "Change history logging",
+      "Before/after state capture",
+      "User action recording",
+      "Timestamp logging"
+    ]
+  },
+
+  "preconditions": [
+    "User has administrative access",
+    "Account is modifiable",
+    "No pending changes exist",
+    "Account is not system-locked"
+  ],
+  "postconditions": [
+    "Account details updated",
+    "History log updated",
+    "Event log created",
+    "Related systems notified",
+    "Audit trail complete"
+  ],
+  "triggers": [
+    "Admin initiates edit",
+    "Account review requires change",
+    "Metadata update needed",
+    "Category adjustment required"
+  ],
+  "mainFlow": [
+    "1. Admin selects account for editing",
+    "2. System verifies edit permissions",
+    "3. System displays editable fields",
+    "4. Admin makes desired changes",
+    "5. System validates changes",
+    "6. System prompts for confirmation",
+    "7. System saves changes",
+    "8. System updates history",
+    "9. System notifies relevant users"
+  ],
+  "alternateFlows": [
+    {
+      "condition": "Invalid changes attempted",
+      "steps": [
+        "1. System shows validation errors",
+        "2. System maintains current state",
+        "3. System suggests valid options",
+        "4. System logs attempt"
+      ]
+    },
+    {
+      "condition": "Concurrent edit attempted",
+      "steps": [
+        "1. System detects conflict",
+        "2. System shows warning",
+        "3. System preserves changes",
+        "4. System requires refresh"
+      ]
+    }
+  ],
+
+  "performance": {
+    "expectations": [
+      "Edit screen load under 500ms",
+      "Validation checks under 200ms",
+      "Save operation under 1s",
+      "History update under 300ms"
+    ],
+    "constraints": [
+      "Change batch size limits",
+      "History retention period",
+      "Concurrent edit restrictions"
+    ]
+  },
+  "errorHandling": {
+    "scenarios": [
+      "Validation failure",
+      "Concurrent modification",
+      "System constraint violation",
+      "History update failure",
+      "Notification failure"
+    ],
+    "responses": [
+      "Clear error messages",
+      "State preservation",
+      "Automatic retry where safe",
+      "Manual intervention options"
+    ]
+  },
+
+  "relatedRequirements": [
+    "R#2.1 - Modify accounts",
+    "R#2.15 - Event logging for changes",
+    "R#2.2 - Unique account validation",
+    "R#2.5 - Account number validation"
+  ],
+  "dependencies": {
+    "facades": [
+      "AccountManagementFacade",
+      "ValidationFacade",
+      "EventLoggingFacade",
+      "NotificationFacade"
+    ],
+    "services": [
+      "AccountEditService",
+      "ValidationService",
+      "HistoryService",
+      "NotificationService"
+    ],
+    "components": [
+      "AccountEditComponent",
+      "ValidationDisplayComponent",
+      "HistoryViewComponent",
+      "ChangeConfirmationComponent"
+    ]
+  },
+
+  "testCriteria": {
+    "acceptance": [
+      "Changes save correctly",
+      "History maintained accurately",
+      "Validations work properly",
+      "Notifications sent appropriately",
+      "Audit trail complete"
+    ],
+    "validation": [
+      "Edit permission verification",
+      "Change rule enforcement",
+      "History accuracy check",
+      "Notification delivery"
+    ],
+    "edge_cases": [
+      "Concurrent edits",
+      "System-critical accounts",
+      "Complex category changes",
+      "Large change sets",
+      "Network interruptions",
+      "Partial save scenarios",
+      "History overflow conditions"
+    ]
+  }
+}

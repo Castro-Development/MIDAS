@@ -1,0 +1,201 @@
+{
+  "id": "AL-006",
+  "name": "Navigate to Account Reporting",
+  "description": "User navigates from account ledger to related financial reports, maintaining context and providing direct access to relevant financial statements and analysis",
+  "category": "reporting",
+
+  "actors": {
+    "primary": ["Administrator", "Manager", "Accountant"],
+    "secondary": ["Auditor"]
+  },
+  "permissions": {
+    "required": [
+      "VIEW_ACCOUNT_LEDGER",
+      "VIEW_FINANCIAL_REPORTS",
+      "ACCESS_STATEMENTS"
+    ],
+    "restricted": [
+      "Cannot access reports outside assigned period",
+      "Cannot view unauthorized statement types",
+      "Cannot generate restricted reports"
+    ]
+  },
+
+  "dataAccess": {
+    "read": [
+      "FinancialStatements",
+      "AccountBalances",
+      "ReportingPeriods",
+      "AccountCategories",
+      "ReportConfigurations",
+      "StatementTemplates"
+    ],
+    "write": [
+      "ViewHistory",
+      "ReportAccessLog"
+    ],
+    "delete": []
+  },
+  "dataValidation": {
+    "rules": [
+      "Account must be in active reporting period",
+      "Statement types must be valid for account",
+      "Report dates must match fiscal periods",
+      "User must have access to all included accounts",
+      "Report dependencies must be available"
+    ],
+    "constraints": [
+      "Report generation limits",
+      "Concurrent report access",
+      "Historical data availability",
+      "Cross-statement dependencies"
+    ]
+  },
+
+  "securityControls": {
+    "authentication": [
+      "Valid user session required",
+      "Report access verification",
+      "Session continuity check"
+    ],
+    "authorization": [
+      "Statement type access check",
+      "Period access validation",
+      "Report level permissions"
+    ],
+    "audit": [
+      "Report access logging",
+      "Navigation path tracking",
+      "Context preservation logging"
+    ]
+  },
+
+  "preconditions": [
+    "User viewing account ledger",
+    "Reports available for period",
+    "Account included in statements",
+    "User has report access rights"
+  ],
+  "postconditions": [
+    "Report view loaded",
+    "Account context preserved",
+    "Access logged",
+    "Navigation path recorded"
+  ],
+  "triggers": [
+    "User selects report option",
+    "User follows report link",
+    "System suggests report view",
+    "Automated report navigation"
+  ],
+  "mainFlow": [
+    "1. User initiates report navigation",
+    "2. System identifies relevant reports",
+    "3. System verifies report access",
+    "4. System preserves account context",
+    "5. System loads report view",
+    "6. System highlights relevant entries",
+    "7. System enables cross-navigation",
+    "8. System updates navigation history"
+  ],
+  "alternateFlows": [
+    {
+      "condition": "No relevant reports",
+      "steps": [
+        "1. System shows no reports message",
+        "2. System suggests alternatives",
+        "3. System maintains current view",
+        "4. System logs navigation attempt"
+      ]
+    },
+    {
+      "condition": "Report generation needed",
+      "steps": [
+        "1. System initiates report generation",
+        "2. System shows progress indicator",
+        "3. System completes navigation",
+        "4. System caches report for reuse"
+      ]
+    }
+  ],
+
+  "performance": {
+    "expectations": [
+      "Navigation initiation under 200ms",
+      "Report identification under 300ms",
+      "Context switch under 500ms",
+      "Report load under 2 seconds"
+    ],
+    "constraints": [
+      "Report complexity limits",
+      "Data volume restrictions",
+      "Concurrent generation limits"
+    ]
+  },
+  "errorHandling": {
+    "scenarios": [
+      "Report unavailable",
+      "Context loss risk",
+      "Generation failure",
+      "Permission mismatch",
+      "Data synchronization issue"
+    ],
+    "responses": [
+      "Clear error notification",
+      "Navigation rollback option",
+      "Alternative report suggestion",
+      "Context recovery mechanism"
+    ]
+  },
+
+  "relatedRequirements": [
+    "R#4.1 - Generate financial statements",
+    "R#4.5 - Report approval workflow",
+    "R#4.6 - Report preparation process",
+    "R#3.44 - Filtering and navigation"
+  ],
+  "dependencies": {
+    "facades": [
+      "ReportingFacade",
+      "AccountLedgerFacade",
+      "NavigationFacade",
+      "ContextManagerFacade"
+    ],
+    "services": [
+      "ReportGenerationService",
+      "NavigationService",
+      "ContextPreservationService",
+      "ReportAccessService"
+    ],
+    "components": [
+      "ReportNavigationComponent",
+      "ContextPreservationComponent",
+      "ReportViewComponent",
+      "NavigationHistoryComponent"
+    ]
+  },
+
+  "testCriteria": {
+    "acceptance": [
+      "Correct reports identified",
+      "Context properly preserved",
+      "Navigation completes successfully",
+      "Relevant data highlighted",
+      "Cross-navigation works"
+    ],
+    "validation": [
+      "Permission verification",
+      "Context preservation check",
+      "Navigation path validity",
+      "Report accessibility"
+    ],
+    "edge_cases": [
+      "Multiple report types",
+      "Cross-period navigation",
+      "Concurrent report generation",
+      "Complex account relationships",
+      "Interrupted navigation",
+      "Partial report availability"
+    ]
+  }
+}

@@ -1,0 +1,211 @@
+{
+ "id": "AL-004",
+ "name": "Manage Account Access",
+ "description": "Administrator manages user access rights to accounts, including viewing permissions, role assignments, and access restrictions",
+ "category": "administrative",
+
+ "actors": {
+   "primary": ["Administrator"],
+   "secondary": [
+     "Manager",    
+     "Accountant"  
+   ]
+ },
+ "permissions": {
+   "required": [
+     "MANAGE_ACCOUNT_ACCESS",
+     "VIEW_USER_PROFILES",
+     "MODIFY_ACCESS_RIGHTS",
+     "ASSIGN_ROLES"
+   ],
+   "restricted": [
+     "Cannot modify own access rights",
+     "Cannot remove all admin access",
+     "Cannot assign higher privileges than own"
+   ]
+ },
+
+ "dataAccess": {
+   "read": [
+     "Account",
+     "UserProfile",
+     "UserRole",
+     "AccessPermissions",
+     "AccountAccessHistory",
+     "DepartmentAssignments"
+   ],
+   "write": [
+     "AccountAccessRights",
+     "UserRoleAssignments",
+     "AccessEventLog",
+     "UserNotifications"
+   ],
+   "delete": [
+     "AccessRights"  
+   ]
+ },
+ "dataValidation": {
+   "rules": [
+     "User must exist and be active",
+     "Account must be active",
+     "Role must be valid for user type",
+     "Access level must be appropriate for role",
+     "No circular permission dependencies",
+     "Maintain minimum required access levels"
+   ],
+   "constraints": [
+     "Maximum users per account",
+     "Role hierarchy enforcement"
+   ]
+ },
+
+ "securityControls": {
+   "authentication": [
+     "Admin session validation",
+     "Recent authentication check"
+   ],
+   "authorization": [
+     "Admin role verification",
+     "Access management permission check"
+   ],
+   "audit": [
+     "Access change logging",
+     "Permission modification tracking",
+     "Role assignment history",
+     "Access review logging"
+   ]
+ },
+
+ "preconditions": [
+   "Administrator is authenticated",
+   "Admin has access management rights",
+   "Target account exists and is active",
+   "User exists and is active"
+ ],
+ "postconditions": [
+   "Access rights updated",
+   "Event log updated",
+   "Affected users notified",
+   "Access history maintained"
+ ],
+ "triggers": [
+   "New user assignment request",
+   "Role change request",
+   "Periodic access review",
+   "User status change"
+ ],
+ "mainFlow": [
+   "1. Admin navigates to account access management from ledger",
+   "2. System displays current access configuration",
+   "3. Admin selects user or role to modify",
+   "4. System shows available access options",
+   "5. Admin makes access changes",
+   "6. System validates changes",
+   "7. System prompts for confirmation",
+   "8. Admin confirms changes",
+   "9. System applies access updates",
+   "10. System notifies affected users",
+   "11. System logs changes"
+ ],
+ "alternateFlows": [
+   {
+     "condition": "Invalid access combination",
+     "steps": [
+       "1. System displays validation errors",
+       "2. System suggests valid combinations",
+       "3. Admin adjusts selections",
+       "4. System revalidates"
+     ]
+   },
+   {
+     "condition": "Critical access change",
+     "steps": [
+       "1. System requires additional authentication",
+       "2. System requires change justification",
+       "3. System notifies other administrators"
+     ]
+   }
+ ],
+
+ "performance": {
+   "expectations": [
+     "Access check under 100ms",
+     "Role update under 500ms",
+     "Notification delivery under 5s",
+     "Audit log update under 1s"
+   ],
+   "constraints": [
+     "Maximum bulk updates",
+     "Rate limiting on changes",
+     "Notification throttling"
+   ]
+ },
+ "errorHandling": {
+   "scenarios": [
+     "Permission conflict",
+     "Role hierarchy violation",
+     "System access limit reached",
+     "Notification failure",
+     "Audit log failure"
+   ],
+   "responses": [
+     "Rollback changes on failure",
+     "Notify admin of specific errors",
+     "Log failed attempts",
+     "Maintain previous access state",
+     "Queue notifications for retry"
+   ]
+ },
+
+ "relatedRequirements": [
+   "R#1.2 - Administrator create/assign roles",
+   "R#1.3 - Administrator update user information",
+   "R#1.4 - Administrator activate/deactivate users",
+   "R#2.19 - Manager view-only access",
+   "R#2.20 - Accountant view-only access",
+   "R#3.35 - Must be able to send email to manager/admin"
+ ],
+ "dependencies": {
+   "facades": [
+     "AccountLedgerFacade",
+     "UserAdministrationFacade",
+     "NotificationFacade",
+     "EventLoggingFacade"
+   ],
+   "services": [
+     "AccessControlService (Review needed)",
+     "UserRoleService (Review needed)",
+     "NotificationService",
+     "ValidationService (Review needed)"
+   ],
+   "components": [
+     "AccessManagementComponent",
+     "UserSelectionComponent",
+     "PermissionMatrixComponent (Review needed)"
+   ]
+ },
+
+ "testCriteria": {
+   "acceptance": [
+     "Access changes applied correctly",
+     "Notifications sent to affected users",
+     "Audit trail complete and accurate",
+     "Validation rules enforced",
+     "Role hierarchy maintained"
+   ],
+   "validation": [
+     "Permission conflict detection",
+     "Role compatibility check",
+     "Access level verification",
+     "Notification delivery confirmation"
+   ],
+   "edge_cases": [
+     "Last admin access change",
+     "Circular permission dependencies",
+     "Maximum users per account",
+     "Complex role hierarchies",
+     "Department boundary conditions",
+     "Concurrent access modifications"
+   ]
+ }
+}

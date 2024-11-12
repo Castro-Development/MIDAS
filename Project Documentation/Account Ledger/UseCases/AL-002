@@ -1,0 +1,198 @@
+{
+  "id": "AL-002",
+  "name": "View Ledger Entry via Post Reference",
+  "description": "User navigates from ledger entry to detailed journal entry view using post reference (PR) link, showing full transaction details and supporting documentation",
+  "category": "core",
+
+  "actors": {
+    "primary": ["Administrator", "Manager", "Accountant"],
+    "secondary": []
+  },
+  "permissions": {
+    "required": [
+      "VIEW_ACCOUNT_LEDGER",
+      "VIEW_JOURNAL_ENTRIES",
+      "VIEW_SUPPORTING_DOCUMENTS"
+    ],
+    "restricted": [
+      "Cannot view entries outside assigned general ledger",
+      "Cannot access restricted supporting documents without clearance"
+    ]
+  },
+
+  "dataAccess": {
+    "read": [
+      "JournalEntry",
+      "LedgerEntry",
+      "AccountingPeriod",
+      "SupportingDocuments",
+      "EntryMetadata",
+      "UserAccessRights"
+    ],
+    "write": [
+      "ViewHistory",
+      "AuditLog"
+    ],
+    "delete": []
+  },
+  "dataValidation": {
+    "rules": [
+      "Post reference must be valid",
+      "Journal entry must exist",
+      "Entry must be within accessible period",
+      "Supporting documents must be accessible",
+      "User must have access to all referenced accounts"
+    ],
+    "constraints": [
+      "Maximum document size",
+      "Supported document types",
+      "Historical data access limits"
+    ]
+  },
+
+  "securityControls": {
+    "authentication": [
+      "Valid user session required",
+      "Document access token verification"
+    ],
+    "authorization": [
+      "Role-based access check",
+      "Document permission verification",
+      "Period access verification"
+    ],
+    "audit": [
+      "Journal entry view logging",
+      "Document access tracking",
+      "Cross-reference verification"
+    ]
+  },
+
+  "preconditions": [
+    "User is viewing account ledger",
+    "Entry has valid post reference",
+    "Journal entry exists and is accessible",
+    "User has permission to view referenced entry"
+  ],
+  "postconditions": [
+    "Journal entry details displayed",
+    "Supporting documents accessible",
+    "View history updated",
+    "Audit log updated"
+  ],
+  "triggers": [
+    "User clicks post reference link",
+    "User selects entry detail view",
+    "System redirects to entry detail",
+    "Entry reference followed from report"
+  ],
+  "mainFlow": [
+    "1. User clicks post reference link",
+    "2. System validates post reference",
+    "3. System checks user permissions",
+    "4. System retrieves journal entry",
+    "5. System loads supporting documents",
+    "6. System displays entry detail view",
+    "7. System shows related entries",
+    "8. System enables document access",
+    "9. System logs entry access"
+  ],
+  "alternateFlows": [
+    {
+      "condition": "Invalid post reference",
+      "steps": [
+        "1. System shows error message",
+        "2. System logs invalid reference",
+        "3. System maintains current view",
+        "4. System suggests alternate navigation"
+      ]
+    },
+    {
+      "condition": "Missing supporting documents",
+      "steps": [
+        "1. System displays entry details",
+        "2. System shows document missing notice",
+        "3. System logs document status",
+        "4. System enables document request workflow"
+      ]
+    }
+  ],
+
+  "performance": {
+    "expectations": [
+      "Reference resolution under 300ms",
+      "Entry detail load under 1 second",
+      "Document access under 2 seconds",
+      "Navigation response under 200ms"
+    ],
+    "constraints": [
+      "Document size limits",
+      "Concurrent access limits",
+      "Network bandwidth constraints"
+    ]
+  },
+  "errorHandling": {
+    "scenarios": [
+      "Broken post reference",
+      "Missing journal entry",
+      "Inaccessible documents",
+      "Permission mismatch",
+      "Period access restriction"
+    ],
+    "responses": [
+      "Clear error message display",
+      "Alternate navigation options",
+      "Error logging and notification",
+      "Automatic retry for transient issues"
+    ]
+  },
+
+  "relatedRequirements": [
+    "R#3.14 - Click PR to go to journal entry",
+    "R#3.32 - Each entry must have clickable PR",
+    "R#3.42 - PR navigation to source entry",
+    "R#3.22 - Access to source documents"
+  ],
+  "dependencies": {
+    "facades": [
+      "JournalEntryFacade",
+      "DocumentManagementFacade",
+      "AccountLedgerFacade"
+    ],
+    "services": [
+      "ReferenceResolutionService",
+      "DocumentAccessService",
+      "AuditService",
+      "ValidationService"
+    ],
+    "components": [
+      "EntryDetailComponent",
+      "DocumentViewComponent",
+      "ReferenceNavigationComponent",
+      "RelatedEntriesComponent"
+    ]
+  },
+
+  "testCriteria": {
+    "acceptance": [
+      "PR navigation works correctly",
+      "Entry details display accurately",
+      "Documents accessible when available",
+      "Navigation history maintained",
+      "Related entries visible"
+    ],
+    "validation": [
+      "Reference validity check",
+      "Permission verification",
+      "Document access control",
+      "Audit trail completeness"
+    ],
+    "edge_cases": [
+      "Multiple concurrent document access",
+      "Very large supporting documents",
+      "Complex entry relationships",
+      "Historical reference resolution",
+      "Cross-period navigation",
+      "Partial document availability"
+    ]
+  }
+}

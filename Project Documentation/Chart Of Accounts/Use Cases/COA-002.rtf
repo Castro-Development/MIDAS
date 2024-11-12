@@ -1,0 +1,198 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \{\
+ id: "COA-002",\
+ name: "Deactivate Existing Account",\
+ description: "Administrator attempts to deactivate an existing account, requiring balance verification and impact assessment",\
+ category: "administrative",\
+\
+ actors: \{\
+   primary: ["Administrator"],\
+   secondary: ["Manager"] // For notification/awareness\
+ \},\
+ permissions: \{\
+   required: [\
+     "DEACTIVATE_ACCOUNT",\
+     "VIEW_ACCOUNT_BALANCE",\
+     "MODIFY_ACCOUNT_STATUS"\
+   ],\
+   restricted: [\
+     "Cannot deactivate accounts with non-zero balance",\
+     "Cannot deactivate system-required accounts"\
+   ]\
+ \},\
+\
+ dataAccess: \{\
+   read: [\
+     "Account",\
+     "AccountBalance",\
+     "AccountStatus",\
+     "AccountRelationships",\
+     "PendingTransactions"\
+   ],\
+   write: [\
+     "AccountStatus",\
+     "AccountMetadata",\
+     "EventLog"\
+   ],\
+   delete: []\
+ \},\
+ dataValidation: \{\
+   rules: [\
+     "Account must exist",\
+     "Account balance must be zero",\
+     "No pending transactions exist, this means check for unapproved journal entries involving this account\'94\
+     "No dependent accounts exist",\
+     "Not a required system account"\
+   ],\
+   constraints: [\
+     "Deactivation must be atomic",\
+     "Event logging required",\
+     "Status change must be immediate"\
+   ]\
+ \},\
+\
+ securityControls: \{\
+   authentication: [\
+     "Valid admin session required",\
+     "Recent authentication check",\
+     "Action requires confirmation"\
+   ],\
+   authorization: [\
+     "Admin role verification",\
+     "Account ownership verification",\
+     "General ledger access verification"\
+   ],\
+   audit: [\
+     "Full deactivation event logging",\
+     "Admin action logging",\
+     "Status change history"\
+   ]\
+ \},\
+\
+ preconditions: [\
+   "Account exists and is active",\
+   "User has administrator privileges",\
+   "Account has zero balance",\
+   "No pending transactions exist"\
+ ],\
+ postconditions: [\
+   "Account status updated to inactive",\
+   "Event log updated",\
+   "Notifications sent to relevant users",\
+   "Account no longer available for new transactions"\
+ ],\
+ triggers: [\
+   "Administrator initiates account deactivation",\
+   "Bulk account maintenance (batch deactivation)",\
+   "Account cleanup process"\
+ ],\
+ mainFlow: [\
+   "1. Admin selects account for deactivation",\
+   "2. System verifies admin permissions",\
+   "3. System checks account balance",\
+   "4. System verifies no pending transactions",\
+   "5. System prompts for deactivation confirmation",\
+   "6. Admin confirms deactivation",\
+   "7. System updates account status",\
+   "8. System logs status change",\
+   "9. System notifies relevant users",\
+   "10. System displays success confirmation"\
+ ],\
+ alternateFlows: [\
+   \{\
+     condition: "Non-zero balance",\
+     steps: [\
+       "1. System shows balance error",\
+       "2. System provides link to account ledger",\
+       "3. Deactivation prevented"\
+     ]\
+   \},\
+   \{\
+     condition: "Pending transactions exist",\
+     steps: [\
+       "1. System shows pending transaction warning",\
+       "2. System lists pending transactions",\
+       "3. Deactivation prevented"\
+     ]\
+   \}\
+ ],\
+\
+ performance: \{\
+   expectations: [\
+     "Status change under 1 second",\
+     "Validation checks under 500ms",\
+     "Notification delivery under 5 seconds"\
+   ],\
+   constraints: [\
+     "Must maintain ACID properties",\
+     "Cannot impact other account operations",\
+     "Must complete all audit logging"\
+   ]\
+ \},\
+ errorHandling: \{\
+   scenarios: [\
+     "Balance check failure",\
+     "Transaction check failure",\
+     "Status update failure",\
+     "Logging failure"\
+   ],\
+   responses: [\
+     "Rollback any partial changes",\
+     "Alert admin of specific failure",\
+     "Log failed attempt",\
+     "Provide retry option"\
+   ]\
+ \},\
+\
+ relatedRequirements: [\
+   "R#2.6 - Accounts with balance > 0 cannot be deactivated",\
+   "R#2.15 - Event log showing before/after image",\
+   "R#1.2 - Administrator user management capabilities"\
+ ],\
+ dependencies: \{\
+   facades: [\
+     "ChartOfAccountsFacade",\
+     "AccountEventFacade",\
+     "NotificationFacade"\
+   ],\
+   services: [\
+     "AccountingStateService",\
+     "EventLoggingService",\
+     "ValidationService",\
+     "NotificationService"\
+   ],\
+   components: [\
+     "AccountDeactivationDialog",\
+     "ConfirmationDialog",\
+     "ErrorNotification"\
+   ]\
+ \},\
+\
+ testCriteria: \{\
+   acceptance: [\
+     "Account successfully deactivated when all conditions met",\
+     "Proper error messages for all failure conditions",\
+     "All required logs and notifications generated",\
+     "Account immediately unavailable for new transactions"\
+   ],\
+   validation: [\
+     "Zero balance verification",\
+     "No pending transaction verification",\
+     "Admin permission verification",\
+     "Event log entry verification"\
+   ],\
+   edge_cases: [\
+     "Concurrent deactivation attempts",\
+     "Transaction posted during deactivation",\
+     "System failure during deactivation",\
+     "Multiple dependent accounts",\
+     "Network interruption during process"\
+   ]\
+ \}\
+\}}

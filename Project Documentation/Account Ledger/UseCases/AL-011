@@ -1,0 +1,199 @@
+{
+  "id": "AL-011",
+  "name": "View Unapproved Entries",
+  "description": "User views pending and unapproved transactions affecting an account, including submitted journal entries awaiting approval and potential balance impacts",
+  "category": "approval-workflow",
+
+  "actors": {
+    "primary": ["Administrator", "Manager", "Accountant"],
+    "secondary": ["Entry Author"]
+  },
+  "permissions": {
+    "required": [
+      "VIEW_PENDING_ENTRIES",
+      "VIEW_ACCOUNT_LEDGER",
+      "VIEW_APPROVAL_STATUS"
+    ],
+    "restricted": [
+      "Cannot view entries outside assigned general ledger",
+      "Cannot see restricted entry types",
+      "Cannot modify other users' entries"
+    ]
+  },
+
+  "dataAccess": {
+    "read": [
+      "PendingEntries",
+      "ApprovalStatus",
+      "EntryMetadata",
+      "AuthorInformation",
+      "PotentialImpacts",
+      "ApprovalHistory"
+    ],
+    "write": [
+      "ViewHistory",
+      "StatusUpdates"
+    ],
+    "delete": []
+  },
+  "dataValidation": {
+    "rules": [
+      "Entry must be in pending state",
+      "Status must be current",
+      "Impact calculations must be valid",
+      "User must have access to all accounts",
+      "Entry relationships must be intact"
+    ],
+    "constraints": [
+      "Maximum pending entries display",
+      "Age of pending entries",
+      "Status update frequency"
+    ]
+  },
+
+  "securityControls": {
+    "authentication": [
+      "Valid user session required",
+      "Role-appropriate access"
+    ],
+    "authorization": [
+      "Entry visibility check",
+      "Status view permissions",
+      "Impact analysis rights"
+    ],
+    "audit": [
+      "View access logging",
+      "Status check tracking",
+      "Impact review logging"
+    ]
+  },
+
+  "preconditions": [
+    "User has appropriate permissions",
+    "Pending entries exist",
+    "Account is active",
+    "Approval workflow active"
+  ],
+  "postconditions": [
+    "Pending entries displayed",
+    "Status information shown",
+    "Impact analysis available",
+    "View history updated"
+  ],
+  "triggers": [
+    "User requests pending entries view",
+    "New entry submitted for approval",
+    "Status change notification",
+    "Periodic status check"
+  ],
+  "mainFlow": [
+    "1. User accesses pending entries view",
+    "2. System verifies permissions",
+    "3. System retrieves pending entries",
+    "4. System calculates potential impacts",
+    "5. System loads entry details",
+    "6. System displays status information",
+    "7. System enables review options",
+    "8. System updates view history"
+  ],
+  "alternateFlows": [
+    {
+      "condition": "No pending entries",
+      "steps": [
+        "1. System shows empty state",
+        "2. System provides status summary",
+        "3. System enables refresh option",
+        "4. System logs view attempt"
+      ]
+    },
+    {
+      "condition": "Status change during view",
+      "steps": [
+        "1. System detects change",
+        "2. System updates display",
+        "3. System notifies user",
+        "4. System refreshes data"
+      ]
+    }
+  ],
+
+  "performance": {
+    "expectations": [
+      "Initial load under 1 second",
+      "Status updates under 200ms",
+      "Impact calculation under 500ms",
+      "Refresh under 300ms"
+    ],
+    "constraints": [
+      "Maximum entries per page",
+      "Update frequency limits",
+      "Concurrent view limits"
+    ]
+  },
+  "errorHandling": {
+    "scenarios": [
+      "Status sync error",
+      "Impact calculation failure",
+      "Permission mismatch",
+      "Data access error",
+      "Real-time update failure"
+    ],
+    "responses": [
+      "Show last known good state",
+      "Provide refresh option",
+      "Clear error indicators",
+      "Automatic retry mechanism"
+    ]
+  },
+
+  "relatedRequirements": [
+    "R#2.6 - Check pending transactions",
+    "R#3.26 - View entry status",
+    "R#3.7 - View pending entries",
+    "R#3.40 - Manager notification"
+  ],
+  "dependencies": {
+    "facades": [
+      "PendingEntryFacade",
+      "ApprovalWorkflowFacade",
+      "ImpactAnalysisFacade"
+    ],
+    "services": [
+      "EntryStatusService",
+      "ImpactCalculationService",
+      "NotificationService",
+      "ValidationService"
+    ],
+    "components": [
+      "PendingEntryListComponent",
+      "StatusDisplayComponent",
+      "ImpactPreviewComponent",
+      "EntryDetailComponent"
+    ]
+  },
+
+  "testCriteria": {
+    "acceptance": [
+      "All pending entries visible",
+      "Status information accurate",
+      "Impact analysis correct",
+      "Real-time updates work",
+      "Review options available"
+    ],
+    "validation": [
+      "Permission enforcement",
+      "Status accuracy",
+      "Impact calculation check",
+      "View history recording"
+    ],
+    "edge_cases": [
+      "High volume of pending entries",
+      "Rapid status changes",
+      "Complex impact scenarios",
+      "Multiple approver levels",
+      "Expired pending entries",
+      "Concurrent status updates",
+      "Cross-period entries"
+    ]
+  }
+}

@@ -1,0 +1,40 @@
+Use Case                         | Requirements Covered
+--------------------------------|--------------------------------------------
+Create Journal Entry            | R#3.19 (Create using accounts in COA)
+                               | R#3.20 (Debits before credits)
+                               | R#3.21 (Multiple debits/credits)
+                               | R#3.33 (At least one debit and credit)
+--------------------------------|--------------------------------------------
+Submit Entry for Approval       | R#3.24 (Submit for approval)
+                               | R#3.40 (Manager notification)
+--------------------------------|--------------------------------------------
+Review and Approve/Reject Entry | R#3.5 (Manager approval workflow)
+                               | R#3.36 (Debit/credit balance check)
+--------------------------------|--------------------------------------------
+Attach Supporting Documents     | R#3.22 (Attach source documents)
+                               | R#3.22 (Support multiple file types)
+--------------------------------|--------------------------------------------
+View Pending Approvals         | R#3.7 (View pending entries)
+                               | R#3.8 (View approved entries)
+                               | R#3.9 (View rejected entries)
+--------------------------------|--------------------------------------------
+Manage Draft Entries           | R#3.23 (Cancel/reset before submission)
+                               | R#3.23 (No deletion after submission)
+--------------------------------|--------------------------------------------
+Validate Entry Balance         | R#3.34 (Prevent error submission)
+                               | R#3.36 (Total debits = Total credits)
+--------------------------------|--------------------------------------------
+Navigate to Author Profile     | R#3.35 (User communication support)
+--------------------------------|--------------------------------------------
+Search & Filter Journal Entries | R#3.11 (Search by name/amount/date)
+                               | R#3.28 (Search capabilities)
+--------------------------------|--------------------------------------------
+Process Approved Entries       | R#3.6 (Update after approval)
+                               | R#3.31 (Reflect in ledger)
+--------------------------------|--------------------------------------------
+Filter Entry Queue             | R#3.10 (Filter by date)
+                               | R#3.27 (Filter categories by date)
+--------------------------------|--------------------------------------------
+Display Entry Validation Errors | R#3.37 (Error messages in database)
+                               | R#3.38 (Display in red)
+                               | R#3.39 (Clear when corrected)

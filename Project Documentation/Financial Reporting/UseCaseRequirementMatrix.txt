@@ -1,0 +1,24 @@
+Use Case                         | Requirements Covered
+--------------------------------|--------------------------------------------
+Generate Trial Balance Sheet    | R#4.1 (Can generate trial balance)
+                               | R#4.5 (Manager can approve/reject)
+                               | R#4.6 (Accountant can prepare)
+--------------------------------|--------------------------------------------
+Generate Balance Sheet         | R#4.1 (Can generate balance sheet)
+                               | R#4.5 (Manager can approve/reject)
+                               | R#4.6 (Accountant can prepare)
+--------------------------------|--------------------------------------------
+Generate Income Statement      | R#4.1 (Can generate income statement)
+                               | R#4.5 (Manager can approve/reject)
+                               | R#4.6 (Accountant can prepare)
+--------------------------------|--------------------------------------------
+Generate Retained Earnings     | R#4.1 (Can generate retained earnings)
+Statement                      | R#4.5 (Manager can approve/reject)
+                               | R#4.6 (Accountant can prepare)
+--------------------------------|--------------------------------------------
+View Report Generation History | R#4.2 (Event logging)
+                               | R#4.4 (View approved reports)
+                               | R#4.4 (View rejected reports)
+--------------------------------|--------------------------------------------
+Filter Report by Date Range    | R#4.7 (Filter by date)
+                               | R#4.8 (Date range filtering)

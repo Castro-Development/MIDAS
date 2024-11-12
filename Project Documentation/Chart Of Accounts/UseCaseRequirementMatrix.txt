@@ -1,0 +1,23 @@
+Use Case                    | Requirements Covered
+---------------------------|--------------------------------------------
+View Chart of Accounts     | R#2.7 (View accounts and charts)
+                          | R#2.8 (Basic search/view capability)
+                          | R#2.12 (Filter using various tokens)
+---------------------------|--------------------------------------------
+Deactivate Account        | R#2.6 (Balance verification)
+                          | R#2.15 (Event logging)
+---------------------------|--------------------------------------------
+Create Account            | R#2.1 (Add accounts)
+                          | R#2.2 (No duplicate numbers)
+                          | R#2.5 (Number format validation)
+---------------------------|--------------------------------------------
+Navigate to Account Ledger | R#2.11 (Account ledger navigation)
+---------------------------|--------------------------------------------
+Search/Filter Accounts     | R#2.8 (Search by number/name)
+                          | R#2.12 (Filter functionality)
+---------------------------|--------------------------------------------
+Admin Navigation Options   | R#2.1 (Edit accounts)
+                          | R#1.2 (Admin capabilities)
+---------------------------|--------------------------------------------
+Navigate to Journal Entry  | R#3.11 (Search journal entries)
+Search                    | R#3.28 (Search capabilities)
