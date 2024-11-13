@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { UserRole } from "../../dataModels/userModels/userRole.model";
-import { Observable, Subject, catchError, combineLatest, filter, from, of, switchMap, tap } from "rxjs";
+import { Observable, Subject, catchError, combineLatest, filter, from, of, switchMap, take, tap } from "rxjs";
 import { AuthStateService } from "../../states/auth-state.service";
 import { ErrorHandlingService } from "../../services/error-handling.service";
 import { Auth, User as FirebaseUser } from "@angular/fire/auth";
@@ -88,15 +88,8 @@ export class UserSecurityFacade {
 
     // login(username: string, password: string): Observable<boolean> {
     //     console.log("Logging in user");
-    //     const userStatus = this.getUserSecurityStatus(username);
-    //     console.log(userStatus);
-    //     return userStatus.pipe(
-    //         tap((status) => console.log(status)),
+    //     return this.getUserSecurityStatus(username).pipe(
     //         switchMap(status => {
-    //             if(!status) {
-    //                 console.log("User status not found");
-    //                 this.establishSecurityStatus(username);
-    //             }
     //             if (status && status.isLocked) {
     //                 console.log("User is locked");
     //                 return of(false);
@@ -126,7 +119,7 @@ export class UserSecurityFacade {
     //                 this.userProfileFacade.loginProfile(username, this.authState.user$);
     //             })
     //             );
-    // }
+    // } Can't get this shit to work, so I'm commenting it out for now.
     
 
     login(username: string, password: string): Observable<boolean> {
@@ -147,22 +140,10 @@ export class UserSecurityFacade {
     }
 
 
-    private getUserSecurityStatus(uid: string): Observable<SecurityStatus> {
-        console.log("Getting user security status");
-        return this.userAdminFirestore.getUserSecurityStatus(uid);
-    }
-
-    private establishSecurityStatus(username: string): Observable<boolean> {
-        const blankStatus = {
-            isLocked: false,
-            suspension: null,
-            passwordStatus: 'valid',
-            failedAttempts: 0
-        } as SecurityStatus;
-        console.log("Establishing user security status");
-        this.userAdminFirestore.setSecurityStatus(username, blankStatus)
-        return of(true);
-    }
+    // private getUserSecurityStatus(uid: string): Observable<SecurityStatus> {
+    //     console.log("Getting user security status");
+    //     return this.userAdminFirestore.getUserSecurityStatus(uid);
+    // } Can't get this S***T to work, so I'm commenting it out for now...
 
     // Password Management Methods
     validatePassword(uid: string, password: string): Observable<boolean> {

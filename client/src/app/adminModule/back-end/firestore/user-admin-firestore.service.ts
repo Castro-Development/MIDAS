@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import { UserApplication } from "../../../shared/dataModels/userModels/user.model";
-import { Firestore, doc, setDoc } from "@angular/fire/firestore";
-import { Observable, Subject, from, map, of, switchMap, tap } from "rxjs";
+import { Firestore, doc, docData, setDoc } from "@angular/fire/firestore";
+import { Observable, Subject, catchError, from, map, of, switchMap, tap } from "rxjs";
 import { SecurityStatus } from "../../../shared/facades/userFacades/user-security.facade";
-import { DocumentSnapshot, collection, getDoc, onSnapshot } from "firebase/firestore";
+import { DocumentData, DocumentReference, DocumentSnapshot, collection, getDoc, onSnapshot } from "firebase/firestore";
 import { ErrorHandlingService } from "../../../shared/services/error-handling.service";
 import { User as FirebaseUser } from "firebase/auth";
 
@@ -47,26 +47,19 @@ export class UserAdminFirestoreService {
 
     getUserSecurityStatus(uid: string): Observable<SecurityStatus>  {
         const userSecurityDocRef = doc(this.firestore, 'userSecurity', uid);
-        getDoc(userSecurityDocRef).then((doc) => {
-            if(doc.exists()) {
-                return doc.data() as SecurityStatus;
-            } else {
-                return of(null);
-            }
-        }).then((status) => {
-            if(status === null) {
-                return of(this.setSecurityStatus(uid,
-                    {
-                        isLocked: false,
-                        suspension: null,
-                        passwordStatus: 'valid',
-                        failedAttempts: 0
-                    } as SecurityStatus
-                ));
-            }
-            return of(status);
-        });
-        throw new Error('User security document does not exist');
+        console.log(userSecurityDocRef);
+        return from(getDoc(userSecurityDocRef)).pipe(
+            map(docSnapshot => {
+                if (!docSnapshot.exists()) {
+                    throw new Error('Security status does not exist');
+                }
+                return docSnapshot.data() as SecurityStatus;
+            }),
+            catchError(error => {
+                console.error('Error getting security status:', error);
+                throw error;
+            })
+        );
     }
 
     setSecurityStatus(username: string, blankStatus: SecurityStatus): SecurityStatus {

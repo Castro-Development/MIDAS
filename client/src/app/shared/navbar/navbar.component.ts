@@ -2,7 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 
 import { Router, RouterLink } from '@angular/router';
 import { AuthStateService } from '../states/auth-state.service';
-import { combineLatest } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map } from 'rxjs';
+import { UserProfileFacade } from '../facades/userFacades/user-profile.facade';
+import { UserRole } from '../dataModels/userModels/userRole.model';
 
 @Component({
   selector: 'app-navbar',
@@ -11,11 +13,15 @@ import { combineLatest } from 'rxjs';
 })
 export class NavbarComponent{
 
+  public profileFacade = inject(UserProfileFacade);
   public authState = inject(AuthStateService);
-  router: any;
-  readonly isAdmin$ = this.authState.isAdmin$;
 
-  constructor(router: Router) { this.router = router; console.log(this.isAdmin$)}
+  readonly isAdmin$ = this.profileFacade.userProfile$.pipe(
+    map((profile) => profile?.role === UserRole.Administrator),
+    distinctUntilChanged()
+  );
+
+  constructor(private router: Router) { }
 
   
   logout() {

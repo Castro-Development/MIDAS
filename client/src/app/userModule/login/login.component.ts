@@ -10,6 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { Auth } from '@angular/fire/auth';
 import { AuthStateService } from '../../shared/states/auth-state.service';
 import { UserSecurityFacade } from '../../shared/facades/userFacades/user-security.facade';
+import { interval, tap } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -32,8 +33,16 @@ export class LoginComponent {
 
   login() {
     console.log(this.formValue.value.username); console.log(this.formValue.value.password);
-    this.securityFacade.login(this.formValue.value.username, this.formValue.value.password);
-    this.router.navigate(['']);
+    this.securityFacade.login(this.formValue.value.username, this.formValue.value.password).pipe(
+      tap((loginResponse) => {
+        console.log(loginResponse);
+      })
+    );
+    interval(1000).subscribe(() => {
+      if (this.authState.isLoggedIn$) {
+        this.router.navigate(['']);
+      }
+    });
   }
 
 
