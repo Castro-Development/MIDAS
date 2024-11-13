@@ -19,13 +19,13 @@ import { UserProfileFacade } from '../../shared/facades/userFacades/user-profile
 })
 export class ProfileComponent {
 
-  public authState = inject(AuthStateService);
+  public profileFacade = inject(UserProfileFacade);
 
-  public userRole$ = this.authState.viewRole$;
-  public userPhone$ = this.authState.viewPhone$;
-  public userName$ = this.authState.username$;
+  public userRole$ = this.profileFacade.viewRole$;
+  public userPhone$ = this.profileFacade.viewPhone$;
+  public userName$ = this.profileFacade.username$;
 
-  constructor(private router: Router, private profileFacade: UserProfileFacade) { }
+  constructor(private router: Router, private authState: AuthStateService) { }
 
   // Stores the user's profile image
   selectedFile: File | null = null;

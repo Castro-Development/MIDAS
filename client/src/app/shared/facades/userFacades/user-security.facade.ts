@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { UserRole } from "../../dataModels/userModels/userRole.model";
-import { Observable, Subject, catchError, combineLatest, filter, from, of, switchMap, take, tap } from "rxjs";
+import { Observable, Subject, catchError, combineLatest, filter, from, map, of, switchMap, take, tap } from "rxjs";
 import { AuthStateService } from "../../states/auth-state.service";
 import { ErrorHandlingService } from "../../services/error-handling.service";
 import { Auth, User as FirebaseUser } from "@angular/fire/auth";
@@ -119,16 +119,16 @@ export class UserSecurityFacade {
     //                 this.userProfileFacade.loginProfile(username, this.authState.user$);
     //             })
     //             );
+    //         }
+        
     // } Can't get this shit to work, so I'm commenting it out for now.
     
 
-    login(username: string, password: string): Observable<boolean> {
+    login(username: string, password: string)  {
 
-        const loginReturnValue = this.authState.login(username, password) 
+        this.userProfileFacade.loginProfile(this.authState.login(username, password))
 
-        this.userProfileFacade.loginProfile(username, this.authState.user$);
 
-        return loginReturnValue;
     }
 
     

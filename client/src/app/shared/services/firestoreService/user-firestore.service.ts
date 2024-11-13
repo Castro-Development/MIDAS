@@ -36,29 +36,46 @@ export class UserFirestoreService implements OnDestroy{
 
   // Get user from uid
   getUserObservable(uid: string): Observable<UserModel | null> {
-    const isLoggedIn$ = this.auth.currentUser ? of(true) : of(false);
-    return isLoggedIn$.pipe(
-      switchMap(isLoggedIn => {
-        if (!isLoggedIn) {
-          return of(null); 
-        }
-        const userDocRef = doc(this.firestore, 'users', uid);
-        return new Observable<UserModel | null>(observer => { 
-          const unsubscribe = onSnapshot(userDocRef, 
-            (docSnapshot: DocumentSnapshot<DocumentData>) => {
-              if (docSnapshot.exists()) {
-                observer.next(docSnapshot.data() as UserModel);
-              } else {
-                observer.next(null);
-              }
-            },
-            (error) => observer.error(error)
-          );
-          // Return the unsubscribe function to be called when the Observable is unsubscribed
-          return unsubscribe; 
-        });
-      })
-    );
+    console.log('Getting user from uid...');
+    const userDocRef = doc(this.firestore, 'users', uid);
+    return new Observable<UserModel | null>(observer => {
+      const unsubscribe = onSnapshot(userDocRef, 
+        (docSnapshot: DocumentSnapshot<DocumentData>) => {
+          if (docSnapshot.exists()) {
+            observer.next(docSnapshot.data() as UserModel);
+          } else {
+            observer.next(null);
+          }
+        },
+        (error) => observer.error(error)
+      );
+      // Return the unsubscribe function to be called when the Observable is unsubscribed
+      return unsubscribe; 
+    });
+
+    // const isLoggedIn$ = this.auth.currentUser ? of(true) : of(false);
+    // return isLoggedIn$.pipe(
+    //   switchMap(isLoggedIn => {
+    //     if (!isLoggedIn) {
+    //       return of(null); 
+    //     }
+    //     const userDocRef = doc(this.firestore, 'users', uid);
+    //     return new Observable<UserModel | null>(observer => { 
+    //       const unsubscribe = onSnapshot(userDocRef, 
+    //         (docSnapshot: DocumentSnapshot<DocumentData>) => {
+    //           if (docSnapshot.exists()) {
+    //             observer.next(docSnapshot.data() as UserModel);
+    //           } else {
+    //             observer.next(null);
+    //           }
+    //         },
+    //         (error) => observer.error(error)
+    //       );
+    //       // Return the unsubscribe function to be called when the Observable is unsubscribed
+    //       return unsubscribe; 
+    //     });
+    //   })
+    // );
   }
 
 

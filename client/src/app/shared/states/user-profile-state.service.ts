@@ -15,7 +15,7 @@ import { UserAdminFirestoreService } from "../../adminModule/back-end/firestore/
   export class UserProfileStateService {
     
     
-    private readonly userProfileSubject = new Subject<UserModel>();
+    private readonly userProfileSubject = new BehaviorSubject<UserModel>({} as UserModel);
 
     private readonly destroy$ = new Subject<void>();
 
@@ -57,10 +57,25 @@ import { UserAdminFirestoreService } from "../../adminModule/back-end/firestore/
                 if (user) {
                     this.firestoreService.getUserObservable(user.uid).pipe(
                         tap(profile => {
+                            console.log(profile);
                             if(profile) {this.userProfileSubject.next(profile)}
                             else {this.errorHandling.handleError('User not found', null)}
                         })
                     )
+                }
+                console.log('user not found in saveProfileState');
+            })
+        )
+    }
+
+    getProfileState(userId: string): Observable<UserModel> {
+        return this.userProfile$.pipe(
+            tap((profile) => {
+                if(profile && profile.id === userId) {
+                    return of(profile);
+                } else {
+                    console.log('profile not found in getProfileState');
+                    return this.firestoreService.getUserObservable(userId);
                 }
             })
         )

@@ -3,7 +3,7 @@ import { UserApplication, UserModel } from "../../dataModels/userModels/user.mod
 import { UserProfileStateService } from "../../states/user-profile-state.service";
 import { SecurityStatus } from "./user-security.facade";
 import { User } from "firebase/auth";
-import { Observable } from "rxjs";
+import { Observable, distinctUntilChanged, map, tap } from "rxjs";
 
 
 @Injectable({
@@ -14,6 +14,22 @@ export class UserProfileFacade{
     userProfileState = inject(UserProfileStateService);
     
     readonly userProfile$ = this.userProfileState.userProfile$;
+
+    readonly viewRole$ = this.userProfile$.pipe(
+        map((profile) => profile?.role),
+        distinctUntilChanged()
+    )
+
+    readonly viewPhone$ = this.userProfile$.pipe(
+        map((profile) => profile?.phone),
+        distinctUntilChanged()
+    )
+
+    readonly username$ = this.userProfile$.pipe(
+        map((profile) => profile?.username),
+        distinctUntilChanged()
+    )
+
 
     constructor(
     ){}
@@ -49,13 +65,17 @@ export class UserProfileFacade{
                                 //-----------------------------------------//
     // // Profile Operations
     // createProfile(userId: string, initialData: ProfileData): Observable<void>;
-    // getFullProfile(userId: string): Observable<UserProfile>;
+    private getProfile(userId: string): Observable<UserModel>{
+        return this.userProfileState.getProfileState(userId);
+    }
     // archiveProfile(userId: string): Observable<void>;
     // restoreProfile(userId: string): Observable<void>;
-    loginProfile(username: string, user$: Observable<User | null>) {
-        if(user$){
-            this.userProfileState.saveProfileState(username, user$);
-        }
+    loginProfile(userId: string) {
+        console.log('loginProfile');
+        this.getProfile(userId).pipe(
+            tap((profile) => { console.log(profile); })
+        )
+        console.log('loginProfile end');
     }
 
     // // Profile Validation
