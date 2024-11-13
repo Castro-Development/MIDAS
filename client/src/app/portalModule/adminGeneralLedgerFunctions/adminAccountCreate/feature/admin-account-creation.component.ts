@@ -1,5 +1,5 @@
 import { Component, inject } from "@angular/core";
-import { AccountFirestoreService } from "../../../../shared/services/firestoreService/account-firestore.service";
+import { AccountFirestoreService } from "../../../chartOfAccount/back-end/firestore/account-firestore.service";
 import { AccountLedger } from "../../../../shared/dataModels/financialModels/account-ledger.model";
 
 @Component({

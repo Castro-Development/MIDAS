@@ -213,10 +213,10 @@
 
         </div>
 
-        <div *ngIf="userService.error$" 
+        <div *ngIf="authState.error$" 
           class="error-message" data-testid="register-box-error-messsage"
           style="background-color: #FEE2E2; color: #991B1B; padding: 12px; border-radius: 4px; margin-top: 8px; display:block">
-          {{ userService.error$ | async}}
+          {{ authState.error$ | async}}
         </div>
 
 

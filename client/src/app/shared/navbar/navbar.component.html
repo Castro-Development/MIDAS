@@ -5,11 +5,11 @@
     </button> -->
 
     <img src="assets/Logo.png" style="max-height: 40px;" class="m-4">
-    <a routerLink="/" class="text-amber-500 font-bold text-4xl" style="text-decoration:none">MIDAS</a>
+    <a routerLink="/" class="text-amber-500 font-bold text-4xl" style="text-decoration:none" (click)="logUserStatus()">MIDAS</a>
     
     
 
-    @if(userService.isLoggedIn$ | async){
+    @if(authState.isLoggedIn$ | async){
 
     <div class="ml-auto">
       <div class="flex gap-2 items-center">
@@ -449,10 +449,10 @@
           <img src="assets/Male Icon.png" class="py-10" style="max-width: 40px; margin:auto">
           <div class="text-white flex flex-col pr-5">
             <h1 class="p-0 m-0 font-medium">
-              {{userService.username$ | async}}
+              {{authState.username$ | async}}
             </h1>
             <p class="p-0 pt-1 m-0 font-medium text-xs">
-              {{userService.viewRole$ | async}}
+              {{authState.viewRole$ | async}}
             </p>
           </div>
         </a>

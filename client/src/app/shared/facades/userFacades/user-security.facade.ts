@@ -1,18 +1,17 @@
 import { Injectable } from "@angular/core";
 import { UserRole } from "../../dataModels/userModels/userRole.model";
 import { Observable, Subject, catchError, combineLatest, filter, from, of, switchMap, tap } from "rxjs";
-import { UserAdminFirestoreService } from "../../services/firestoreService/user-admin-firestore.service";
-import { UserAdminFacade } from "./user-administration.facade";
 import { AuthStateService } from "../../states/auth-state.service";
 import { ErrorHandlingService } from "../../services/error-handling.service";
 import { Auth, User as FirebaseUser } from "@angular/fire/auth";
 import { doc } from "@angular/fire/firestore";
 import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
-import { AccountFirestoreService } from "../../services/firestoreService/account-firestore.service";
+import { AccountFirestoreService } from "../../../portalModule/chartOfAccount/back-end/firestore/account-firestore.service";
 import { PermissionType } from "../../dataModels/userModels/permissions.model";
 import { AccountAccessEvent, EventType } from "../../dataModels/loggingModels/event-logging.model";
 import { EventLogService } from "../../services/event-log.service";
 import { UserProfileFacade } from "./user-profile.facade";
+import { UserAdminFirestoreService } from "../../../adminModule/back-end/firestore/user-admin-firestore.service";
 
 
 
@@ -87,30 +86,60 @@ export class UserSecurityFacade {
                                 /* * * * * Authentication Methods * * * * */
                                 //-----------------------------------------//
 
+    // login(username: string, password: string): Observable<boolean> {
+    //     console.log("Logging in user");
+    //     const userStatus = this.getUserSecurityStatus(username);
+    //     console.log(userStatus);
+    //     return userStatus.pipe(
+    //         tap((status) => console.log(status)),
+    //         switchMap(status => {
+    //             if(!status) {
+    //                 console.log("User status not found");
+    //                 this.establishSecurityStatus(username);
+    //             }
+    //             if (status && status.isLocked) {
+    //                 console.log("User is locked");
+    //                 return of(false);
+    //             }
+    //             if (status && status.suspension) {
+    //                 console.log("User is suspended");
+    //                 return of(false);
+    //             }
+    //             if (status && status.passwordStatus === 'expired') {
+    //                 console.log("Password is expired");
+    //                 return of(false);
+    //             }
+    //             // Check failed login attempts
+    //             if (status && status.failedAttempts >= 3) {
+    //                 console.log("User has exceeded login attempts");
+    //                 return of(false);
+    //             }
+    //             // Authenticate user
+    //                 console.log("User authenticated");
+    //                 return of(true);
+    //             }),
+    //             catchError((error) => this.errorHandling.handleError(error, false)),
+    //             tap((success) => { 
+    //                 if(success) { 
+    //                     this.authState.login(username, password) 
+    //                 }
+    //                 this.userProfileFacade.loginProfile(username, this.authState.user$);
+    //             })
+    //             );
+    // }
+    
+
     login(username: string, password: string): Observable<boolean> {
-        const userStatus = this.getUserSecurityStatus(username);
-            return userStatus.pipe(
-            switchMap(status => {
-                if (status.isLocked) {
-                    return of(false);
-                }
-                if (status.suspension) {
-                    return of(false);
-                }
-                if (status.passwordStatus === 'expired') {
-                    return of(false);
-                }
-                // Check failed login attempts
-                if (status.failedAttempts >= 3) {
-                    return of(false);
-                }
-                // Authenticate user
-                    return of(true);
-                }),
-            catchError((error) => this.errorHandling.handleError(error, false)),
-            tap((success) => { if(success) { this.authState.login(username, password) }})
-    )
+
+        const loginReturnValue = this.authState.login(username, password) 
+
+        this.userProfileFacade.loginProfile(username, this.authState.user$);
+
+        return loginReturnValue;
     }
+
+    
+    
 
     requestSystemAccess(user: UserApplication): Promise<void> {
         this.userProfileFacade.createProfile(user, this.authState.user$);
@@ -119,19 +148,22 @@ export class UserSecurityFacade {
 
 
     private getUserSecurityStatus(uid: string): Observable<SecurityStatus> {
-        return this.userAdminFirestore.getUserSecurityStatus(uid).pipe(
-            // Filter out null values
-            filter((status): status is SecurityStatus => status !== null),
-            catchError((error) => {
-                return this.errorHandling.handleError(error, {
-                    isLocked: true,
-                    suspension: null,
-                    passwordStatus: 'expired',
-                    failedAttempts: 3,
-                } as SecurityStatus);
-            })
-        );
+        console.log("Getting user security status");
+        return this.userAdminFirestore.getUserSecurityStatus(uid);
     }
+
+    private establishSecurityStatus(username: string): Observable<boolean> {
+        const blankStatus = {
+            isLocked: false,
+            suspension: null,
+            passwordStatus: 'valid',
+            failedAttempts: 0
+        } as SecurityStatus;
+        console.log("Establishing user security status");
+        this.userAdminFirestore.setSecurityStatus(username, blankStatus)
+        return of(true);
+    }
+
     // Password Management Methods
     validatePassword(uid: string, password: string): Observable<boolean> {
         const passwordComplexity = this.validatePasswordComplexity(password);

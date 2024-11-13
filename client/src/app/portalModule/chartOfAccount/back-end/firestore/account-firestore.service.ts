@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { DocumentData, Firestore, QuerySnapshot, collection, doc, onSnapshot, setDoc, updateDoc, serverTimestamp } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable, Subject, catchError, map, take, takeUntil } from 'rxjs';
-import { AccountLedger, AccountFilter, GeneralLedger, JournalEntry } from '../../dataModels/financialModels/account-ledger.model';
-import { ErrorHandlingService } from '../error-handling.service';
+import { AccountLedger, AccountFilter, GeneralLedger, JournalEntry } from '../../../../shared/dataModels/financialModels/account-ledger.model';
+import { ErrorHandlingService } from '../../../../shared/services/error-handling.service';
 import { getDoc } from 'firebase/firestore';
 
 @Injectable({
@@ -155,18 +155,6 @@ export class AccountFirestoreService implements OnDestroy {
     });
     return authorizedUsers;
   }
-
-  //  getAllCurrentBalances(): Observable<AccountBalance[]> {
-  //   return this.accounts$.pipe(
-  //     map(accounts => {
-  //       return accounts.map(account => ({
-  //         accountId: account.accountNumber,
-  //         balance: account.currentBalance
-  //       } as AccountBalance));
-  //     })
-  //   );
-  //  }
-   
 
    ngOnDestroy() {
     this.destroySubject.next();

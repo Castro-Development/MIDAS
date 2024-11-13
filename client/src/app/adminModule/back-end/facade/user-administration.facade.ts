@@ -1,12 +1,10 @@
 import { Injectable } from "@angular/core";
-import { UserFirestoreService } from "../../services/firestoreService/user-firestore.service";
-import { ErrorHandlingService } from "../../services/error-handling.service";
-import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
-import { UserProfileStateService } from "../../states/user-profile-state.service";
-import { AuthStateService } from "../../states/auth-state.service";
-import { UserAdminFirestoreService } from "../../services/firestoreService/user-admin-firestore.service";
-import { SecurityStatus } from "./user-security.facade";
 import { Observable, Subject, map, switchMap } from "rxjs";
+import { UserProfileStateService } from "../../../shared/states/user-profile-state.service";
+import { AuthStateService } from "../../../shared/states/auth-state.service";
+import { UserApplication } from "../../../shared/dataModels/userModels/user.model";
+import { ErrorHandlingService } from "../../../shared/services/error-handling.service";
+import { UserAdminFirestoreService } from "../firestore/user-admin-firestore.service";
 
 
 @Injectable({

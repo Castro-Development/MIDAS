@@ -2,8 +2,9 @@ import { Injectable } from "@angular/core";
 import { Firestore, collection, onSnapshot, setDoc, doc, updateDoc, arrayUnion, getDoc } from "@angular/fire/firestore";
 import { BehaviorSubject, Observable, catchError, distinctUntilChanged, from, map, switchMap, tap, throwError } from "rxjs";
 import { ErrorHandlingService } from "../services/error-handling.service";
-import { EventBusService, EventType } from "../services/event-bus.service";
 import { JournalEntry, JournalEntryStatus } from "../dataModels/financialModels/account-ledger.model";
+import { EventLogService } from "../services/event-log.service";
+import { EventType } from "../dataModels/loggingModels/event-logging.model";
 
 @Injectable({ providedIn: 'root' })
 export class ApprovalStateService {
@@ -18,7 +19,7 @@ export class ApprovalStateService {
   constructor(
     private firestore: Firestore,
     private errorHandling: ErrorHandlingService,
-    private eventBus: EventBusService
+    private eventLog: EventLogService
   ) {
     // Initialize real-time listeners for pending entries
     this.initializePendingEntriesListener();
@@ -52,10 +53,7 @@ export class ApprovalStateService {
     ).pipe(
       tap(() => {
         // Emit event for notification system
-        this.eventBus.emit({
-          type: EventType.JOURNAL_ENTRY_SUBMITTED,
-          payload: pendingEntry
-        });
+        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_CREATED, { entryId: entry.id });
       }),
       catchError(error => this.errorHandling.handleError(
         'submitForApproval',
@@ -89,10 +87,7 @@ export class ApprovalStateService {
         );
       }),
       tap(() => {
-        this.eventBus.emit({
-          type: EventType.JOURNAL_ENTRY_APPROVED,
-          payload: { entryId }
-        });
+        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_APPROVED, { entryId });
       })
     );
   }
@@ -122,10 +117,7 @@ export class ApprovalStateService {
         );
       }),
       tap(() => {
-        this.eventBus.emit({
-          type: EventType.JOURNAL_ENTRY_REJECTED,
-          payload: { entryId }
-        });
+        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_REJECTED, { rejectionReason, entryId });
       })
     );
   }

@@ -1,10 +1,10 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 import { ChartOfAccountsComponent } from "./chartOfAccount/feature/chart-of-accounts.component";
-import { JournalEntryFormComponent } from "./journalEntryForm/feature/journal-entry-form.component";
+import { JournalEntryFormComponent } from "./journalEntry/entryForm/feature/journal-entry-form.component";
 import { PortalDashboardComponent } from "./portalDashboard/portal-dashboard.component";
 import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
-import { JournalEntryReviewComponent } from "./journalEntryReview/feature/journal-entry-review.component";
+import { JournalEntryReviewComponent } from "./journalEntry/entryReview/feature/journal-entry-review.component";
 
 const routes: Routes = [
     {

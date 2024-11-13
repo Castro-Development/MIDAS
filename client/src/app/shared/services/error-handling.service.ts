@@ -43,6 +43,7 @@ export class ErrorHandlingService {
    * Main error handler that can be used in RxJS pipes
    */
   handleError<T>(operation: string, fallbackValue: T): ObservableInput<T> {
+    console.log('Error handling service');
       const systemError: SystemError = {
         id: crypto.randomUUID(), // Generate unique error ID
         timestamp: new Date(),

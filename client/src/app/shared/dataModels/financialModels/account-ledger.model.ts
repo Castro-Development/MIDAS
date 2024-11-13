@@ -294,6 +294,32 @@ export  enum JournalEntryStatus {
       [key in AccountCategory]?: number;
     };
   }
+
+  export type BalanceStatus = 'ACTIVE' | 'INACTIVE' | 'CLOSED' | 'RECONCILED' | 'UNRECONCILED';
+
+
+
+export interface BalanceDTO {
+  accountId: string;
+  currentBalance: number;
+  availableBalance: number;
+  pendingDebits: number;
+  pendingCredits: number;
+  lastUpdated: Date;
+  status: BalanceStatus;
+  reconciled: boolean;
+  lastReconciled?: Date;
+}
+
+export type BalanceEvents = 
+    | 'BALANCE_UPDATED'
+    | 'BALANCE_ADJUSTED'
+    | 'RECONCILIATION_COMPLETED'
+    | 'PERIOD_CLOSED'
+    | 'THRESHOLD_BREACHED'
+    | 'ANOMALY_DETECTED'
+    | 'BALANCE_VERIFIED'
+    | 'ADJUSTMENT_REVERSED';
   
   // ----------------
   // Event Logging

@@ -1,14 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap, finalize } from 'rxjs/operators';
-import { ErrorHandlingService } from '../../services/error-handling.service';
-import { JournalEntry } from '../../dataModels/financialModels/account-ledger.model';
+import { ErrorHandlingService } from '../../shared/services/error-handling.service'
+import { JournalEntry } from '../../shared/dataModels/financialModels/account-ledger.model';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { QueryConstraint, orderBy, query, where } from 'firebase/firestore';
-import { EventLogService } from '../../services/event-log.service';
-import { EventType } from '../../dataModels/loggingModels/event-logging.model';
-import { AuthStateService } from '../../states/auth-state.service';
-import { AccountFirestoreService } from '../../services/firestoreService/account-firestore.service';
+import { EventLogService } from '../../shared/services/event-log.service';
+import { EventType } from '../../shared/dataModels/loggingModels/event-logging.model';
+import { AuthStateService } from '../../shared/states/auth-state.service';
+import { AccountFirestoreService } from '../chartOfAccount/back-end/firestore/account-firestore.service'
 
 interface JournalTransaction {
   accountId: string;
@@ -50,32 +50,7 @@ export class JournalEntryFacade {
     private accountService: AccountFirestoreService
   ) {}
 
-  /* id: string;
-    entryNumber: string;
-    date: Date;
-    description: string;
-    status: JournalEntryStatus;
-    
-    // Double-entry transactions
-    transactions: JournalTransaction[];
-    
-    // Balancing
-    totalDebits: number;
-    totalCredits: number;
-    isBalanced: boolean;
-    
-    // Metadata
-    createdAt: Date;
-    createdBy: string;
-    updatedAt: Date;
-    updatedBy: string;
-    postedAt?: Date;
-    postedBy?: string;
-    
-    // Version tracking
-    version: number;
-    versionHistory: JournalEntryVersionHistory[];
-    */
+  
 
   /**
    * Create a new journal entry

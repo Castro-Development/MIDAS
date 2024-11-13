@@ -1,11 +1,10 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, CollectionReference, where, doc, getDocs, query, setDoc, onSnapshot, getDoc, DocumentSnapshot } from '@angular/fire/firestore';
-import { User as FirebaseUser, user } from '@angular/fire/auth'
+import { Auth, User as FirebaseUser, user } from '@angular/fire/auth'
 import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
 import { BehaviorSubject, Observable, distinctUntilChanged, firstValueFrom, map, of, switchMap, takeUntil, tap, catchError } from 'rxjs';
 
 import { UserApplication, UserModel } from '../../dataModels/userModels/user.model';
-import { UserDisplayUtils } from '../../userService/utils/user-display.utils';
 import { AuthStateService } from '../../states/auth-state.service';
 import { SecurityStatus } from '../../facades/userFacades/user-security.facade';
 
@@ -24,32 +23,21 @@ export class UserFirestoreService implements OnDestroy{
   private readonly destroySubject = new BehaviorSubject<void>(undefined);
 
   
-  constructor(private firestore: Firestore, private authStateService: AuthStateService) {
+  constructor(private firestore: Firestore, private auth: Auth) {
     this.initializeUserFirestoreService();
    }
 
 
    initializeUserFirestoreService(){
     console.log('UserFirestoreService initializing...');
-    this.authStateService.isLoggedIn$.pipe(
-      takeUntil(this.destroySubject)
-    ).subscribe(isLoggedIn => {
-      if(isLoggedIn){
-        // Unsubscribe from previous snapshots when user logs in again
-        this.destroySubject.next(); 
-
-        onSnapshot(collection(this.firestore, 'users'), 
-          (snapshot) => this.userCollectionSnapshotSubject.next(snapshot), 
-          (error) => this.userCollectionErrorSubject.next(error) 
-        );
-      } 
-    });
+      
    }
   
 
   // Get user from uid
   getUserObservable(uid: string): Observable<UserModel | null> {
-    return this.authStateService.isLoggedIn$.pipe(
+    const isLoggedIn$ = this.auth.currentUser ? of(true) : of(false);
+    return isLoggedIn$.pipe(
       switchMap(isLoggedIn => {
         if (!isLoggedIn) {
           return of(null); 

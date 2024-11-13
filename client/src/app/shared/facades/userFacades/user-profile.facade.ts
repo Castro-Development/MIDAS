@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
 import { UserProfileStateService } from "../../states/user-profile-state.service";
 import { SecurityStatus } from "./user-security.facade";
@@ -11,9 +11,11 @@ import { Observable } from "rxjs";
 })
 export class UserProfileFacade{
     
+    userProfileState = inject(UserProfileStateService);
+    
+    readonly userProfile$ = this.userProfileState.userProfile$;
 
     constructor(
-        private userProfileState: UserProfileStateService,
     ){}
 
                                 //----------------------------------------//
@@ -35,6 +37,9 @@ export class UserProfileFacade{
 
     // // Profile Image
     // uploadProfileImage(userId: string, image: File): Observable<void>;
+    uploadProfilePicture(id: any, selectedFile: File) {
+        throw new Error('Method not implemented.');
+      }
     // getProfileImage(userId: string): Observable<ProfileImage>;
     // removeProfileImage(userId: string): Observable<void>;
     // cropProfileImage(userId: string, cropSettings: CropSettings): Observable<void>;
@@ -47,6 +52,11 @@ export class UserProfileFacade{
     // getFullProfile(userId: string): Observable<UserProfile>;
     // archiveProfile(userId: string): Observable<void>;
     // restoreProfile(userId: string): Observable<void>;
+    loginProfile(username: string, user$: Observable<User | null>) {
+        if(user$){
+            this.userProfileState.saveProfileState(username, user$);
+        }
+    }
 
     // // Profile Validation
     // validateProfileCompleteness(userId: string): Observable<CompletenessResult>;

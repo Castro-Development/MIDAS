@@ -3,11 +3,10 @@ import { Router,  } from '@angular/router';
 import { FormBuilder, FormGroup, FormControl, Validators,  } from '@angular/forms';
 import { Auth } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, map } from 'rxjs';
-import { UserService } from '../../shared/userService/data-access/user.service';
 import { UserRole } from '../../shared/dataModels/userModels/userRole.model';
 import { AuthStateService } from '../../shared/states/auth-state.service';
-import { UserAdminFacade } from '../../shared/facades/userFacades/user-administration.facade';
 import { UserSecurityFacade } from '../../shared/facades/userFacades/user-security.facade';
+import { UserAdminFacade } from '../../adminModule/back-end/facade/user-administration.facade';
 
 
 @Component({
@@ -25,18 +24,18 @@ export class RequestSystemAccessComponent {
 
 
   formValue !: FormGroup;
-  userService = inject(UserService);
   userData !: any;
   showAdd!: boolean;
   showEdit!: boolean;
   currentId: string = '';
+  authState = inject(AuthStateService);
   
   
   errorSubject = new BehaviorSubject<string | null>(null);
 
 
 
-  constructor(private formbuilder: FormBuilder, private router: Router, private authState: AuthStateService, private adminFacade: UserAdminFacade, private securityFacade: UserSecurityFacade) {
+  constructor(private formbuilder: FormBuilder, private router: Router, private adminFacade: UserAdminFacade, private securityFacade: UserSecurityFacade) {
     this.formValue = new FormGroup({
       username: new FormControl("",),
       password: new FormControl("", [Validators.required, Validators.minLength(8)]),

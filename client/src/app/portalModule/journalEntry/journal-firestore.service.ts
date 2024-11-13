@@ -1,9 +1,8 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
 import { DocumentData, Firestore, QuerySnapshot, collection, doc, onSnapshot, setDoc, updateDoc, serverTimestamp } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable, Subject, catchError, map, take, takeUntil } from 'rxjs';
-import { Account, AccountFilter, GeneralLedger, JournalEntry } from '../../dataModels/financialModels/account-ledger.model';
-import { ErrorHandlingService } from '../error-handling.service';
-import { AccountBalance } from '../../facades/accountFacades/account-balance.facade';
+import { AccountLedger, AccountFilter, GeneralLedger, JournalEntry } from '../../shared/dataModels/financialModels/account-ledger.model';
+import { ErrorHandlingService } from '../../shared/services/error-handling.service';
 
 @Injectable({
   providedIn: 'root'

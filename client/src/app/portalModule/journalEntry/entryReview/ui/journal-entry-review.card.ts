@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
+import { JournalEntry } from "../../../../shared/dataModels/financialModels/account-ledger.model";
 import { Observable } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { AsyncPipe } from "@angular/common";

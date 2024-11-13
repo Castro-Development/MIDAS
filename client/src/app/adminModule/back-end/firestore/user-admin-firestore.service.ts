@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
-import { UserApplication } from "../../dataModels/userModels/user.model";
+import { UserApplication } from "../../../shared/dataModels/userModels/user.model";
 import { Firestore, doc, setDoc } from "@angular/fire/firestore";
-import { Observable, Subject, from, map, switchMap } from "rxjs";
-import { SecurityStatus } from "../../facades/userFacades/user-security.facade";
+import { Observable, Subject, from, map, of, switchMap, tap } from "rxjs";
+import { SecurityStatus } from "../../../shared/facades/userFacades/user-security.facade";
 import { DocumentSnapshot, collection, getDoc, onSnapshot } from "firebase/firestore";
-import { ErrorHandlingService } from "../error-handling.service";
+import { ErrorHandlingService } from "../../../shared/services/error-handling.service";
 import { User as FirebaseUser } from "firebase/auth";
 
 
@@ -12,6 +12,7 @@ import { User as FirebaseUser } from "firebase/auth";
     providedIn: 'root'
 })
 export class UserAdminFirestoreService {
+    
 
     constructor(
         private firestore: Firestore,
@@ -44,21 +45,39 @@ export class UserAdminFirestoreService {
         return setDoc(appDocRef, userApplication);
     }
 
-    getUserSecurityStatus(username: string): Observable<SecurityStatus | null>  {
-        const uid = this.getUid(username);
-        return uid.pipe(
-            switchMap((uid) => {
+    getUserSecurityStatus(uid: string): Observable<SecurityStatus>  {
+        const userSecurityDocRef = doc(this.firestore, 'userSecurity', uid);
+        getDoc(userSecurityDocRef).then((doc) => {
+            if(doc.exists()) {
+                return doc.data() as SecurityStatus;
+            } else {
+                return of(null);
+            }
+        }).then((status) => {
+            if(status === null) {
+                return of(this.setSecurityStatus(uid,
+                    {
+                        isLocked: false,
+                        suspension: null,
+                        passwordStatus: 'valid',
+                        failedAttempts: 0
+                    } as SecurityStatus
+                ));
+            }
+            return of(status);
+        });
+        throw new Error('User security document does not exist');
+    }
+
+    setSecurityStatus(username: string, blankStatus: SecurityStatus): SecurityStatus {
+        const uid = this.getUid(username).pipe(
+            tap((uid) => {
                 const userSecurityDocRef = doc(this.firestore, 'userSecurity', uid);
-                return getDoc(userSecurityDocRef)
-                    .then((doc) => {
-                        if(doc.exists()) {
-                            return doc.data() as SecurityStatus;
-                        }
-                        return null;
-                    })
+                return setDoc(userSecurityDocRef, blankStatus);
             })
-            
         )
+        return blankStatus;
+        
     }
 
     private getUid(username: string): Observable<string> {
