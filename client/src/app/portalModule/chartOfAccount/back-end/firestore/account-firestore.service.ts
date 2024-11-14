@@ -1,266 +1,142 @@
-import { Injectable, OnDestroy, inject } from '@angular/core';
-import { DocumentData, Firestore, QuerySnapshot, collection, doc, onSnapshot, setDoc, updateDoc, serverTimestamp } from '@angular/fire/firestore';
-import { BehaviorSubject, Observable, Subject, catchError, map, take, takeUntil } from 'rxjs';
-import { AccountLedger, AccountFilter, GeneralLedger, JournalEntry } from '../../../../shared/dataModels/financialModels/account-ledger.model';
+import { Injectable } from '@angular/core';
+import { 
+  Firestore, 
+  collection, 
+  doc, 
+  onSnapshot, 
+  setDoc, 
+  updateDoc, 
+  serverTimestamp,
+  getDoc,
+  getDocs,
+  query
+} from '@angular/fire/firestore';
+import { Observable, from } from 'rxjs';
 import { ErrorHandlingService } from '../../../../shared/services/error-handling.service';
-import { getDoc } from 'firebase/firestore';
+import { AccountLedger } from '../../../../shared/dataModels/financialModels/account-ledger.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AccountFirestoreService implements OnDestroy {
+export class AccountFirestoreService {
+  private readonly COLLECTION_NAME = 'generalLedger';
   
-    
-
-  private accountsSubject = new BehaviorSubject<AccountLedger[]>([]);
-
-  readonly accounts$ = this.accountsSubject.asObservable();
-
-  private destroySubject = new Subject<void>();
-
   constructor(
     private firestore: Firestore,
-    private errorHandlingService: ErrorHandlingService) {
-    this.initializeAccountFirestoreService();
-   }
-  
+    private errorHandlingService: ErrorHandlingService
+  ) {}
 
-   initializeAccountFirestoreService(){ 
-    //Create subscription to the generalLedgers collection snapshot
-    onSnapshot(collection(this.firestore, 'generalLedger'), (snapshot) => {
-      takeUntil(this.destroySubject);
-      const accounts = snapshot.docs.map(doc => ({
-        ...doc.data()
-      }) as AccountLedger);
-      catchError(error => {
-        this.errorHandlingService.handleError(error, [] as AccountLedger[]);
-        return [];
-      });
-      this.accountsSubject.next(accounts);
-    });
-   }
-
-   createAccount(account: AccountLedger): Promise<AccountLedger> {
-    const accountDocRef = doc(collection(this.firestore, 'generalLedger'), account.accountNumber);
-    return setDoc(accountDocRef, account).then(() => { return account });
-   }
-
-   deactivateAccount(id: string): Promise<void> {
-    const accountRef = doc(collection(this.firestore, 'generalLedger'), id);
-    return updateDoc(accountRef, {
-      isActive: false,
-      updatedAt: serverTimestamp()
-    });
-   }
-
-   async addAuthorizedUser(accountId: string, userId: string): Promise<void> {
-    try {
-      // Get reference to the account document
-      const accountRef = doc(collection(this.firestore, 'generalLedger'), accountId);
-      
-      // Get the current document data
-      const accountDoc = await getDoc(accountRef);
-      
-      if (!accountDoc.exists()) {
-        throw new Error(`Account ${accountId} not found`);
-      }
-      
-      const accountData = accountDoc.data() as AccountLedger;
-      
-      // Create or update the authorizedUsers array
-      const currentAuthorizedUsers = accountData.authorizedUsers || [];
-      
-      // Check if user is already authorized
-      if (currentAuthorizedUsers.includes(userId)) {
-        return; // User is already authorized
-      }
-      
-      // Add the new user to the array
-      const updatedAuthorizedUsers = [...currentAuthorizedUsers, userId];
-      
-      // Update the document in Firestore
-      await updateDoc(accountRef, {
-        authorizedUsers: updatedAuthorizedUsers,
-        updatedAt: serverTimestamp()
-      });
-  
-      // Update the local BehaviorSubject
-      const currentAccounts = this.accountsSubject.getValue();
-      const updatedAccounts = currentAccounts.map(account => 
-        account.accountNumber === accountId 
-          ? { ...account, authorizedUsers: updatedAuthorizedUsers }
-          : account
+  // Core single-document operations
+  getAccount(accountId: string): Observable<AccountLedger | null> {
+    return new Observable(subscriber => {
+      const unsubscribe = onSnapshot(
+        doc(collection(this.firestore, this.COLLECTION_NAME), accountId),
+        (docSnapshot) => {
+          if (docSnapshot.exists()) {
+            subscriber.next({ documentId: docSnapshot.id, ...docSnapshot.data() } as AccountLedger);
+          } else {
+            subscriber.next(null);
+          }
+        },
+        error => {
+          this.errorHandlingService.handleError('Failed to get account', error);
+          subscriber.error(error);
+        }
       );
-      this.accountsSubject.next(updatedAccounts);
-      
-    } catch (error) {
-      this.errorHandlingService.handleError('Error occurred adding authorized user', undefined);
-    }
+
+      return () => unsubscribe();
+    });
   }
 
-  async removeAuthorizedUser(accountId: string, userId: string): Promise<void> {
+  getAllAccounts(): Observable<AccountLedger[]> {
+    return new Observable(subscriber => {
+      const unsubscribe = onSnapshot(
+        collection(this.firestore, this.COLLECTION_NAME),
+        (snapshot) => {
+          const accounts = snapshot.docs.map(doc => ({
+            documentId: doc.id,
+            ...doc.data()
+          } as AccountLedger));
+          subscriber.next(accounts);
+        },
+        error => {
+          this.errorHandlingService.handleError('Failed to get accounts', error);
+          subscriber.error(error);
+        }
+      );
+
+      return () => unsubscribe();
+    });
+  }
+
+  async createAccount(account: AccountLedger): Promise<void> {
     try {
-      const accountRef = doc(collection(this.firestore, 'generalLedger'), accountId);
-      
-      // Get the current document data
-      const accountDoc = await getDoc(accountRef);
-      
-      if (!accountDoc.exists()) {
-        throw new Error(`Account ${accountId} not found`);
-      }
-      
-      const accountData = accountDoc.data() as AccountLedger;
-      
-      // Get current authorized users array
-      const currentAuthorizedUsers = accountData.authorizedUsers || [];
-      
-      // Check if user is actually in the authorized list
-      if (!currentAuthorizedUsers.includes(userId)) {
-        return; // User is not in the authorized list, nothing to remove
-      }
-      
-      // Remove the user from the array
-      const updatedAuthorizedUsers = currentAuthorizedUsers.filter(id => id !== userId);
-      
-      // Update the document in Firestore
-      await updateDoc(accountRef, {
-        authorizedUsers: updatedAuthorizedUsers,
+      const accountRef = doc(
+        collection(this.firestore, this.COLLECTION_NAME), 
+        account.accountNumber
+      );
+
+      await setDoc(accountRef, {
+        ...account,
+        createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       });
-  
-      // Update the local BehaviorSubject
-      const currentAccounts = this.accountsSubject.getValue();
-      const updatedAccounts = currentAccounts.map(account => 
-        account.accountNumber === accountId 
-          ? { ...account, authorizedUsers: updatedAuthorizedUsers }
-          : account
-      );
-      this.accountsSubject.next(updatedAccounts);
-      
     } catch (error) {
-      this.errorHandlingService.handleError('Error removing user from account', undefined);
+      this.errorHandlingService.handleError('Failed to create account', error);
       throw error;
     }
   }
 
-  getAuthorizedUsers(accountId: string): Promise<string[]> {
-    const accountRef = doc(collection(this.firestore, 'generalLedger'), accountId);
+  async updateAccount(accountId: string, changes: Partial<AccountLedger>): Promise<void> {
+    try {
+      const accountRef = doc(
+        collection(this.firestore, this.COLLECTION_NAME), 
+        accountId
+      );
 
-    const authorizedUsers = getDoc(accountRef).then(doc => {
-      if (!doc.exists()) {
-        return [];
+      await updateDoc(accountRef, {
+        ...changes,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      this.errorHandlingService.handleError('Failed to update account', error);
+      throw error;
+    }
+  }
+
+  async deactivateAccount(accountId: string): Promise<void> {
+    try {
+      const accountRef = doc(
+        collection(this.firestore, this.COLLECTION_NAME), 
+        accountId
+      );
+
+      await updateDoc(accountRef, {
+        isDeleted: true,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      this.errorHandlingService.handleError('Failed to delete account', error);
+      throw error;
+    }
+  }
+
+  // Batch operations if needed
+  async batchGetAccounts(accountIds: string[]): Promise<AccountLedger[]> {
+    try {
+      const accounts: AccountLedger[] = [];
+      for (const id of accountIds) {
+        const docSnap = await getDoc(
+          doc(collection(this.firestore, this.COLLECTION_NAME), id)
+        );
+        if (docSnap.exists()) {
+          accounts.push({ documentId: docSnap.id, ...docSnap.data() } as AccountLedger);
+        }
       }
-      const accountData = doc.data() as AccountLedger;
-      return accountData.authorizedUsers || [];
-    });
-    return authorizedUsers;
+      return accounts;
+    } catch (error) {
+      this.errorHandlingService.handleError('Failed to batch get accounts', error);
+      throw error;
+    }
   }
-
-   ngOnDestroy() {
-    this.destroySubject.next();
-    this.destroySubject.complete();
-  }
-
-  postJournalEntry(journalEntry: JournalEntry): Observable<void> {
-    throw new Error('Method not implemented.');
-  }
-
-
-   
-
-  //  getAllAccountsWhere(filter?: AccountFilter): Observable<Account[]> {
-  //   return this.generalLedgerSnapshot$.pipe(
-  //     map((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
-  //       if (!snapshot) {
-  //         return [];
-  //       }
-        
-  //       // First get all accounts
-  //       const accounts = snapshot.docs.map(doc => ({
-  //         id: doc.id,
-  //         ...doc.data()
-  //       } as Account));
-        
-  //       // If no filter, return all accounts
-  //       if (!filter) {
-  //         return accounts;
-  //       }
-        
-  //       // Apply filter
-  //       return accounts.filter(account => {
-  //         // Add your filter logic here
-  //         // Example:
-  //         return filter.category ? account.category === filter.category : true;
-  //       });
-  //     })
-  //   );
-  // }
-
-    //get account by id
-    // getAccountById(id: string): Observable<Account | null> {
-    //   return this.generalLedgerSnapshot$.pipe(
-    //     map((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
-    //       if (!snapshot) {
-    //         return null;
-    //       }
-    //       const doc = snapshot.docs.find(doc => doc.id === id);
-    //       return doc ? { id: doc.id, ...doc.data() } as Account : null;
-    //     })
-    //   );
-    // }
-
-    //Get all accounts
-    // getAllAccounts(): Observable<Account[] | null> {
-    //   return this.getAllAccountsWhere();
-    // }
-
-    //Create account
-    // createAccount(account: Account): Promise<void> {
-    //   this.generalLedgerSnapshot$.subscribe((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
-    //     if (!snapshot) {
-    //       throw new Error('No snapshot to create account');
-    //     }
-    //     snapshot.docs.forEach(doc => {//Check to see if account already exists
-    //       if (doc.id === account.id) {
-    //         throw new Error('Account already exists');
-    //       }
-    //     })//If not, we create new account.
-    //       const accDocRef = doc(collection(this.firestore, 'generalLedger'), account.id);
-    //       return setDoc(accDocRef, account);
-    //   });
-    //   throw new Error('No snapshot to create account');
-    // }
-
-    // updateAccount(id: string, account: Partial<Account>): Promise<void> {
-    //   const accountRef = doc(collection(this.firestore, 'generalLedger'), id);
-    //   return updateDoc(accountRef, {
-    //     ...account,
-    //     updatedAt: serverTimestamp()
-    //   });
-    // }
-
-    // //deactivate account
-    // deactivateAccount(id: string): Promise<void> {
-    //   return this.updateAccount(id, { isActive: false });
-    // }
-  
-
-   
-
-  //   getAllCurrentBalances(): Observable<AccountBalance[]> {
-  //     return this.getAllAccounts().pipe(
-  //       map(accounts => {
-  //         if (!accounts) return [];
-  //         return accounts.map(account => ({
-  //             accountId: account.id,
-  //             balance: account.currentBalance
-  //         }));
-  //     })
-  //     );
-  //   }
-
-
-  // updateBalance(accountId: string, amount: number, type: string, reference: string): Observable<void> {
-  //     throw new Error('Method not implemented.');
-  //   }
 }

@@ -68,16 +68,16 @@ import { UserAdminFirestoreService } from "../../adminModule/back-end/firestore/
         )
     }
 
-    getProfileState(userId: string): Observable<UserModel> {
-        return this.userProfile$.pipe(
-            tap((profile) => {
-                if(profile && profile.id === userId) {
-                    return of(profile);
-                } else {
-                    console.log('profile not found in getProfileState');
-                    return this.firestoreService.getUserObservable(userId);
+    getProfileState(userId: string): Promise<UserModel | null> {
+        console.log('getProfileState called uid:' + userId);
+        return this.firestoreService.getUser(userId).then(
+            (profile) => {
+                console.log('getProfileState profile:' + profile);
+                if(profile) {
+                    this.userProfileSubject.next(profile);
                 }
-            })
+                return profile;
+            }
         )
     }
     

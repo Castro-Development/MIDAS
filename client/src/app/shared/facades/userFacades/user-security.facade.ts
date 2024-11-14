@@ -167,35 +167,35 @@ export class UserSecurityFacade {
                                 /* * * * * Access Management Methods * * * * */
                                 //-------------------------------------------//
 
-    grantAccess(accountId: string, userId: string): Promise<void> {
-        return this.accountFirestore.addAuthorizedUser(accountId, userId);
-    }
+    // grantAccess(accountId: string, userId: string): Promise<void> {
+    //     return this.accountFirestore.addAuthorizedUser(accountId, userId);
+    // }
 
-    revokeAccess(accountId: string, userId: string): Promise<void> {
-        return this.accountFirestore.removeAuthorizedUser(accountId, userId);
-    }
+    // revokeAccess(accountId: string, userId: string): Promise<void> {
+    //     return this.accountFirestore.removeAuthorizedUser(accountId, userId);
+    // }
 
-    getAccountAccessList(accountId: string): Promise<string[]> {
-        return this.accountFirestore.getAuthorizedUsers(accountId);
-      }
+    // getAccountAccessList(accountId: string): Promise<string[]> {
+    //     return this.accountFirestore.getAuthorizedUsers(accountId);
+    //   }
 
                                 //--------------------------------------------//
                                 /* * * * * Access Validation Methods * * * * */
                                 //-------------------------------------------//
 
-    validateAccess(user: UserModel, accountId: string): Promise<boolean> {
-        return this.accountFirestore.getAuthorizedUsers(accountId).then((authorizedUserIds: string[]) => {
-           const authorized = authorizedUserIds.includes(user.id);
-           if(authorized) {
-               this.eventLogging.logEvent(EventType.ACCOUNT_ACCESS, {
-                accountId: accountId,
-                userId: user.id,
-                authorized: true} as AccountAccessEvent);
-               return true;
-           }
-           return authorized;
-        });
-    }
+    // validateAccess(user: UserModel, accountId: string): Promise<boolean> {
+    //     return this.accountFirestore.getAuthorizedUsers(accountId).then((authorizedUserIds: string[]) => {
+    //        const authorized = authorizedUserIds.includes(user.id);
+    //        if(authorized) {
+    //            this.eventLogging.logEvent(EventType.ACCOUNT_ACCESS, {
+    //             accountId: accountId,
+    //             userId: user.id,
+    //             authorized: true} as AccountAccessEvent);
+    //            return true;
+    //        }
+    //        return authorized;
+    //     });
+    // }
 
     validatePermissions(permissionType: PermissionType, accountId: string): boolean {
         // Check if user has permission required to perform action

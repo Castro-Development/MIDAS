@@ -3,7 +3,8 @@ import { UserApplication, UserModel } from "../../dataModels/userModels/user.mod
 import { UserProfileStateService } from "../../states/user-profile-state.service";
 import { SecurityStatus } from "./user-security.facade";
 import { User } from "firebase/auth";
-import { Observable, distinctUntilChanged, map, tap } from "rxjs";
+import { Observable, catchError, distinctUntilChanged, filter, from, map, tap } from "rxjs";
+import { ErrorHandlingService } from "../../services/error-handling.service";
 
 
 @Injectable({
@@ -32,6 +33,7 @@ export class UserProfileFacade{
 
 
     constructor(
+        private errorHandling: ErrorHandlingService
     ){}
 
                                 //----------------------------------------//
@@ -65,14 +67,18 @@ export class UserProfileFacade{
                                 //-----------------------------------------//
     // // Profile Operations
     // createProfile(userId: string, initialData: ProfileData): Observable<void>;
-    private getProfile(userId: string): Observable<UserModel>{
-        return this.userProfileState.getProfileState(userId);
+    private getProfile(userId: string): Observable<UserModel> {
+        return from(this.userProfileState.getProfileState(userId)).pipe(
+            filter((profile): profile is UserModel => profile !== null),
+            catchError(() => this.errorHandling.handleError('User not found', {} as UserModel))
+        );
     }
     // archiveProfile(userId: string): Observable<void>;
     // restoreProfile(userId: string): Observable<void>;
     loginProfile(userId: string) {
         console.log('loginProfile');
         this.getProfile(userId).pipe(
+
             tap((profile) => { console.log(profile); })
         )
         console.log('loginProfile end');

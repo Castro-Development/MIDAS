@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, CollectionReference, where, doc, getDocs, query, setDoc, onSnapshot, getDoc, DocumentSnapshot } from '@angular/fire/firestore';
 import { Auth, User as FirebaseUser, user } from '@angular/fire/auth'
 import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
-import { BehaviorSubject, Observable, distinctUntilChanged, firstValueFrom, map, of, switchMap, takeUntil, tap, catchError } from 'rxjs';
+import { BehaviorSubject, Observable, distinctUntilChanged, firstValueFrom, map, of, switchMap, takeUntil, tap, catchError, throwError } from 'rxjs';
 
 import { UserApplication, UserModel } from '../../dataModels/userModels/user.model';
 import { AuthStateService } from '../../states/auth-state.service';
@@ -35,48 +35,47 @@ export class UserFirestoreService implements OnDestroy{
   
 
   // Get user from uid
-  getUserObservable(uid: string): Observable<UserModel | null> {
-    console.log('Getting user from uid...');
+  getUserObservable(uid: string): Observable<UserModel> {
+    console.log('Getting user from uid:', uid);
+    
+    // Check if uid is valid
+    if (!uid) {
+      console.error('No uid provided to getUserObservable');
+      return throwError(() => new Error('No uid provided'));
+    }
+
     const userDocRef = doc(this.firestore, 'users', uid);
-    return new Observable<UserModel | null>(observer => {
-      const unsubscribe = onSnapshot(userDocRef, 
-        (docSnapshot: DocumentSnapshot<DocumentData>) => {
-          if (docSnapshot.exists()) {
-            observer.next(docSnapshot.data() as UserModel);
+    console.log('Document reference:', userDocRef.path);
+    
+    return new Observable<UserModel>(observer => {
+      console.log('Setting up snapshot listener for:', uid);  // Debug
+      
+      const unsubscribe = onSnapshot(
+        userDocRef, 
+        (doc) => {
+          console.log('Snapshot received:', doc.exists()); // Debug
+          if (doc.exists()) {
+            const data = doc.data() as UserModel;
+            console.log('Document data:', data);
+            observer.next(data);
           } else {
-            observer.next(null);
+            console.log(`No document found for uid: ${uid}`);
+            observer.error(new Error(`User document does not exist for uid: ${uid}`));
           }
         },
-        (error) => observer.error(error)
+        (error) => {
+          console.error('Firestore error:', error);
+          observer.error(error);
+        }
       );
-      // Return the unsubscribe function to be called when the Observable is unsubscribed
-      return unsubscribe; 
-    });
 
-    // const isLoggedIn$ = this.auth.currentUser ? of(true) : of(false);
-    // return isLoggedIn$.pipe(
-    //   switchMap(isLoggedIn => {
-    //     if (!isLoggedIn) {
-    //       return of(null); 
-    //     }
-    //     const userDocRef = doc(this.firestore, 'users', uid);
-    //     return new Observable<UserModel | null>(observer => { 
-    //       const unsubscribe = onSnapshot(userDocRef, 
-    //         (docSnapshot: DocumentSnapshot<DocumentData>) => {
-    //           if (docSnapshot.exists()) {
-    //             observer.next(docSnapshot.data() as UserModel);
-    //           } else {
-    //             observer.next(null);
-    //           }
-    //         },
-    //         (error) => observer.error(error)
-    //       );
-    //       // Return the unsubscribe function to be called when the Observable is unsubscribed
-    //       return unsubscribe; 
-    //     });
-    //   })
-    // );
-  }
+      // Debug cleanup
+      return () => {
+        console.log('Cleaning up snapshot listener for:', uid);
+        unsubscribe();
+      };
+    });
+}
 
 
   getAllUsers(): Observable<UserModel[]> {

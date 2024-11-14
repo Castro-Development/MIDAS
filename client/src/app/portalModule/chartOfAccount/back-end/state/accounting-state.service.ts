@@ -33,7 +33,7 @@ import { timeStamp } from "console";
     }
 
     initializeAccountingState() {
-      this.accountingFirestoreService.accounts$.pipe(
+      this.accountingFirestoreService.getAllAccounts().pipe(
         takeUntil(this.destroy$),
         catchError(error => {
           return this.errorHandlingService.handleError(error, [] as AccountLedger[]);
@@ -92,7 +92,7 @@ import { timeStamp } from "console";
             subcategory: account.subcategory,
             normalSide: account.normalSide,
             accountNumber: accNum,
-            isActive: true,
+            isActive: false,
             version: 1,
             createdAt: new Date(Date.now()),
             createdBy: userId,
@@ -103,7 +103,9 @@ import { timeStamp } from "console";
           };
           
           // Convert Promise to Observable
-          return from(this.accountingFirestoreService.createAccount(newAccount));
+          return this.accountingFirestoreService.createAccount(newAccount).then(() => {
+            return newAccount;
+          })
         })
       );
     }

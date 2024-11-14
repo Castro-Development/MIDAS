@@ -1,47 +1,103 @@
-import { Injectable, OnDestroy, inject } from '@angular/core';
-import { DocumentData, Firestore, QuerySnapshot, collection, doc, onSnapshot, setDoc, updateDoc, serverTimestamp } from '@angular/fire/firestore';
-import { BehaviorSubject, Observable, Subject, catchError, map, take, takeUntil } from 'rxjs';
-import { AccountLedger, AccountFilter, GeneralLedger, JournalEntry } from '../../shared/dataModels/financialModels/account-ledger.model';
+import { Injectable } from '@angular/core';
+import { 
+  Firestore, 
+  collection, 
+  doc, 
+  onSnapshot, 
+  setDoc, 
+  updateDoc, 
+  serverTimestamp,
+  getDoc
+} from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
 import { ErrorHandlingService } from '../../shared/services/error-handling.service';
+import { JournalEntry } from '../../shared/dataModels/financialModels/account-ledger.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class JournalEntryFirestoreService implements OnDestroy {
-
-  private journalEntriesSubject = new BehaviorSubject<JournalEntry[]>([]);
-
-  readonly journalEntries$ = this.journalEntriesSubject.asObservable();
-
-  private destroySubject = new Subject<void>();
-
-  constructor(
-    firestore: Firestore,
-    private errorHandlingService: ErrorHandlingService) {
-    this.initializeAccountFirestoreService(firestore, errorHandlingService);
-   }
+export class JournalEntryFirestoreService {
+  private readonly COLLECTION_NAME = 'journalEntries';
   
+  constructor(
+    private firestore: Firestore,
+    private errorHandlingService: ErrorHandlingService
+  ) {}
 
-   initializeAccountFirestoreService(firestore: Firestore, errorHandlingService: ErrorHandlingService){ 
-    //Create subscription to the generalLedgers collection snapshot
-    onSnapshot(collection(firestore, 'journalEntries'), (snapshot) => {
-      takeUntil(this.destroySubject);
-      const journalEntries = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }) as JournalEntry);
-      catchError(error => {
-        errorHandlingService.handleError(error, [] as JournalEntry[]);
-        return [];
-      });
-      this.journalEntriesSubject.next(journalEntries);
+  getEntry(postRef: string): Observable<JournalEntry | null> {
+    return new Observable(subscriber => {
+      const unsubscribe = onSnapshot(
+        doc(collection(this.firestore, this.COLLECTION_NAME), postRef),
+        (docSnapshot) => {
+          if (docSnapshot.exists()) {
+            subscriber.next({ id: docSnapshot.id, ...docSnapshot.data() } as JournalEntry);
+          } else {
+            subscriber.next(null);
+          }
+        },
+        error => {
+          this.errorHandlingService.handleError('Failed to get journal entry', error);
+          subscriber.error(error);
+        }
+      );
+
+      return () => unsubscribe();
     });
-   }
+  }
 
-   
+  getAllEntries(): Observable<JournalEntry[]> {
+    return new Observable(subscriber => {
+      const unsubscribe = onSnapshot(
+        collection(this.firestore, this.COLLECTION_NAME),
+        (snapshot) => {
+          const entries = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          } as JournalEntry));
+          subscriber.next(entries);
+        },
+        error => {
+          this.errorHandlingService.handleError('Failed to get journal entries', error);
+          subscriber.error(error);
+        }
+      );
 
-   ngOnDestroy() {
-    this.destroySubject.next();
-    this.destroySubject.complete();
+      return () => unsubscribe();
+    });
+  }
+
+  async createEntry(entry: JournalEntry): Promise<void> {
+    try {
+      const entryRef = doc(
+        collection(this.firestore, this.COLLECTION_NAME), 
+        entry.postReference // Using postRef as the document ID
+      );
+
+      await setDoc(entryRef, {
+        ...entry,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      this.errorHandlingService.handleError('Failed to create journal entry', error);
+      throw error;
+    }
+  }
+
+  async updateEntry(postRef: string, changes: Partial<JournalEntry>): Promise<void> {
+    try {
+      const entryRef = doc(
+        collection(this.firestore, this.COLLECTION_NAME), 
+        postRef
+      );
+
+      await updateDoc(entryRef, {
+        ...changes,
+        updatedAt: serverTimestamp()
+      });
+    } catch (error) {
+      this.errorHandlingService.handleError('Failed to update journal entry', error);
+      throw error;
+    }
   }
 }

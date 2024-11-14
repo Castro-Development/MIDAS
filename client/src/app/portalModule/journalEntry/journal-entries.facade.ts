@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap, finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../shared/services/error-handling.service'
-import { JournalEntry } from '../../shared/dataModels/financialModels/account-ledger.model';
+import { JournalEntry, NormalSide } from '../../shared/dataModels/financialModels/account-ledger.model';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { QueryConstraint, orderBy, query, where } from 'firebase/firestore';
 import { EventLogService } from '../../shared/services/event-log.service';
@@ -110,32 +110,32 @@ export class JournalEntryFacade {
   /**
    * Approve a journal entry
    */
-  approveEntry(entryId: string): Observable<void> {
+  approveEntry(entryId: string) {
     this.loadingSubject.next(true);
-
+  
     const currentUserId = this.authState.getUid$;
-
+  
     return this.getJournalEntry(entryId).pipe(
       switchMap(entry => {
         if (!entry) {
           return throwError(() => new Error('Journal entry not found'));
         }
-
+  
         const updatedEntry = {
           ...entry,
           status: JournalEntryStatus.APPROVED,
-          approvedBy: currentUserId, // You'd get this from your auth service
+          approvedBy: currentUserId,
           approvedAt: new Date()
         };
-
+  
         return this.saveJournalEntry(updatedEntry).pipe(
-          switchMap(() => this.postToAccounts(updatedEntry))
+          map(() => this.postToAccounts(updatedEntry))
         );
       }),
       tap(() => {
         this.eventLog.logEvent(EventType.JOURNAL_ENTRY_APPROVED, { entryId, approvedBy: currentUserId });
       }),
-    //   catchError(this.errorHandling.handleError('approveEntry')),
+      // catchError(this.errorHandling.handleError('approveEntry')),
       finalize(() => this.loadingSubject.next(false))
     );
   }
@@ -208,10 +208,38 @@ export class JournalEntryFacade {
     return of(true);
   }
 
-  private postToAccounts(entry: JournalEntry): Observable<void> {
-    const returnVal = this.accountService.postJournalEntry(entry);
+  private postToAccounts(entry: JournalEntry) {
+    entry.transactions.forEach(transaction => {
+      const accountId = transaction.accountId;
+      this.accountService.getAccount(accountId).pipe(
+        switchMap(account => {
+          if (!account) {
+            return throwError(() => new Error(`Account not found: ${accountId}`));
+          }
+
+          const updatedDebitAccount = {
+            ...account,
+            totalDebits: account.totalDebits? account.totalDebits + transaction.debitAmount : transaction.debitAmount,
+            totalCredits: account.totalCredits? account.totalCredits + transaction.creditAmount : transaction.creditAmount,
+            currentBalance: account.currentBalance? account.currentBalance + transaction.debitAmount - transaction.creditAmount : transaction.debitAmount - transaction.creditAmount
+          };
+
+          const updatedCreditAccount = {
+            ...account,
+            totalDebits: account.totalDebits? account.totalDebits + transaction.debitAmount : transaction.debitAmount,
+            totalCredits: account.totalCredits? account.totalCredits + transaction.creditAmount : transaction.creditAmount,
+            currentBalance: account.currentBalance? account.currentBalance + transaction.creditAmount - transaction.debitAmount : transaction.creditAmount - transaction.debitAmount
+          };
+
+          if(account.normalSide === NormalSide.CREDIT){
+            return this.accountService.updateAccount(accountId, updatedCreditAccount);
+          }
+
+          return this.accountService.updateAccount(accountId, updatedDebitAccount);
+        })
+      );
+    });
     
-    return returnVal;
   }
 
   // These methods would interact with your Firestore service
