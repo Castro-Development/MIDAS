@@ -46,21 +46,10 @@ import { User as FirebaseUser } from "firebase/auth";
     initProfileState() {
         this.authStateService.user$.subscribe(user => {
             if(user){
-                this.getProfileState(user.uid).then(profile => {
-                    this.userProfileSubject.next(profile ?? 
-                        {id: '', 
-                        username: '', 
-                        firstname: '', 
-                        lastname: '', 
-                        phone: '', 
-                        street: '', 
-                        zip: '', 
-                        state: '', 
-                        password: '', 
-                        role: UserRole.Guest, 
-                        notificationFilter: {type: 'all', priority: 'all', category: 'all'}}
-                    );
+                this.getProfileState(user.uid).subscribe(profile => {
+                    this.userProfileSubject.next(profile as UserModel);
                 })
+                distinctUntilChanged();
             }
         })
         const emptyUser: UserModel = {

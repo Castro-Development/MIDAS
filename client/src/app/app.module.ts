@@ -33,6 +33,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { NavbarModule } from './shared/navbar/navbar.module';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { ErrorHandlingService } from './shared/errorHandling/error-handling.service';
+import { PortalModule } from './portalModule/portal-module.module';
 
 
 
@@ -61,6 +62,7 @@ import { ErrorHandlingService } from './shared/errorHandling/error-handling.serv
     MatFormField,
     UserModule,
     AdminModule,
+    PortalModule
     
     
 
