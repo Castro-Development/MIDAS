@@ -30,6 +30,7 @@ enum JournalEntryStatus {
   providedIn: 'root'
 })
 export class JournalEntryFacade {
+    
   
   
   // Subjects
@@ -260,6 +261,10 @@ export class JournalEntryFacade {
       );
     });
     
+  }
+
+  getAccounts() {
+    return this.accountService.getAllAccounts();
   }
 
   // These methods would interact with your Firestore service

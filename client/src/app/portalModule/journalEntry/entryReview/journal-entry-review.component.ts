@@ -2,9 +2,9 @@
 import { Component, inject, OnDestroy, OnInit } from "@angular/core";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { collection, doc, Firestore, getDocs } from "@angular/fire/firestore";
-import { JournalEntry } from "../../../../shared/dataModels/financialModels/account-ledger.model";
+import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
 import { Router } from "@angular/router";
-import { JournalEntryFacade } from "../../journal-entries.facade";
+import { JournalEntryFacade } from "../journal-entries.facade";
 
 @Component({
     selector: 'app-journal-entry-form',
@@ -16,16 +16,14 @@ import { JournalEntryFacade } from "../../journal-entries.facade";
     `
 })
 export class JournalEntryReviewComponent implements OnDestroy {
-    private firestore = inject(Firestore);
-    private journalEntriesSubject = new Subject<JournalEntry[]>();
     private journalFacade = inject(JournalEntryFacade);
-    readonly journalEntries$: Observable<JournalEntry[]> = this.journalEntriesSubject.asObservable();
     private router = inject(Router);
+
+    journalEntries$ = this.journalFacade.loadEntries();
 
     private destroySubject = new BehaviorSubject<void>(undefined);
 
     constructor () {
-        this.initializeJournalEntrySubscription();
     }
 
     ngOnDestroy(): void {
@@ -34,11 +32,6 @@ export class JournalEntryReviewComponent implements OnDestroy {
     }
 
 
-    private initializeJournalEntrySubscription() {
-        this.journalFacade.loadEntries().subscribe(entries => {
-            this.journalEntriesSubject.next(entries);
-        });
-    }
 
     routeToJournalEntry(journalEntry: JournalEntry) {
         this.journalFacade.selectEntry(journalEntry.postReference);

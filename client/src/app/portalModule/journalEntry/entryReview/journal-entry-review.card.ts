@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { JournalEntry } from "../../../../shared/dataModels/financialModels/account-ledger.model";
+import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
 import { Observable } from "rxjs";
 import { CommonModule } from "@angular/common";
 import { AsyncPipe } from "@angular/common";
@@ -26,7 +26,7 @@ import { AsyncPipe } from "@angular/common";
                   <tr *ngFor="let entry of entries" 
                       class="border-b border-gray-200 hover:bg-gray-50 transition duration-150">
                       <td class="py-3 px-6 text-left">
-                          {{entry.createdAt | date:'medium'}}
+                          {{convertTimestamp(entry.createdAt) | date:'medium'}}
                       </td>
                       <td class="py-3 px-6 text-left">{{entry.createdBy}}</td>
                       <td class="py-3 px-6 text-left">{{entry.id}}</td>
@@ -69,6 +69,10 @@ export class JournalReviewCard implements OnInit{
 
     chooseJournalEntry(journalEntry: JournalEntry) {
         this.chosenJournalEntry.emit(journalEntry);
+    }
+
+    convertTimestamp(timestamp: any): Date {
+        return timestamp?.toDate?.() || timestamp;
     }
 
 

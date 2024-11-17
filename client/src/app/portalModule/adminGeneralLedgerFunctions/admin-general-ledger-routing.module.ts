@@ -5,7 +5,7 @@ import { AccountCreationComponent } from './adminAccountCreate/feature/admin-acc
 
 const routes: Routes = [
   {
-    path: 'account-add',
+    path: 'add-account',
     component: AccountCreationComponent
   }
 ];
