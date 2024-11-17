@@ -3,10 +3,10 @@ import { Firestore, getDocs, collection, onSnapshot, QueryConstraint, where } fr
 import { BehaviorSubject, Subject, Observable, map, filter, catchError, from, combineLatest, switchMap, tap, finalize } from "rxjs";
 import { ErrorHandlingService } from "../../../../shared/services/error-handling.service";
 import { query } from "@angular/fire/firestore";
-import { AccountLedgerFirestoreService } from "../firestore-service/account-ledger-firestore.service";
 import { AccountLedger, AccountLedgerReference, JournalEntry, LedgerEntry, LedgerFilter, NormalSide } from "../../../../shared/dataModels/financialModels/account-ledger.model";
 import { EventLogService } from "../../../../shared/services/event-log.service";
 import { EventType } from "../../../../shared/dataModels/loggingModels/event-logging.model";
+import { AccountFirestoreService } from "../../../chartOfAccount/back-end/firestore/account-firestore.service";
 
 
 @Injectable({ providedIn: 'root' })
@@ -27,27 +27,17 @@ export class AccountLedgerStateService implements OnDestroy {
   readonly error$ = this.errorSubject.asObservable();
 
   constructor(
-    private firestore: Firestore,
     private errorHandling: ErrorHandlingService,
     private eventLogging: EventLogService,
-    private accountLedgerFirestoreService: AccountLedgerFirestoreService,
+    private accountLedgerFirestoreService: AccountFirestoreService,
   ) {
   }
 
-  getAccountLedger(accountId: string): Observable<AccountLedger> {//Gathers all the information but the specific entries, those are 
-    this.loadingSubject.next(true);                               //gathered in account-ledger.facade.ts. 
+  getAccountLedger(accountId: string): Observable<AccountLedger> {
+    this.loadingSubject.next(true);                               
     this.selectAccount(accountId);
-    // Get the stored account ledger information including journal entries post references
-    return this.accountLedgerFirestoreService.getAccountLedger(accountId).pipe(
-      tap((ledger: AccountLedger) => {
-        this.ledgerSubject.next(ledger);
-        this.loadingSubject.next(false);
-        this.eventLogging.logEvent(EventType.ACCOUNT_ACCESS, null);
-      }),
-      catchError(error => this.errorHandling.handleError(
-        'getAccountLedger',
-        {} as AccountLedger
-      ))
+    return this.accountLedgerFirestoreService.getAccount(accountId).pipe(
+      filter((account): account is AccountLedger => account !== null), // Type guard
     );
   }
 

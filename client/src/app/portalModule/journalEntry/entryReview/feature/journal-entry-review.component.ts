@@ -41,7 +41,7 @@ export class JournalEntryReviewComponent implements OnDestroy {
     }
 
     routeToJournalEntry(journalEntry: JournalEntry) {
-        this.journalFacade.selectEntry(journalEntry);
+        this.journalFacade.selectEntry(journalEntry.postReference);
         this.router.navigate(['/journal-entry', journalEntry.id]);
     }
 

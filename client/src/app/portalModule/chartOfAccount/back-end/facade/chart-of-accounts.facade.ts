@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, merge } from 'rxjs';
+import { Observable, Subject, from, merge, of } from 'rxjs';
 import { takeUntil, map, tap } from 'rxjs/operators';
 import { AccountLedger, AccountCategory, AccountFilter, AccountSubcategories, NormalSide } from '../../../../shared/dataModels/financialModels/account-ledger.model';
 import { ErrorHandlingService } from '../../../../shared/services/error-handling.service';
@@ -64,6 +64,7 @@ interface AccountSearchResult {
   providedIn: 'root'
 })
 export class ChartOfAccountsFacade implements OnDestroy {
+  
   // Cleanup subscription
   private readonly destroy$ = new Subject<void>();
 
@@ -127,6 +128,9 @@ export class ChartOfAccountsFacade implements OnDestroy {
   }
 
   getAllAccountsWhere(filter: AccountFilter | null): Observable<AccountLedger[]> {
+    if(filter) {
+      this.accountingStateService.updateFilters(filter);
+    }
     return this.accountingStateService.filteredAccounts$;
   }
 
@@ -295,7 +299,14 @@ export class ChartOfAccountsFacade implements OnDestroy {
     );
   }
   
-  
+  getFilter(): Observable<AccountFilter> {
+    return of({
+      // category?: AccountCategory;
+      // subcategory?: AccountSubcategories[AccountCategory];
+      // isActive?: boolean;
+      // normalSide?: NormalSide;
+    } as AccountFilter);
+  }
   
   ngOnDestroy(): void {
     this.destroy$.next();

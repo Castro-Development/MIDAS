@@ -8,6 +8,7 @@ import { Router } from "@angular/router";
     template: `
     <div class="journal-entry-form">
         <journal-entry-form-card 
+        []
         (formSubmit)="handleJournalEntry($event)">
         </journal-entry-form-card>
     </div>

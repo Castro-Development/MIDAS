@@ -6,10 +6,10 @@ import { AuthStateService } from "../../../../shared/states/auth-state.service";
 import { EventLogService } from "../../../../shared/services/event-log.service";
 import { ApprovalStateService } from "../../../../shared/states/approval-state.service";
 import { AccountLedgerStateService } from "../state-service/account-ledger-state.service";
-import { JournalEntryStateService } from "../../../../shared/states/journal-entry-state.service";
 import { UserSecurityFacade } from "../../../../shared/facades/userFacades/user-security.facade";
 import { PermissionType } from "../../../../shared/dataModels/userModels/permissions.model";
 import { AccountAccessEvent, AccountEventLog, EventLog, EventLogFilter, EventMetadata, EventType } from "../../../../shared/dataModels/loggingModels/event-logging.model";
+import { JournalEntryStateService } from "../../../journalEntry/journal-entry-state.service";
 
 @Injectable({
     providedIn: 'root'

@@ -2,13 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap, finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../shared/services/error-handling.service'
-import { JournalEntry, NormalSide } from '../../shared/dataModels/financialModels/account-ledger.model';
+import { JournalEntry, LedgerEntry, NormalSide } from '../../shared/dataModels/financialModels/account-ledger.model';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { QueryConstraint, orderBy, query, where } from 'firebase/firestore';
 import { EventLogService } from '../../shared/services/event-log.service';
 import { EventType } from '../../shared/dataModels/loggingModels/event-logging.model';
 import { AuthStateService } from '../../shared/states/auth-state.service';
 import { AccountFirestoreService } from '../chartOfAccount/back-end/firestore/account-firestore.service'
+import { JournalEntryStateService } from './journal-entry-state.service';
+import { Router } from '@angular/router';
 
 interface JournalTransaction {
   accountId: string;
@@ -28,26 +30,23 @@ enum JournalEntryStatus {
   providedIn: 'root'
 })
 export class JournalEntryFacade {
-  private readonly loadingSubject = new BehaviorSubject<boolean>(false);
-  private readonly currentEntrySubject = new BehaviorSubject<JournalEntry | null>(null);
-  private readonly entriesSubject = new BehaviorSubject<JournalEntry[]>([]);
-
-  readonly loading$ = this.loadingSubject.asObservable();
-  readonly currentEntry$ = this.currentEntrySubject.asObservable();
-  readonly entries$ = this.entriesSubject.asObservable();
+  
+  
+  // Subjects
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  private errorSubject = new BehaviorSubject<string | null>(null);
 
   private firestore = inject(Firestore);
 
   // Derived observables
-  readonly pendingEntries$ = this.entries$.pipe(
-    map(entries => entries.filter(e => e.status === JournalEntryStatus.PENDING))
-  );
 
   constructor(
     private errorHandling: ErrorHandlingService,
     private eventLog: EventLogService,
     private authState: AuthStateService,
-    private accountService: AccountFirestoreService
+    private accountService: AccountFirestoreService,
+    private journalState: JournalEntryStateService,
+    private router: Router
   ) {}
 
   
@@ -56,7 +55,6 @@ export class JournalEntryFacade {
    * Create a new journal entry
    */
   createJournalEntry(entry: Omit<JournalEntry, 'id' | 'status' | 'createdAt' | 'createdBy'>): Observable<void> {
-    this.loadingSubject.next(true);
 
     const newEntry: JournalEntry = {
       ...entry,
@@ -72,12 +70,19 @@ export class JournalEntryFacade {
         this.eventLog
       }),
     //   catchError(this.errorHandling.handleError('createJournalEntry')),
-      finalize(() => this.loadingSubject.next(false))
+      
     );
   }
 
-  selectEntry(entry: JournalEntry): void {
-    this.currentEntrySubject.next(entry);
+  selectEntry(postRef: string): void {
+    this.journalState.getEntryByPostRef(postRef).pipe(
+      tap(entry => {
+        if (entry) {
+          this.journalState.selectEntry(entry);
+          this.router.navigate(['/journal-entry-review/' + entry.id]);
+        }
+      }) 
+    )
   }
 
   /**
@@ -179,10 +184,25 @@ export class JournalEntryFacade {
     this.loadingSubject.next(true);
 
     return this.fetchJournalEntries(filters).pipe(
-        tap(entries => this.entriesSubject.next(entries)),
         finalize(() => this.loadingSubject.next(false))
     );
 }
+
+    getAccountLedgerEntries(accountNumber: string): Observable<LedgerEntry[]> {
+      return this.journalState.getJournalEntriesForAccount(accountNumber).pipe(
+        map(entries => entries.map(entry => {
+          return {
+            date: entry.date,
+            description: entry.description,
+            debitAmount: entry.transactions.find(t => t.accountId === accountNumber)?.debitAmount || 0,
+            creditAmount: entry.transactions.find(t => t.accountId === accountNumber)?.creditAmount || 0,
+            runningBalance: 0,
+            journalEntryId: entry.id
+          };
+        }))
+      );
+    }
+
 
   private validateJournalEntry(entry: JournalEntry): Observable<boolean> {
     const errors: string[] = [];
@@ -294,4 +314,6 @@ export class JournalEntryFacade {
         })
     );
 }
+
+
 }

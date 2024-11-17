@@ -5,6 +5,8 @@ import { JournalEntryFormComponent } from "./journalEntry/entryForm/feature/jour
 import { PortalDashboardComponent } from "./portalDashboard/portal-dashboard.component";
 import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
 import { JournalEntryReviewComponent } from "./journalEntry/entryReview/feature/journal-entry-review.component";
+import { AccountLedgerComponent } from "./accountLedger/feature/account-ledger.component";
+import { AccountEventLogComponent } from "./accountEventLog/feature/account-event-log.component";
 
 const routes: Routes = [
     {
@@ -12,14 +14,14 @@ const routes: Routes = [
         pathMatch: 'full',
         redirectTo: 'portal-dashboard',
     },
-    // {not yet implemented
-    //     path: 'event-log',
-    //     component: AccountEventLogComponent
-    // },
-    // {not yet implemented
-    //     path: 'account-ledger',
-    //     component: AccountLedgerComponent
-    // },
+    {
+        path: 'event-log',
+        component: AccountEventLogComponent
+    },
+    {
+        path: 'account-ledger/:accountNumber',
+        component: AccountLedgerComponent
+    },
     {
         path: 'chart-of-accounts',
         component: ChartOfAccountsComponent
@@ -37,7 +39,7 @@ const routes: Routes = [
         canActivate: [AuthGuardService],
         component: PortalDashboardComponent
     },
-    // {not yet implemented
+    // {
     //     path: 'business-gl-functions',
     //     loadChildren: () => import('./adminBusinessGLFunctions/admin-business-glfunctions.module').then(m => m.AdminBusinessGLFunctionsModule)
     // },
