@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable, Subject, catchError, combineLatest, distinctUntilChanged, from, map, of } from "rxjs";
+import { BehaviorSubject, Observable, Subject, catchError, combineLatest, distinctUntilChanged, from, map, of, tap } from "rxjs";
 import { JournalEntry, JournalEntryStatus } from "../../shared/dataModels/financialModels/account-ledger.model";
 import { Injectable } from "@angular/core";
 import { JournalEntryFirestoreService } from "./journal-firestore.service";
@@ -19,7 +19,9 @@ import { query } from "@angular/fire/firestore";
   @Injectable({ providedIn: 'root' })
   export class JournalEntryStateService {
     
+    
     private readonly journalEntriesSubject = new BehaviorSubject<JournalEntry[]>([] as JournalEntry[]);
+    private readonly selectedEntrySubject = new BehaviorSubject<JournalEntry>({} as JournalEntry);
     private filterSubject = new Subject<JournalFilter>();
     private readonly journalEntries$ = this.journalEntriesSubject.asObservable();
   
@@ -30,18 +32,16 @@ import { query } from "@angular/fire/firestore";
     constructor(
       private journalEntryFirestoreService: JournalEntryFirestoreService,
       private errorHandlingService: ErrorHandlingService,
-      private filterService: FilteringService,
-      private firestore: Firestore
+      private filterService: FilteringService
     ) {
       this.initializeJournalEntries(journalEntryFirestoreService, errorHandlingService);
     }
     
     initializeJournalEntries(journalEntryService: JournalEntryFirestoreService, errorHandlingService: ErrorHandlingService) {
-      journalEntryService.journalEntries$.subscribe(
-        (journalEntries) => {
-          this.journalEntriesSubject.next(journalEntries);
-        }
-      );
+      journalEntryService.getAllEntries().pipe(
+        tap(entries => this.journalEntriesSubject.next(entries)),
+        distinctUntilChanged(),
+      )
     }
     
     readonly filteredJournalEntries$ = combineLatest([this.journalEntries$, this.filterSubject]).pipe(
@@ -60,6 +60,10 @@ import { query } from "@angular/fire/firestore";
       this.filterSubject.next(filter);
     }
 
+    selectEntry(entry: JournalEntry) {
+      this.selectedEntrySubject.next(entry);
+    }
+
     getEntryByPostRef(postRef: string): Observable<JournalEntry | undefined> {
       return this.journalEntries$.pipe(
         map(journalEntries => journalEntries.find(entry => entry.postReference === postRef)),
@@ -69,28 +73,9 @@ import { query } from "@angular/fire/firestore";
   }
 
     getJournalEntriesForAccount(accountId: string): Observable<JournalEntry[]> {
-      //TODO: Hide firestore access behind journalEntryFirestoreService
-      const journalEntriesRef = collection(this.firestore, 'journalEntries');
-      
-      // Query for entries that have a transaction for this account
-      return from(
-        getDocs(
-          query(journalEntriesRef, 
-            where('transactions', 'array-contains-any', [{ accountId }])
-          )
-        )
-      ).pipe(
-        map(snapshot => 
-          snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          } as JournalEntry))
-        ),
-        catchError(error => {
-          console.error('Error fetching journal entries:', error);
-          return of([]);
-        })
-      );
+      return this.journalEntryFirestoreService.getAllEntries().pipe(
+        map(entries => entries.filter(entry => entry.accounts.includes(accountId))),
+      )
     }
     
   }

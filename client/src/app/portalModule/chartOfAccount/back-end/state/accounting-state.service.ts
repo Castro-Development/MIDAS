@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { BehaviorSubject, combineLatest, map, distinctUntilChanged, shareReplay, Subject, takeUntil, tap, catchError, Observable, of, switchMap, from } from "rxjs";
 import { AccountLedger, AccountFilter, NormalSide } from "../../../../shared/dataModels/financialModels/account-ledger.model";
 import { ErrorHandlingService } from "../../../../shared/services/error-handling.service";
@@ -20,11 +20,12 @@ import { timeStamp } from "console";
 
     private destroySubject = new Subject<void>();
     private readonly destroy$ = this.destroySubject.asObservable();
-    currentBalances$: any;
+    
+
+    accountingFirestoreService = inject(AccountFirestoreService);
     
 
     constructor(
-      private accountingFirestoreService: AccountFirestoreService,
       private errorHandlingService: ErrorHandlingService,
       private filterService: FilteringService
 
@@ -50,17 +51,9 @@ import { timeStamp } from "console";
       distinctUntilChanged()
     );
 
-    readonly filteredAccounts$ = combineLatest([this.accounts$, this.filterSubject]).pipe(
-      map(([journalEntries, filter]) => this.filterService.filter(journalEntries, filter, [
-        'id',
-        'entryNumber',
-        'dateStart',
-        'dateEnd',
-        'status',
-        'createdBy'
-      ])),
-      distinctUntilChanged(),
-    );
+    readonly filteredAccounts$ = this.accountingFirestoreService.getAllAccounts().pipe(
+
+    )
 
     updateFilters(filter: AccountFilter) {
       this.filterSubject.next(filter);

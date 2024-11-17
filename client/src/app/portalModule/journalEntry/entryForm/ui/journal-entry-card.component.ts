@@ -1,7 +1,8 @@
 // journal-entry-form.component.ts
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { getAuth } from 'firebase/auth';
+import { AccountLedger } from '../../../../shared/dataModels/financialModels/account-ledger.model';
 
 @Component({
   selector: 'journal-entry-form-card',
@@ -123,6 +124,7 @@ import { getAuth } from 'firebase/auth';
 })
 export class JournalEntryFormCard {
   @Output() formSubmit = new EventEmitter<any>();
+  @Input() accounts: AccountLedger[] = [] as AccountLedger[];
 
   journalEntryForm!: FormGroup;
 

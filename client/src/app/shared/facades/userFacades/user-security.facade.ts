@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { UserRole } from "../../dataModels/userModels/userRole.model";
-import { Observable, Subject, catchError, combineLatest, filter, from, map, of, switchMap, take, tap } from "rxjs";
+import { Observable, Subject, catchError, combineLatest, filter, firstValueFrom, from, map, of, switchMap, take, tap } from "rxjs";
 import { AuthStateService } from "../../states/auth-state.service";
 import { ErrorHandlingService } from "../../services/error-handling.service";
 import { Auth, User as FirebaseUser } from "@angular/fire/auth";
@@ -12,6 +12,7 @@ import { AccountAccessEvent, EventType } from "../../dataModels/loggingModels/ev
 import { EventLogService } from "../../services/event-log.service";
 import { UserProfileFacade } from "./user-profile.facade";
 import { UserAdminFirestoreService } from "../../../adminModule/back-end/firestore/user-admin-firestore.service";
+import { AccountLedger } from "../../dataModels/financialModels/account-ledger.model";
 
 
 
@@ -52,6 +53,9 @@ export interface PermissionCheckResult {
 
 @Injectable({ providedIn: 'root' })
 export class UserSecurityFacade {
+  /* * * * * Access Management Methods * * * * */
+  //-------------------------------------------//
+  
   
   
     
@@ -167,35 +171,60 @@ export class UserSecurityFacade {
                                 /* * * * * Access Management Methods * * * * */
                                 //-------------------------------------------//
 
-    // grantAccess(accountId: string, userId: string): Promise<void> {
-    //     return this.accountFirestore.addAuthorizedUser(accountId, userId);
-    // }
+    grantAccess(accountId: string, userId: string): Promise<void> {
+        return firstValueFrom(this.accountFirestore.getAccount(accountId).pipe(
+            tap(account => {
+                if(account) {
+                    if(account.authorizedUsers.includes(userId)) {
+                        throw new Error("User already has access to account");
+                    } else{
+                        account.authorizedUsers = [...account.authorizedUsers, userId];
+                    }
+                }
+            }),
+            catchError(() => { return this.errorHandling.handleError("Error granting access", {} as AccountLedger)}),
+            switchMap(account => account ? this.accountFirestore.updateAccount(accountId, account) : of(void 0))
+        ))
+    }
 
-    // revokeAccess(accountId: string, userId: string): Promise<void> {
-    //     return this.accountFirestore.removeAuthorizedUser(accountId, userId);
-    // }
+    revokeAccess(accountId: string, userId: string): Promise<void> {
+        return firstValueFrom(this.accountFirestore.getAccount(accountId).pipe(
+            tap(account => {
+                if(account) {
+                    if(!account.authorizedUsers.includes(userId)) {
+                        throw new Error("User does not have access to account");
+                    } else{
+                        account.authorizedUsers = account.authorizedUsers.filter(id => id !== userId);
+                    }
+                }
+            }),
+            catchError(() => { return this.errorHandling.handleError("Error granting access", {} as AccountLedger)}),
+            switchMap(account => account ? this.accountFirestore.updateAccount(accountId, account) : of(void 0))
+        ))
+    }
 
-    // getAccountAccessList(accountId: string): Promise<string[]> {
-    //     return this.accountFirestore.getAuthorizedUsers(accountId);
-    //   }
+    getAccountAccessList(accountId: string): Promise<string[]> {
+        return firstValueFrom(this.accountFirestore.getAccount(accountId).pipe(
+            map(account => account ? account.authorizedUsers : [] as string[]),
+            catchError(() => { return this.errorHandling.handleError("Error getting access list", [])}),
+        ))
+      }
 
                                 //--------------------------------------------//
                                 /* * * * * Access Validation Methods * * * * */
                                 //-------------------------------------------//
 
-    // validateAccess(user: UserModel, accountId: string): Promise<boolean> {
-    //     return this.accountFirestore.getAuthorizedUsers(accountId).then((authorizedUserIds: string[]) => {
-    //        const authorized = authorizedUserIds.includes(user.id);
-    //        if(authorized) {
-    //            this.eventLogging.logEvent(EventType.ACCOUNT_ACCESS, {
-    //             accountId: accountId,
-    //             userId: user.id,
-    //             authorized: true} as AccountAccessEvent);
-    //            return true;
-    //        }
-    //        return authorized;
-    //     });
-    // }
+    validateAccess(user: UserModel, accountId: string): Promise<boolean> {
+        return this.getAccountAccessList(accountId).then(users => {
+            if(users.includes(user.id)) {
+                return true;
+            }else if(user.role === UserRole.Administrator) {
+                return true;
+            }
+            return false;
+        })
+    }
+    
 
     validatePermissions(permissionType: PermissionType, accountId: string): boolean {
         // Check if user has permission required to perform action
