@@ -7,7 +7,7 @@ import { AccountLedgerFacade } from "../back-end/facade/account-ledger.facade";
 @Component({
     selector: 'app-account-ledger',
     template: `
-    <account-ledger-card [account]="ledger$ | async" />
+    <account-ledger-card [ledgerEntries]="ledgerEntries$" />
     `,
 })
 export class AccountLedgerComponent implements OnInit {
@@ -18,8 +18,8 @@ export class AccountLedgerComponent implements OnInit {
 
 
 
-    ledger$ = this.accountNumber$.pipe(
-      switchMap(accountNumber => this.accountLedgerFacade.getAccountLedger(accountNumber))
+    ledgerEntries$ = this.accountNumber$.pipe(
+      switchMap(accountNumber => this.accountLedgerFacade.getAccountEntries(accountNumber))
     )
 
     constructor(

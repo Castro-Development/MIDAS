@@ -206,7 +206,7 @@ export class UserSecurityFacade {
     getAccountAccessList(accountId: string): Promise<string[]> {
         return firstValueFrom(this.accountFirestore.getAccount(accountId).pipe(
             map(account => account ? account.authorizedUsers : [] as string[]),
-            catchError(() => { return this.errorHandling.handleError("Error getting access list", [])}),
+            catchError(() => { return this.errorHandling.handleError("Error getting access list", [] as string[])}),
         ))
       }
 

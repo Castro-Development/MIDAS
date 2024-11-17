@@ -31,6 +31,7 @@ enum JournalEntryStatus {
 })
 export class JournalEntryFacade {
     
+    
   
   
   // Subjects
@@ -50,7 +51,9 @@ export class JournalEntryFacade {
     private router: Router
   ) {}
 
-  
+  saveEntryDraft(journalEntry: JournalEntry): Promise<string> {
+    return this.journalState.saveEntryDraft(journalEntry);
+  }
 
   /**
    * Create a new journal entry

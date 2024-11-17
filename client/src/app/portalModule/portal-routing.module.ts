@@ -7,6 +7,7 @@ import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
 import { JournalEntryReviewComponent } from "./journalEntry/entryReview/journal-entry-review.component";
 import { AccountLedgerComponent } from "./accountLedger/feature/account-ledger.component";
 import { AccountEventLogComponent } from "./accountEventLog/feature/account-event-log.component";
+import { JournalSubmissionComponent } from "./journalEntry/entrySubmissionReview/journal-submission.component";
 
 const routes: Routes = [
     {
@@ -50,7 +51,11 @@ const routes: Routes = [
     {
         path: 'general-ledger-functions',
         loadChildren: () => import('./adminGeneralLedgerFunctions/admin-general-ledger-functions.module').then(m => m.AdminGeneralLedgerFunctionsModule)
-    }
+    },
+    // {
+    //     path: 'journal-entry:postRef',
+    //     component: JournalSubmissionComponent
+    // }
 ];
 
 @NgModule({

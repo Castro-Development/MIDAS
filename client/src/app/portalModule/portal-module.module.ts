@@ -25,6 +25,8 @@ import { JournalEntryFormCard } from './journalEntry/entryForm/journal-entry-car
 import { JournalEntryFormComponent } from './journalEntry/entryForm/journal-entry-form.component';
 import { JournalEntryReviewComponent } from './journalEntry/entryReview/journal-entry-review.component';
 import { JournalReviewCard } from './journalEntry/entryReview/journal-entry-review.card';
+import { JournalSubmissionComponent } from './journalEntry/entrySubmissionReview/journal-submission.component';
+import { JournalSubmissionCard } from './journalEntry/entrySubmissionReview/journal-submission.card';
 
 @NgModule({
   declarations: [
@@ -40,7 +42,9 @@ import { JournalReviewCard } from './journalEntry/entryReview/journal-entry-revi
     ChartOfAccountsComponent,
     ChartOfAccountsCard,
     JournalEntryReviewComponent,
-    JournalReviewCard
+    JournalReviewCard,
+    JournalSubmissionComponent,
+    JournalSubmissionCard
 
   ],
   imports: [

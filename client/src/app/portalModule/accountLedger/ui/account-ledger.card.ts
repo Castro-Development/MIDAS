@@ -3,7 +3,7 @@ import { AccountLedger, LedgerEntry } from "../../../shared/dataModels/financial
 import { JournalEntryFacade } from "../../journalEntry/journal-entries.facade";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from "@angular/material/dialog";
-import { map } from "rxjs";
+import { Observable, map, of } from "rxjs";
 
 @Component({
     selector: 'account-ledger-card',
@@ -123,46 +123,27 @@ import { map } from "rxjs";
     `,
 })
 export class AccountLedgerCard implements OnInit {
-    @Input() account: AccountLedger | null = null;
+    @Input() ledgerEntries: Observable<LedgerEntry[] | undefined> = of(undefined);
     @Output() selectedAccount = new EventEmitter<AccountLedger>();
     @Output() editAccount = new EventEmitter<AccountLedger>();
     @Output() viewHistory = new EventEmitter<AccountLedger>();
 
     journalEntryFacade = inject(JournalEntryFacade);
     displayedColumns: string[] = ['date', 'description', 'debit', 'credit', 'balance', 'postReference', 'documents'];
-    dataSource: MatTableDataSource<LedgerEntry>;
+    dataSource!: MatTableDataSource<LedgerEntry>;
   
     openingBalance = 10000;
     currentBalance = 15250;
     pendingCount = 2;
 
-  constructor(private dialog: MatDialog) {
-    
-    // Initialize with sample data
-    if(this.account) {
-      this.journalEntryFacade.getAccountLedgerEntries(this.account.accountNumber).pipe(
-        map(entries => {this.dataSource = new MatTableDataSource(entries)}),
-      )
-    }
-      const SAMPLE_DATA: LedgerEntry[] = [
-        {
-          date: new Date('2024-03-15'),
-          description: 'Office Supplies Payment',
-          debitAmount: 1250,
-          creditAmount: 0,
-          runningBalance: 15250,
-          journalEntryId: 'JE-1001',
-        },
-        // Add more sample entries...
-      ];
-
-    this.dataSource = new MatTableDataSource(SAMPLE_DATA);
-    
-
+  constructor() {
+    this.ledgerEntries.pipe(
+      map(entries => this.dataSource = new MatTableDataSource(entries))
+    )
   }
 
   ngOnInit() {
-    // Initialize any subscriptions or data loading here
+    
   }
 
   openFilters() {

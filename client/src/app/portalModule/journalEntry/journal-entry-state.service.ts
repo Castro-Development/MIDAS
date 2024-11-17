@@ -20,6 +20,7 @@ import { query } from "@angular/fire/firestore";
   export class JournalEntryStateService {
     
     
+    
     private readonly journalEntriesSubject = new BehaviorSubject<JournalEntry[]>([] as JournalEntry[]);
     private readonly selectedEntrySubject = new BehaviorSubject<JournalEntry>({} as JournalEntry);
     private filterSubject = new Subject<JournalFilter>();
@@ -62,6 +63,20 @@ import { query } from "@angular/fire/firestore";
 
     selectEntry(entry: JournalEntry) {
       this.selectedEntrySubject.next(entry);
+    }
+
+    saveEntryDraft(journalEntry: JournalEntry): Promise<string> {
+      const journalDraft = {
+        ...journalEntry,
+        status: JournalEntryStatus.DRAFT,
+        postReference: journalEntry.createdBy.slice(0, 3).toUpperCase() + journalEntry.date + '-DRAFT',
+      }
+      return this.journalEntryFirestoreService.createEntry(journalDraft).then(
+        () => {
+          console.log('Journal draft saved')
+          return journalDraft.postReference;
+        }
+      )
     }
 
     getEntryByPostRef(postRef: string): Observable<JournalEntry | undefined> {

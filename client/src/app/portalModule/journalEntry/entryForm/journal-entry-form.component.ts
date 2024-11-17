@@ -4,6 +4,7 @@ import { addDoc } from "firebase/firestore";
 import { Router } from "@angular/router";
 import { AccountLedgerFacade } from "../../accountLedger/back-end/facade/account-ledger.facade";
 import { JournalEntryFacade } from "../journal-entries.facade";
+import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
 
 @Component({
     selector: 'app-journal-entry-form',
@@ -23,9 +24,9 @@ export class JournalEntryFormComponent {
 
     accounts$ = this.journalFacade.getAccounts();
 
-    handleJournalEntry(journalEntry: any) {
-        this.journalFacade.createJournalEntry(journalEntry);
-        this.router.navigate(['/journal-entry-review/je' + journalEntry.id]);
+    handleJournalEntry(journalEntry: JournalEntry) {
+        this.journalFacade.saveEntryDraft(journalEntry);
+        this.router.navigate(['/portal/journal-entry-review']);
     }
 
 }

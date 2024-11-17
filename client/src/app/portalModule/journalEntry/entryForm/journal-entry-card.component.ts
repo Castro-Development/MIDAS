@@ -2,7 +2,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { getAuth } from 'firebase/auth';
-import { AccountLedger, JournalEntryStatus, JournalTransaction } from '../../../shared/dataModels/financialModels/account-ledger.model';
+import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } from '../../../shared/dataModels/financialModels/account-ledger.model';
 
 @Component({
   selector: 'journal-entry-form-card',
@@ -16,23 +16,23 @@ import { AccountLedger, JournalEntryStatus, JournalTransaction } from '../../../
 
         <!-- Basic Information Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Entry Number -->
+          <!-- Entry Title -->
           <div>
-            <label for="entryNumber" class="block text-sm font-medium text-white mb-2">
-              Entry Number
+            <label for="entryTitle" class="block text-sm font-medium text-white mb-2">
+              Entry Title
             </label>
             <input 
-              id="entryNumber" 
+              id="entryTitle" 
               type="text" 
-              formControlName="entryNumber"
+              formControlName="entryTitle"
               class="w-full p-2 bg-gray-800 border border-gray-700 rounded-md text-white
                      focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter entry number"
+              placeholder="Enter Entry Title"
             >
-            <div *ngIf="journalEntryForm.get('entryNumber')?.touched && 
-                        journalEntryForm.get('entryNumber')?.invalid"
+            <div *ngIf="journalEntryForm.get('entryTitle')?.touched && 
+                        journalEntryForm.get('entryTitle')?.invalid"
                  class="text-red-500 text-sm mt-1">
-              Entry number is required
+              Entry Title is required
             </div>
           </div>
 
@@ -241,7 +241,7 @@ export class JournalEntryFormCard {
 
   private createForm() {
     this.journalEntryForm = this.fb.group({
-      entryNumber: ['', Validators.required],
+      entryTitle: ['', Validators.required],
       date: [new Date().toISOString().split('T')[0], Validators.required],
       description: ['', Validators.required],
       transactions: this.fb.array([])
@@ -317,19 +317,26 @@ export class JournalEntryFormCard {
     if (this.journalEntryForm.valid && this.isBalanced()) {
       const formValue = this.journalEntryForm.value as JournalEntryFormValue;
       
+      const accountsFromTransactions = formValue.transactions.map((transaction: JournalTransaction) => transaction.accountId);
+
       // Prepare the journal entry object
       const journalEntry = {
-        ...formValue,
+        id: '',
+        postReference: '',
+        updatedBy: '',
         totalDebits: this.calculateTotalDebits(),
         totalCredits: this.calculateTotalCredits(),
         isBalanced: true,
         status: JournalEntryStatus.DRAFT,
         createdAt: new Date(),
         updatedAt: new Date(),
+        date: new Date(formValue.date),
+        description: formValue.description,
         version: 1,
         versionHistory: [],
         createdBy: getAuth().currentUser?.uid || '',
         // Fixed: using formValue.transactions instead of transaction
+        accounts: accountsFromTransactions,
         transactions: formValue.transactions.map((transaction: JournalTransaction) => ({
           id: crypto.randomUUID(), // Add unique ID for each transaction
           journalEntryId: '', // This will be set when the entry is saved
@@ -342,8 +349,9 @@ export class JournalEntryFormCard {
           updatedAt: new Date(),
           updatedBy: getAuth().currentUser?.uid || ''
         }))
-      };
+      } as JournalEntry;
 
+      console.log(journalEntry);
       this.formSubmit.emit(journalEntry);
     }
   }
@@ -351,7 +359,7 @@ export class JournalEntryFormCard {
 
 
 interface JournalEntryFormValue {
-  entryNumber: string;
+  entryTitle: string;
   date: string;
   description: string;
   transactions: JournalTransaction[];
