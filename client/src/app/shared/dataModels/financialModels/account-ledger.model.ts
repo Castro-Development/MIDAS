@@ -168,8 +168,8 @@ export  enum JournalEntryStatus {
   // ----------------
   export interface JournalEntry {
     id: string;
+    dateCreated: Date;
     postReference: string;
-    date: Date;
     description: string;
     status: JournalEntryStatus;
     

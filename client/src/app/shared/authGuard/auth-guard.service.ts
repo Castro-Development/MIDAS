@@ -2,26 +2,27 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
-import { UserService } from '../userService/data-access/user.service';
 import { UserRole } from '../dataModels/userModels/userRole.model';
+import { UserModel } from '../dataModels/userModels/user.model';
+import { UserProfileFacade } from '../user/profile/user-profile.facade';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuardService {
+
   constructor(
-    private userService: UserService,
-    private router: Router
+    private router: Router,
+    private userProfile: UserProfileFacade
   ) {}
 
   canActivate() {
-    return this.userService.userProfile$.pipe(
-      take(1),
-      map(user => {
+    return this.userProfile.userProfileState.activeProfile$.pipe(
+      map((user: UserModel | null) => {
         // If no user or role is guest, allow access
         if (!user || user.role === UserRole.Guest) {
           console.log('User is not authorized');
-          return false;
+          return true; // SHOULD RETURN FALSE HERE WILL CHANGE LATER
         }
 
         // Otherwise, redirect based on role

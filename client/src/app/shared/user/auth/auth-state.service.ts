@@ -27,6 +27,7 @@ interface AuthState {
         distinctUntilChanged()
     );
 
+
     
 
     constructor(
@@ -87,23 +88,23 @@ interface AuthState {
         distinctUntilChanged()
       );
 
-      login(username: string, password: string): Observable<boolean> {
-        return from(signInWithEmailAndPassword(this.auth, username, password)).pipe(
-            switchMap(userCredential => {
-                return from(userCredential.user.getIdToken()).pipe(
-                    tap(token => {
-                        this.authStateSubject.next({
-                            isLoggedIn: true,
-                            token: token,
-                            lastActivity: new Date(),
-                            failedAttempts: 0,
-                            user: userCredential.user
-                        });
-                    }),
-                    map(() => true)
-                );
-            })
-        );
+      login(username: string, password: string): Promise<string> {
+        return signInWithEmailAndPassword(this.auth, username + '@midas-app.com', password).then(
+          userCredential => {
+            userCredential.user.getIdToken().then(token => {
+              this.authStateSubject.next({
+                isLoggedIn: true,
+                token: token,
+                lastActivity: new Date(),
+                failedAttempts: 0,
+                user: userCredential.user
+              });
+            });
+            return userCredential.user.uid;
+          }
+        )
+        
+        
       }
 
       logout() {

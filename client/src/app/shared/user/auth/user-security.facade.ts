@@ -1,6 +1,7 @@
-import { Injectable } from "@angular/core";
+
+import { Injectable, inject } from "@angular/core";
 import { UserRole } from "../../dataModels/userModels/userRole.model";
-import { Observable, Subject, catchError, combineLatest, filter, from, of, switchMap, tap } from "rxjs";
+import { Observable, Subject, catchError, combineLatest, filter, firstValueFrom, from, map, of, switchMap, tap } from "rxjs";
 import { UserAdminFirestoreService } from "../admin/user-admin-firestore.service";
 import { UserAdminFacade } from "../admin/user-administration.facade";
 import { AuthStateService } from "./auth-state.service";
@@ -53,26 +54,9 @@ export interface PermissionCheckResult {
 
 @Injectable({ providedIn: 'root' })
 export class UserSecurityFacade {
-  
+    userAuthState = inject(AuthStateService);
   
     
-    
-  // Role-Based Authorization
-//   readonly hasRole$(role: UserRole): Observable<PermissionCheckResult>
-
-  // Permission/Access Control
-//   readonly hasPermission$(permission: Permission): Observable<PermissionCheckResult>
-//   readonly hasPermissions(permissions: Permission[]): Observable<PermissionCheckResult[]>
-//   readonly canAccess(feature: FeatureFlag): Observable<boolean>
-//   readonly getAccessibleFeatures(): Observable<FeatureFlag[]>
-
-  // Account Status Observables
-//   readonly isAccountLocked$: Observable<boolean>
-//   readonly passwordExpiresIn$: Observable<number>
-//   readonly requiresPasswordChange$: Observable<boolean>
-  
-  // Consolidated Security Status
-  readonly securityStatus$ = new Subject<SecurityStatus>();
 
     constructor(    private userAdminFirestore: UserAdminFirestoreService,
                     private errorHandling: ErrorHandlingService,
@@ -87,29 +71,51 @@ export class UserSecurityFacade {
                                 /* * * * * Authentication Methods * * * * */
                                 //-----------------------------------------//
 
-    login(username: string, password: string): Observable<boolean> {
-        const userStatus = this.getUserSecurityStatus(username);
-            return userStatus.pipe(
-            switchMap(status => {
-                if (status.isLocked) {
-                    return of(false);
-                }
-                if (status.suspension) {
-                    return of(false);
-                }
-                if (status.passwordStatus === 'expired') {
-                    return of(false);
-                }
-                // Check failed login attempts
-                if (status.failedAttempts >= 3) {
-                    return of(false);
-                }
-                // Authenticate user
-                    return of(true);
-                }),
-            catchError((error) => this.errorHandling.handleError(error, false)),
-            tap((success) => { if(success) { this.authState.login(username, password) }})
-    )
+    // login(username: string, password: string): Observable<boolean> {
+    //     console.log("Logging in user");
+    //     return this.getUserSecurityStatus(username).pipe(
+    //         switchMap(status => {
+    //             if (status && status.isLocked) {
+    //                 console.log("User is locked");
+    //                 return of(false);
+    //             }
+    //             if (status && status.suspension) {
+    //                 console.log("User is suspended");
+    //                 return of(false);
+    //             }
+    //             if (status && status.passwordStatus === 'expired') {
+    //                 console.log("Password is expired");
+    //                 return of(false);
+    //             }
+    //             // Check failed login attempts
+    //             if (status && status.failedAttempts >= 3) {
+    //                 console.log("User has exceeded login attempts");
+    //                 return of(false);
+    //             }
+    //             // Authenticate user
+    //                 console.log("User authenticated");
+    //                 return of(true);
+    //             }),
+    //             catchError((error) => this.errorHandling.handleError(error, false)),
+    //             tap((success) => { 
+    //                 if(success) { 
+    //                     this.authState.login(username, password) 
+    //                 }
+    //                 this.userProfileFacade.loginProfile(username, this.authState.user$);
+    //             })
+    //             );
+    //         }
+        
+    // } Can't get this shit to work, so I'm commenting it out for now.
+    
+
+    login(username: string, password: string)  {
+        this.authState.login(username, password).then((uid) => {
+            console.log(uid);
+            this.userProfileFacade.loginProfile(uid);
+        })
+
+
     }
 
     requestSystemAccess(user: UserApplication): Promise<void> {
@@ -118,20 +124,22 @@ export class UserSecurityFacade {
     }
 
 
-    private getUserSecurityStatus(uid: string): Observable<SecurityStatus> {
-        return this.userAdminFirestore.getUserSecurityStatus(uid).pipe(
-            // Filter out null values
-            filter((status): status is SecurityStatus => status !== null),
-            catchError((error) => {
-                return this.errorHandling.handleError(error, {
-                    isLocked: true,
-                    suspension: null,
-                    passwordStatus: 'expired',
-                    failedAttempts: 3,
-                } as SecurityStatus);
-            })
-        );
-    }
+    // private getUserSecurityStatus(uid: string): Observable<SecurityStatus> {
+    //     console.log('user-security-facade: getUserSecurityStatus');
+    //     return this.userAdminFirestore.getUserSecurityStatus(uid).pipe(
+    //         // Filter out null values
+    //         filter((status): status is SecurityStatus => status !== null),
+    //         catchError((error) => {
+    //             return this.errorHandling.handleError(error, {
+    //                 isLocked: true,
+    //                 suspension: null,
+    //                 passwordStatus: 'expired',
+    //                 failedAttempts: 3,
+    //             } as SecurityStatus);
+    //         })
+    //     );
+    // }
+
     // Password Management Methods
     validatePassword(uid: string, password: string): Observable<boolean> {
         const passwordComplexity = this.validatePasswordComplexity(password);
@@ -155,15 +163,31 @@ export class UserSecurityFacade {
                                 //-------------------------------------------//
 
     grantAccess(accountId: string, userId: string): Promise<void> {
-        return this.accountFirestore.addAuthorizedUser(accountId, userId);
+        return firstValueFrom(this.accountFirestore.getAccount(accountId).pipe(
+            switchMap(account => {
+                if(account.authorizedUsers.includes(userId)) {
+                    return of();
+                }
+                return this.accountFirestore.updateAccount(accountId, {authorizedUsers: account.authorizedUsers.concat(userId)});
+            })
+        ))
     }
 
     revokeAccess(accountId: string, userId: string): Promise<void> {
-        return this.accountFirestore.removeAuthorizedUser(accountId, userId);
+        return firstValueFrom(this.accountFirestore.getAccount(accountId).pipe(
+            switchMap(account => {
+                if(!account.authorizedUsers.includes(userId)) {
+                    return of();
+                }
+                return this.accountFirestore.updateAccount(accountId, {authorizedUsers: account.authorizedUsers.filter(id => id !== userId)});
+            })
+        ));
     }
 
-    getAccountAccessList(accountId: string): Promise<string[]> {
-        return this.accountFirestore.getAuthorizedUsers(accountId);
+    getAccountAccessList(accountId: string): Observable<string[]> {
+        return this.accountFirestore.getAccount(accountId).pipe(
+            map(account => account.authorizedUsers)
+        )
       }
 
                                 //--------------------------------------------//
@@ -171,17 +195,10 @@ export class UserSecurityFacade {
                                 //-------------------------------------------//
 
     validateAccess(user: UserModel, accountId: string): Promise<boolean> {
-        return this.accountFirestore.getAuthorizedUsers(accountId).then((authorizedUserIds: string[]) => {
-           const authorized = authorizedUserIds.includes(user.id);
-           if(authorized) {
-               this.eventLogging.logEvent(EventType.ACCOUNT_ACCESS, {
-                accountId: accountId,
-                userId: user.id,
-                authorized: true} as AccountAccessEvent);
-               return true;
-           }
-           return authorized;
-        });
+        return firstValueFrom(this.getAccountAccessList(accountId).pipe(
+            map(users => users.includes(user.id)),
+        ));
+    
     }
 
     validatePermissions(permissionType: PermissionType, accountId: string): boolean {

@@ -55,13 +55,12 @@ export interface AccountAccessEvent extends AccountEvent {
     authorized: boolean;
 }
 
-export interface JournalEntryEvent extends Event {
-    journalEntryId: string;
-    accountId: string;
+export interface AccountUpdateEvent extends AccountEvent {
     userId: string;
-    dateCreated: Date;
-    postRef: string;
+    dateUpdated: Date;
 }
+
+
 
 export interface UserEvent extends Event {
     userId: string;
@@ -82,4 +81,19 @@ export interface EventLogFilter {
     source?: string;
     userId?: string;
     accountId?: string;
+}
+
+//--------------------------------//
+/* * * * * Journal Events * * * * */
+//--------------------------------//
+export interface JournalEntryEvent extends Event {
+    journalEntryId: string;
+    accountId: string;
+    userId: string;
+    dateCreated: Date;
+    postRef: string;
+}
+
+export interface JournalEntrySubmissionEvent extends JournalEntryEvent {
+    dateSubmitted: Date;
 }

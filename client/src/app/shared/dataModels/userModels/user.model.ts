@@ -1,4 +1,4 @@
-import { NotificationFilter } from "../../states/notification-state.service";
+import { NotificationFilter } from "../../notification/notification-state.service";
 import { UserRole } from "./userRole.model";
 
 export interface UserModel{

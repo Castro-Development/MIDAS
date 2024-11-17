@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, merge } from 'rxjs';
+import { Observable, Subject, firstValueFrom, merge, of } from 'rxjs';
 import { takeUntil, map, tap } from 'rxjs/operators';
 import { AccountLedger, AccountCategory, AccountFilter, AccountSubcategories, NormalSide } from '../../../shared/dataModels/financialModels/account-ledger.model';
 import { ErrorHandlingService } from '../../../shared/errorHandling/error-handling.service';
@@ -8,6 +8,8 @@ import { AccountingStateService } from '../../../shared/account/accounting-state
 import { AuthStateService } from '../../../shared/user/auth/auth-state.service';
 import { EventLogService } from '../../../shared/eventLog/event-log.service';
 import { AccountCreationEvent, EventType } from '../../../shared/dataModels/loggingModels/event-logging.model';
+import { AccountFirestoreService } from '../../../shared/account/account-firestore.service';
+import { JournalEntryFacade } from '../../journalEntry/journal-entries.facade';
 
 
 type SubcategoryMap = {
@@ -31,10 +33,11 @@ export interface CreateAccountDTO {
 }
 
 export interface UpdateAccountDTO {
-  accountName?: string;
-  description?: string;
-  category?: AccountCategory;
-  subcategory?: string;
+  accountName: string;
+  description: string;
+  category: AccountCategory;
+  subcategory: AccountSubcategories[AccountCategory];
+    
 }
 
 export interface AccountResponseDTO extends CreateAccountDTO {
@@ -69,11 +72,11 @@ export class ChartOfAccountsFacade implements OnDestroy {
 
   constructor(
     private accountingStateService: AccountingStateService,
-    private errorHandlingService: ErrorHandlingService,
-    private authState: AuthStateService,
+    private accountFirestoreService: AccountFirestoreService,
     private eventLog: EventLogService,
-    private router: Router,
-    // private accountingEventLog: AccountingEventLogService
+    private authState: AuthStateService,
+    private journalFacade: JournalEntryFacade,
+    private errorHandlingService: ErrorHandlingService,
   ) {}
 
   /**
@@ -96,13 +99,13 @@ export class ChartOfAccountsFacade implements OnDestroy {
     
     const accountCreated = this.accountingStateService.createAccount(accountData, accountNumber, accountData.createdBy).pipe(
       tap((account: AccountLedger) => {
-        this.eventLog.logEvent(EventType.ACCOUNT_CREATED, {
+        this.eventLog.logAccountCreationEvent({
           type: EventType.ACCOUNT_CREATED,
           payload: null,
           accountId: account.accountNumber,
           userId: accountData.createdBy,
           dateCreated: new Date(),
-          postRef: accountData.postRef,
+          postRef: 'inactive-account',
         } as AccountCreationEvent);
       })
     );
@@ -136,67 +139,62 @@ export class ChartOfAccountsFacade implements OnDestroy {
    * @param updates The account updates to apply
    * @returns Observable<AccountResponseDTO>
    */
-  // updateAccount(accountId: string, updates: UpdateAccountDTO): Observable<AccountResponseDTO> {
-  //   return this.accountingStateService.updateAccount(accountId, updates).pipe(
-  //     tap(account => {
-  //       this.eventBus.emit({
-  //         type: 'ACCOUNT_UPDATED',
-  //         payload: account
-  //       });
-  //       this.accountingEventLog.logEvent({
-  //         type: 'ACCOUNT_UPDATE',
-  //         accountId: account.id,
-  //         userId: this.authState.getCurrentUserId(),
-  //         timestamp: new Date(),
-  //         details: {
-  //           before: account,
-  //           after: { ...account, ...updates }
-  //         }
-  //       });
-  //     })
-  //   );
-  // }
+
+updateAccount(accountId: string, updates: Partial<AccountLedger>): Promise<Partial<AccountLedger>> {
+    return this.accountFirestoreService.updateAccount(accountId, updates).then(
+      async () => { // Make this an async function
+        const userId = await firstValueFrom(this.authState.getUid$);
+        if (!userId) {
+          throw new Error('User ID not found');
+        }
+
+        this.eventLog.logAccountUpdate({
+          type: EventType.ACCOUNT_UPDATED,
+          payload: null,
+          accountId: accountId,
+          userId: userId,
+          dateUpdated: new Date()
+        });
+      }).then(() => {
+        return updates;
+      });
+  }
+
 
   /**
    * Deactivates an account if it has no balance
    * @param accountId The ID of the account to deactivate
    * @returns Observable<boolean>
    */
-  // deactivateAccount(accountId: string): Observable<boolean> {
-  //   return this.accountingStateService.getAccount(accountId).pipe(
-  //     map(account => {
-  //       if (!account) {
-  //         this.errorHandlingService.handleSystemError(
-  //           'ACCOUNT_NOT_FOUND',
-  //           'Account not found'
-  //         );
-  //         return false;
-  //       }
+  deactivateAccount(accountId: string): Observable<boolean> {
+    return this.accountFirestoreService.getAccount(accountId).pipe(
+      map(account => {
+        if (!account) {
+          this.errorHandlingService.handleError(
+            'ACCOUNT_NOT_FOUND',
+            false
+          );
+          return false;
+        }
         
-  //       if (account.balance !== 0) {
-  //         this.errorHandlingService.handleBusinessValidation(
-  //           'ACCOUNT_HAS_BALANCE',
-  //           'Cannot deactivate account with non-zero balance'
-  //         );
-  //         return false;
-  //       }
+        if (account.currentBalance !== 0) {
+          console.warn('Account has balance, cannot deactivate');
+          return false;
+        }
 
-  //       this.accountingStateService.deactivate(accountId);
-  //       this.eventBus.emit({
-  //         type: EventType.ACCOUNT_DEACTIVATED,
-  //         payload: { accountId }
-  //       });
-  //       this.accountingEventLog.logEvent({
-  //         type: 'ACCOUNT_DEACTIVATION',
-  //         accountId: accountId,
-  //         userId: this.authState.getUid$,
-  //         timestamp: new Date(),
-  //         details: account
-  //       });
-  //       return true;
-  //     })
-  //   );
-  // }
+        this.accountFirestoreService.deactivateAccount(accountId);
+        
+        this.eventLog.logAccountDeactivation({
+          type: EventType.ACCOUNT_DEACTIVATED,
+          payload: null,
+          accountId: accountId,
+          userId: this.authState.getUid$,
+          dateCreated: new Date(),
+        })
+        return true;
+      })
+    );
+  }
 
   /**
    * Validates an account number according to business rules
@@ -316,7 +314,6 @@ export class ChartOfAccountsFacade implements OnDestroy {
                                           /* * * * * Creation & Setup Methods * * * * */
                                           //------------------------------------------//
 
-  // createAccount(accountData: CreateAccountDTO): Observable<AccountResponseDTO>
   // createChildAccount(parentId: string, accountData: CreateAccountDTO): Observable<AccountResponseDTO>
   // importAccounts(accounts: AccountImportDTO[]): Observable<ImportResult>
   // createAccountTemplate(templateData: AccountTemplateDTO): Observable<AccountTemplateDTO>

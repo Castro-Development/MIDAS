@@ -46,6 +46,7 @@ export class UserAdminFirestoreService {
 
     getUserSecurityStatus(username: string): Observable<SecurityStatus | null>  {
         const uid = this.getUid(username);
+        console.log('getting user security status, uid: ', uid);
         return uid.pipe(
             switchMap((uid) => {
                 const userSecurityDocRef = doc(this.firestore, 'userSecurity', uid);

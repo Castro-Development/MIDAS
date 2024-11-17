@@ -3,26 +3,26 @@ import { UserApplication, UserModel } from "../../dataModels/userModels/user.mod
 import { UserProfileStateService } from "./user-profile-state.service";
 import { SecurityStatus } from "../auth/user-security.facade";
 import { User } from "firebase/auth";
-import { Observable } from "rxjs";
+import { Observable, catchError, filter, from, map, tap } from "rxjs";
+import { ErrorHandlingService } from "../../errorHandling/error-handling.service";
 
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserProfileFacade{
-    userProfileState = inject(UserProfileStateService)
+    userProfileState = inject(UserProfileStateService);
 
                                 //-------------------------------//
                                 /* * * * * State Observables * * */
                                 //-------------------------------//
     
-    userProfile$: Observable<UserModel | null> = this.userProfileState.userProfile$;
-
-    username$: Observable<string | null> = this.userProfileState.username$;
+    
 
     
 
     constructor(
+        private errorHandling: ErrorHandlingService
     ){}
         // User Profile
 
@@ -44,7 +44,9 @@ export class UserProfileFacade{
     // setPrimaryContact(userId: string, contactType: ContactType): Observable<void>;
 
     // // Profile Image
-    // uploadProfileImage(userId: string, image: File): Observable<void>;
+    uploadProfileImage(image: File): Observable<void>{
+        throw new Error('Method not implemented.');
+    }
     // getProfileImage(userId: string): Observable<ProfileImage>;
     // removeProfileImage(userId: string): Observable<void>;
     // cropProfileImage(userId: string, cropSettings: CropSettings): Observable<void>;
@@ -54,9 +56,19 @@ export class UserProfileFacade{
                                 //-----------------------------------------//
     // // Profile Operations
     // createProfile(userId: string, initialData: ProfileData): Observable<void>;
-    // getFullProfile(userId: string): Observable<UserProfile>;
+    private getProfile(userId: string): Observable<UserModel> {
+        return from(this.userProfileState.getProfileState(userId)).pipe(
+            filter((profile): profile is UserModel => profile !== null),
+            catchError(() => this.errorHandling.handleError('User not found', {} as UserModel))
+        );
+    }
     // archiveProfile(userId: string): Observable<void>;
     // restoreProfile(userId: string): Observable<void>;
+    loginProfile(userId: string) {
+        console.log('loginProfile');
+        this.getProfile(userId);
+        console.log('loginProfile end');
+    }
 
     // // Profile Validation
     // validateProfileCompleteness(userId: string): Observable<CompletenessResult>;

@@ -1,10 +1,10 @@
 import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
-import { ChartOfAccountsComponent } from "./chartOfAccount/feature/chart-of-accounts.component";
-import { JournalEntryFormComponent } from "./journalEntryForm/feature/journal-entry-form.component";
-import { PortalDashboardComponent } from "./portalDashboard/portal-dashboard.component";
+import { Routes, RouterModule, withDebugTracing } from "@angular/router";
+import { ChartOfAccountsComponent } from "./chartOfAccount/chart-of-accounts.component";
 import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
-import { JournalEntryReviewComponent } from "./journalEntryReview/feature/journal-entry-review.component";
+import { JournalEntryFormComponent } from "./journalEntry/journalEntryForm/journal-entry-form.component";
+import { JournalEntryReviewComponent } from "./journalEntry/journalEntryReview/journal-entry-review.component";
+import { PortalDashboardComponent } from "./portalDashboard/portal-dashboard.component";
 
 const routes: Routes = [
     {
@@ -37,14 +37,6 @@ const routes: Routes = [
         canActivate: [AuthGuardService],
         component: PortalDashboardComponent
     },
-    // {not yet implemented
-    //     path: 'business-gl-functions',
-    //     loadChildren: () => import('./adminBusinessGLFunctions/admin-business-glfunctions.module').then(m => m.AdminBusinessGLFunctionsModule)
-    // },
-    {
-        path: 'general-ledger-functions',
-        loadChildren: () => import('./adminGeneralLedgerFunctions/admin-general-ledger-functions.module').then(m => m.AdminGeneralLedgerFunctionsModule)
-    }
 ];
 
 @NgModule({

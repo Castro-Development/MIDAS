@@ -4,9 +4,7 @@ import { AccountLedger, AccountFilter, NormalSide } from "../dataModels/financia
 import { ErrorHandlingService } from "../errorHandling/error-handling.service";
 import { AccountFirestoreService } from "./account-firestore.service";
 import { FilteringService } from "../filter/filter.service";
-import { AccountResponseDTO, CreateAccountDTO } from "../../portalModule/chartOfAccount/back-end/chart-of-accounts.facade";
-import { serverTimestamp } from "firebase/firestore";
-import { timeStamp } from "console";
+import { CreateAccountDTO } from "../../portalModule/chartOfAccount/back-end/chart-of-accounts.facade";
 
   
   @Injectable({ providedIn: 'root' })
@@ -33,7 +31,7 @@ import { timeStamp } from "console";
     }
 
     initializeAccountingState() {
-      this.accountingFirestoreService.accounts$.pipe(
+      this.accountingFirestoreService.getAllAccounts().pipe(
         takeUntil(this.destroy$),
         catchError(error => {
           return this.errorHandlingService.handleError(error, [] as AccountLedger[]);
@@ -45,10 +43,14 @@ import { timeStamp } from "console";
   
     
       
-    readonly selectedAccount$ = this.selectedAccountSubject.pipe(
-      catchError(error => {return this.errorHandlingService.handleError(error, [] as AccountLedger[])}),
-      distinctUntilChanged()
+    readonly selectedAccount$ = this.accounts$.pipe(
+      switchMap(accounts => this.selectedAccountSubject.pipe(
+        map(selectedAccountNumber => accounts.find(account => account.accountNumber === selectedAccountNumber))
+      )),
+      distinctUntilChanged(),
+      shareReplay(1)
     );
+    
 
     readonly filteredAccounts$ = combineLatest([this.accounts$, this.filterSubject]).pipe(
       map(([journalEntries, filter]) => this.filterService.filter(journalEntries, filter, [
@@ -108,21 +110,4 @@ import { timeStamp } from "console";
       );
     }
 
-    deactivateAccount(accountId: string): Promise<void> {
-      return this.accountingFirestoreService.deactivateAccount(accountId);
-    }
   }
-
-    //Possible method?
-  // refreshBalances(): Observable<AccountBalance[]> {
-  //   this.loadingSubject.next(true);
-
-  //   return this.accountFirestore.getAllCurrentBalances().pipe(
-  //     tap(balances => {
-  //       const balanceMap = new Map<string, number>();
-  //       (balances as AccountBalance[]).forEach(b => balanceMap.set(b.accountId, b.balance));
-  //       this.accountState.current.next(balanceMap);
-  //     }),
-  //     tap(() => this.loadingSubject.next(false))
-  //   );
-  // }

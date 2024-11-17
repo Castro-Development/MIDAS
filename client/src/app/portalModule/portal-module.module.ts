@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminGeneralLedgerFunctionsModule } from './adminGeneralLedgerFunctions/admin-general-ledger-functions.module';
 import { PortalDashboardComponent } from './portalDashboard/portal-dashboard.component';
 import { PortalRoutingModule } from './portal-routing.module';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -14,22 +13,22 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ChartOfAccountsCard } from './chartOfAccount/ui/chart-of-accounts.card';
-import { FilterDialogComponent } from './chartOfAccount/utils/account-filter.component';
-import { AccountEventLogComponent } from './accountEventLog/feature/account-event-log.component';
-import { AccountEventCard } from './accountEventLog/ui/account-event.card';
-import { AccountLedgerComponent } from './accountLedger/feature/account-ledger.component';
-import { AccountLedgerCard } from './accountLedger/ui/account-ledger.card';
-import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-accounts.component';
-import { JournalEntryFormCard } from './journalEntryForm/ui/journal-entry-card.component';
-import { JournalEntryFormComponent } from './journalEntryForm/feature/journal-entry-form.component';
-import { JournalEntryReviewComponent } from './journalEntryReview/feature/journal-entry-review.component';
-import { JournalReviewCard } from './journalEntryReview/ui/journal-entry-review.card';
+import { ChartOfAccountsCard } from './chartOfAccount/chart-of-accounts.card';
+import { FilterDialogComponent } from './chartOfAccount/account-filter.component';
+import { AccountEventLogComponent } from './accountEventLog/account-event-log.component';
+import { AccountEventCard } from './accountEventLog/account-event.card';
+import { AccountLedgerComponent } from './accountLedger/account-ledger.component';
+import { AccountLedgerCard } from './accountLedger/account-ledger.card';
+import { ChartOfAccountsComponent } from './chartOfAccount/chart-of-accounts.component';
+import { JournalEntryFormCard } from './journalEntry/journalEntryForm/journal-entry-card.component';
+import { JournalEntryFormComponent } from './journalEntry/journalEntryForm/journal-entry-form.component';
+import { JournalEntryReviewComponent } from './journalEntry/journalEntryReview/journal-entry-review.component';
+import { JournalReviewCard } from './journalEntry/journalEntryReview/journal-entry-review.card';
 
 @NgModule({
   declarations: [
-    JournalEntryFormComponent,
     JournalEntryFormCard,
+    JournalEntryFormComponent,
     PortalDashboardComponent,
     ChartOfAccountsCard,
     FilterDialogComponent,
@@ -45,7 +44,6 @@ import { JournalReviewCard } from './journalEntryReview/ui/journal-entry-review.
   ],
   imports: [
     CommonModule,
-    AdminGeneralLedgerFunctionsModule,
     PortalRoutingModule,
     FormsModule,
     ReactiveFormsModule,

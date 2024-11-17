@@ -1,6 +1,6 @@
-import { BehaviorSubject, Observable, Subject, catchError, combineLatest, distinctUntilChanged, from, map, of } from "rxjs";
+import { BehaviorSubject, Observable, Subject, catchError, combineLatest, distinctUntilChanged, from, map, of, takeUntil } from "rxjs";
 import { JournalEntry, JournalEntryStatus } from "../../shared/dataModels/financialModels/account-ledger.model";
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { JournalEntryFirestoreService } from "./journal-firestore.service";
 import { ErrorHandlingService } from "../../shared/errorHandling/error-handling.service";
 import { FilteringService } from "../../shared/filter/filter.service";
@@ -17,15 +17,15 @@ import { query } from "@angular/fire/firestore";
   }
 
   @Injectable({ providedIn: 'root' })
-  export class JournalEntryStateService {
+  export class JournalEntryStateService implements OnDestroy{
     
     private readonly journalEntriesSubject = new BehaviorSubject<JournalEntry[]>([] as JournalEntry[]);
     private filterSubject = new Subject<JournalFilter>();
+    private destroyedSubject = new Subject<void>();
+
     private readonly journalEntries$ = this.journalEntriesSubject.asObservable();
-  
-
-
-    private filteredJournalEntriesSubject = new BehaviorSubject<JournalEntry[]>([]);
+    private readonly filter$ = this.filterSubject.asObservable();
+    private readonly destroyed$ = this.destroyedSubject.asObservable();
 
     constructor(
       private journalEntryFirestoreService: JournalEntryFirestoreService,
@@ -33,15 +33,21 @@ import { query } from "@angular/fire/firestore";
       private filterService: FilteringService,
       private firestore: Firestore
     ) {
-      this.initializeJournalEntries(journalEntryFirestoreService, errorHandlingService);
+      this.initializeJournalEntries();
     }
     
-    initializeJournalEntries(journalEntryService: JournalEntryFirestoreService, errorHandlingService: ErrorHandlingService) {
-      journalEntryService.journalEntries$.subscribe(
-        (journalEntries) => {
-          this.journalEntriesSubject.next(journalEntries);
-        }
-      );
+    initializeJournalEntries() {
+      this.journalEntryFirestoreService.getAllEntries().subscribe( (journalEntries) => {
+        this.journalEntriesSubject.next(journalEntries);
+        takeUntil(this.destroyed$)
+      })
+    }
+
+    ngOnDestroy(): void {
+      this.journalEntriesSubject.complete();
+      this.filterSubject.complete();
+      this.destroyedSubject.next();
+      this.destroyedSubject.complete();
     }
     
     readonly filteredJournalEntries$ = combineLatest([this.journalEntries$, this.filterSubject]).pipe(
@@ -63,10 +69,16 @@ import { query } from "@angular/fire/firestore";
     getEntryByPostRef(postRef: string): Observable<JournalEntry | undefined> {
       return this.journalEntries$.pipe(
         map(journalEntries => journalEntries.find(entry => entry.postReference === postRef)),
+        catchError(() => {
+          console.warn('Failed to get journal entry state, querying by post reference');
+          return this.journalEntryFirestoreService.getEntry(postRef).pipe(
+            // Map null to undefined to match the return type
+            map(entry => entry ?? {} as JournalEntry),
+            catchError(() => this.errorHandlingService.handleError('Failed to get journal entry', undefined))
+          )
+        })
       );
-      //This should return the journal entry that corresponds to the account creation post reference, which is that postRef: string
-      // Should just need to search the journalEntries for a transaction that has that postRef
-  }
+    }
 
     getJournalEntriesForAccount(accountId: string): Observable<JournalEntry[]> {
       //TODO: Hide firestore access behind journalEntryFirestoreService

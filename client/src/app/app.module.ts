@@ -31,10 +31,8 @@ import { UserModule } from './userModule/user-module.module';
 import { AdminModule } from './adminModule/admin-module.module';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { NavbarModule } from './shared/navbar/navbar.module';
-import { UserService } from './shared/userService/data-access/user.service';
-import { ErrorHandlingService } from './shared/services/error-handling.service';
-import { JournalEntryFacade } from './shared/facades/transactionManagementFacades/journal-entries.facade';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { ErrorHandlingService } from './shared/errorHandling/error-handling.service';
 
 
 

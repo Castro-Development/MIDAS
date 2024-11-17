@@ -3,13 +3,52 @@ import { Router } from 'express';
 import { inject } from '@angular/core';
 import { async } from 'rxjs';
 import { UserProfileFacade } from '../../shared/user/profile/user-profile.facade';
+import { UserSecurityFacade } from '../../shared/user/auth/user-security.facade';
 @Component({
   selector: 'router-outlet',
-  templateUrl: './splash-screen-component.component.html',
-  styleUrl: './splash-screen-component.component.scss'
+  template: `
+  <div class="flex items-center flex-col pt-56 h-[90vh]  text-white" style="background-color:#242525">
+  <div class="h-screen">
+    <img src="../../../assets/Logo.png" style="max-height: 300px; margin:auto" class="justify-center">
+    <!-- <h1 class="text-4xl text-center font-bold my-10">Welcome to
+
+      <span class="text-7xl text-amber-400">M.I.D.A.S</span>
+    </h1> -->
+
+    <div class="flex flex-col items-center gap-3
+     justify-center">
+      @if(this.userSecurity.userAuthState.isLoggedIn$ | async){
+      <h1 class="text-2xl">
+        You are logged in as <span class="font-bold bg-amber-500 rounded-md p-2 text-white">
+          {{userProfile.userProfileState.username$ | async}}
+        </span>
+      </h1>
+      }
+      @else{
+        <h1 class="text-2xl">You are not currently logged in</h1>
+        <a routerLink="/login">
+          <button class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-md" style="min-width: 120px;">
+            Login
+          </button>
+        </a>
+
+        <a routerLink="/request-system-access">
+          <button class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-md" style="min-width: 120px;">
+            Register
+          </button>
+        </a>
+      }
+
+    </div>
+
+  </div>
+</div>
+  `,
 })
 export class SplashScreenComponent {
   userProfile = inject(UserProfileFacade);
+  userSecurity = inject(UserSecurityFacade);
+
   constructor() {
     
   }

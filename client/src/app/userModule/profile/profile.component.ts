@@ -8,21 +8,68 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserModel } from '../../shared/dataModels/userModels/user.model';
-import { UserService } from '../../shared/userService/data-access/user.service';
 import { Auth, getAuth } from '@angular/fire/auth';
+import { UserProfileFacade } from '../../shared/user/profile/user-profile.facade';
 
 @Component({
   selector: 'app-user-profile',
-  templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss'
+  template: `
+  <div class="flex items-center p-10" style="background-color:#242525; color:white;">
+  <button routerLink="/" class=" border-black mx-auto rounded-md disabled:bg-amber-400 py-2 px-3 mt-3 bg-amber-600 text-white font-bold">
+    Return to Users
+    </button>
+</div>
+<div class="flex" style="background-color:#242525; color:white;" >
+  <div class="container mx-auto my-0 p-8 shadow-md rounded-md max-w-md" style="background-color:#1b1c1f; color: white; max-width:600px">
+    <h1 class="text-3xl text-gray-100 font-bold mb-4 text-center">
+      {{userProfile.userProfileState.username$ | async}}'s User Profile 
+    </h1>
+    <div>
+      <div class="text-center">
+        <!-- <div
+          class="rounded-full bg-blue-500 my-4 text-4xl w-24 h-24 inline-flex items-center justify-center font-bold text-white">
+          {{user.fullName[0] | uppercase}}
+        </div> -->
+
+        <img src="../../../assets/Male Icon.png" class="py-10" style="max-width: 300px; margin:auto">
+      </div>
+
+      <button type="submit" class="w-full mt-4 border rounded-md border-black disabled:bg-amber-400 py-2 px-3 my-5 bg-amber-600 text-white font-bold">
+      Update Profile Image
+      </button>
+
+      <hr class="py-4 border-gray-100">
+      <div class="grid grid-cols-2 gap-4">
+        <div class="text-gray-100 font-bold">Full Name</div>
+        <div class="text-gray-300 font-medium">{{userProfile.userProfileState.username$ | async}} </div> <!-- Damien: erased " | titlecase" from the two properties on this line -->
+<!-- 
+        <div class="text-gray-100 font-bold">Email</div>
+        <div class="text-gray-300 font-medium">{{profileDetail.email}}</div> Damien: Commented as we don't need email-->
+
+        <div class="text-gray-200 font-bold">
+          Role
+        </div>
+
+        <div class="text-gray-300 font-medium">{{userProfile.userProfileState.activeRole$ | async}}</div>
+        <div class="text-gray-100 font-bold">
+          Phone
+        </div>
+        <div class="text-gray-300 font-medium">{{userProfile.userProfileState.viewPhone$ | async}}</div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+`,
 })
 export class ProfileComponent {
 
-  public userService = inject(UserService);
+  userProfile = inject(UserProfileFacade);
 
-  public userRole$ = this.userService.viewRole$;
-  public userPhone$ = this.userService.viewPhone$;
-  public userName$ = this.userService.username$;
+  readonly username$ = this.userProfile.userProfileState.username$;
+  readonly activeRole$ = this.userProfile.userProfileState.activeRole$;
+  readonly viewPhone$ = this.userProfile.userProfileState.viewPhone$;
 
   constructor(private router: Router, private auth: Auth) { }
 
@@ -39,19 +86,11 @@ export class ProfileComponent {
     }
   }
 
-  // Actually calling the placeInProfile method once we obtain an image. placeInProfile is
-  // unimplemented as instructed, this is simply calling a function that does nothing.
-  //
-  // You should just be able to replace whatever is getting the profile image for our users
-  // with wherever you wanna store these pictures in the DB. Maybe a helper method to get
-  // profile pictures would be useful?
   uploadProfileImage(): void {
     // Makes sure there is a selected file
     if (this.selectedFile) {
 
-      // This method call is kind of upset I think because the actual placeInProfile method
-      // is nothing. Once you wire that up, this should work I think?
-      this.userService.uploadProfilePicture(this.userService.getCurrentUser().id, this.selectedFile).then();
+      this.userProfile.uploadProfileImage(this.selectedFile);
     }
     else {
       console.warn('No file selected');
@@ -59,9 +98,6 @@ export class ProfileComponent {
   }
 
 
-  public refreshUser() {
-    console.log(this.userService.userProfile$);
-  }
 
 
 }

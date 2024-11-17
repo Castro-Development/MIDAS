@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap, finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../shared/errorHandling/error-handling.service';
-import { JournalEntry } from '../../shared/dataModels/financialModels/account-ledger.model';
+import { JournalEntry, JournalTransaction } from '../../shared/dataModels/financialModels/account-ledger.model';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { QueryConstraint, orderBy, query, where } from 'firebase/firestore';
 import { EventLogService } from '../../shared/eventLog/event-log.service';
@@ -10,12 +10,6 @@ import { EventType } from '../../shared/dataModels/loggingModels/event-logging.m
 import { AuthStateService } from '../../shared/user/auth/auth-state.service';
 import { AccountFirestoreService } from '../../shared/account/account-firestore.service';
 
-interface JournalTransaction {
-  accountId: string;
-  description?: string;
-  debitAmount: number;
-  creditAmount: number;
-}
 
 enum JournalEntryStatus {
   DRAFT = 'DRAFT',
@@ -122,10 +116,23 @@ export class JournalEntryFacade {
           status: JournalEntryStatus.PENDING
         };
 
+        entry.transactions.forEach(transaction => {
+          this.eventLog.logPendingAccountTransaction(transaction as JournalTransaction);
+        })
+
+        this.eventLog.logJournalEntrySubmission({
+          type: EventType.JOURNAL_ENTRY_SUBMITTED,
+          payload: null,
+          dateSubmitted: new Date(), 
+          journalEntryId: entry.id, 
+          accountId: entry.createdBy, 
+          userId: entry.createdBy,
+          dateCreated: entry.createdAt,
+          postRef: '',
+
+        })
+
         return this.saveJournalEntry(updatedEntry);
-      }),
-      tap(() => {
-        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_SUBMITTED, { entryId });
       }),
     //   catchError(this.errorHandling.handleError('submitForApproval')),
       finalize(() => this.loadingSubject.next(false))
@@ -153,12 +160,16 @@ export class JournalEntryFacade {
           approvedAt: new Date()
         };
 
+        this.eventLog.logJournalEntryApproval({
+          type: EventType.JOURNAL_ENTRY_APPROVED,
+          payload: null,
+          dateApproved: new Date(),
+          journalEntryId: entry.id,
+        })
+
         return this.saveJournalEntry(updatedEntry).pipe(
           switchMap(() => this.postToAccounts(updatedEntry))
         );
-      }),
-      tap(() => {
-        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_APPROVED, { entryId, approvedBy: currentUserId });
       }),
     //   catchError(this.errorHandling.handleError('approveEntry')),
       finalize(() => this.loadingSubject.next(false))
@@ -183,10 +194,15 @@ export class JournalEntryFacade {
           notes: reason
         };
 
+        this.eventLog.logJournalEntryRejection({
+          type: EventType.JOURNAL_ENTRY_REJECTED,
+          payload: null,
+          dateRejected: new Date(),
+          journalEntryId: entry.id,
+          reason: reason
+        })
+
         return this.saveJournalEntry(updatedEntry);
-      }),
-      tap(() => {
-        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_REJECTED, { entryId, reason });
       }),
     //   catchError(this.errorHandling.handleError('rejectEntry')),
       finalize(() => this.loadingSubject.next(false))
@@ -214,7 +230,6 @@ export class JournalEntryFacade {
 
     // Check required fields
     if (!entry.id) errors.push('Entry number is required');
-    if (!entry.date) errors.push('Date is required');
     if (!entry.description) errors.push('Description is required');
     if (!entry.transactions?.length) errors.push('At least one transaction is required');
 
@@ -234,9 +249,7 @@ export class JournalEntryFacade {
   }
 
   private postToAccounts(entry: JournalEntry): Observable<void> {
-    const returnVal = this.accountService.postJournalEntry(entry);
-    
-    return returnVal;
+    throw new Error('Method not implemented.');
   }
 
   // These methods would interact with your Firestore service
@@ -291,4 +304,21 @@ export class JournalEntryFacade {
         })
     );
 }
+
+  generatePostRef(accountName: string): string {
+    // Step 1: Normalize account name (remove spaces and make lowercase)
+    const normalizedAccountName = accountName.replace(/\s+/g, '-').toLowerCase();
+
+    // Step 2: Get the current date in YYYYMMDD format
+    const date = new Date();
+    const formattedDate = `${date.getFullYear()}${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, '0')}${date.getDate().toString().padStart(2, '0')}`;
+
+    // Step 3: Generate a unique identifier (e.g., UUID or timestamp)
+    const uniqueId = Date.now().toString();
+
+    // Step 4: Combine parts into the postRef
+    return `${formattedDate}-${normalizedAccountName}-${uniqueId}`;
+  }
 }

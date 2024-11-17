@@ -5,6 +5,7 @@ import { AdminExpiredPasswordReportComponent } from './adminExpiredPasswordRepor
 import { AdminDashboardComponent } from './adminDashboard/admin-dashboard.component'; 
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminUserApplicationsComponent } from './admin-user-applications/admin-user-applications.component';
+import { AdminUserApplicationReviewComponent } from './adminUserApplicationReview/admin-user-application-review.component';
 
 @NgModule({
   declarations: [
@@ -12,6 +13,7 @@ import { AdminUserApplicationsComponent } from './admin-user-applications/admin-
     AdminDashboardComponent,
     AdminUsersChartComponent,
     AdminUserApplicationsComponent,
+    AdminUserApplicationReviewComponent,
   ],
   imports: [
     CommonModule,
