@@ -21,10 +21,10 @@ import { AccountEventCard } from './accountEventLog/ui/account-event.card';
 import { AccountLedgerComponent } from './accountLedger/feature/account-ledger.component';
 import { AccountLedgerCard } from './accountLedger/ui/account-ledger.card';
 import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-accounts.component';
-import { JournalEntryFormCard } from './journalEntryForm/ui/journal-entry-card.component';
-import { JournalEntryFormComponent } from './journalEntryForm/feature/journal-entry-form.component';
-import { JournalEntryReviewComponent } from './journalEntryReview/feature/journal-entry-review.component';
-import { JournalReviewCard } from './journalEntryReview/ui/journal-entry-review.card';
+import { JournalEntryFormCard } from './journalEntry/entryForm/ui/journal-entry-card.component';
+import { JournalEntryFormComponent } from './journalEntry/entryForm/feature/journal-entry-form.component';
+import { JournalEntryReviewComponent } from './journalEntry/entryReview/feature/journal-entry-review.component';
+import { JournalReviewCard } from './journalEntry/entryReview/ui/journal-entry-review.card';
 
 @NgModule({
   declarations: [

@@ -7,79 +7,27 @@ import { FirebaseApp } from "@angular/fire/app";
 import { serverTimestamp } from "firebase/firestore";
 import { UserRole } from "../dataModels/userModels/userRole.model";
 import { ErrorHandlingService } from "../services/error-handling.service";
-import { UserAdminFirestoreService } from "../services/firestoreService/user-admin-firestore.service";
 import { SecurityStatus } from "../facades/userFacades/user-security.facade";
 import { User as FirebaseUser } from "firebase/auth";
+import { UserAdminFirestoreService } from "../../adminModule/back-end/firestore/user-admin-firestore.service";
   
   @Injectable({ providedIn: 'root' })
   export class UserProfileStateService {
     
-    private readonly userProfileSubject = new Subject<UserModel>();
+    
+    private readonly userProfileSubject = new BehaviorSubject<UserModel>({} as UserModel);
 
     private readonly destroy$ = new Subject<void>();
 
+    readonly userProfile$ = this.userProfileSubject.asObservable();
+
     constructor(
-        private authStateService: AuthStateService,
         private firestoreService: UserFirestoreService,
         private errorHandling: ErrorHandlingService,
         private userAdminService: UserAdminFirestoreService
-    ) {
-        this.initProfileState();
-    }
+    ) { }
   
-    initProfileState() {
-        const emptyUser: UserModel = {
-            id: '',
-            username: '',
-            firstname: '',
-            lastname: '',
-            phone: '',
-            street: '',
-            zip: '',
-            state: '',
-            password: '',
-            role: UserRole.Guest,
-            notificationFilter: {
-                type: 'all',
-                priority: 'all',
-                category: 'all'
-            }
-        }
-        
-        this.destroy$.next();
-
-        this.authStateService.user$.pipe(
-            switchMap(user => {
-                if (!user) {
-                    return of(emptyUser);
-                }
-                return this.firestoreService.getUserObservable(user.uid).pipe(
-                    switchMap(profile => profile ? of(profile) : of(emptyUser)), //catcherror wasn't working properly, might refactor
-                    tap((profile: UserModel) => {profile ? this.userProfileSubject.next(profile) : this.userProfileSubject.next(emptyUser)}),
-                    takeUntil(this.destroy$),
-                )
-            })
-        )
     
-        // this.authStateService.isLoggedIn$.pipe(
-        //     switchMap(isLoggedIn => {
-        //         if (!isLoggedIn) {
-        //             return of({ profile: null });
-        //         }
-        //         return this.authStateService.getUid$.pipe(
-        //             // Explicitly handle undefined/null case
-        //             filter((uid): uid is string => uid !== null && uid !== undefined),
-        //             map(uid => 
-        //                 this.firestoreService.getUserObservable(uid).pipe(
-        //                     catchError(error => this.errorHandling.handleError(error, emptyUser)),
-        //                     tap((profile: UserModel) => {profile ? this.userProfileSubject.next(profile) : this.userProfileSubject.next(emptyUser)}),
-        //                     takeUntil(this.destroy$),
-        //                 )
-        //             )
-        //         );
-        //     })
-        // ); 
-    }
     
     // Don't forget to add in your class:
     
@@ -101,6 +49,36 @@ import { User as FirebaseUser } from "firebase/auth";
                 return this.firestoreService.createProfile(user);
             })
         );
+    }
+
+    saveProfileState(username: string, user$: Observable<FirebaseUser | null>) {
+        user$.pipe(
+            tap((user) => {
+                if (user) {
+                    this.firestoreService.getUserObservable(user.uid).pipe(
+                        tap(profile => {
+                            console.log(profile);
+                            if(profile) {this.userProfileSubject.next(profile)}
+                            else {this.errorHandling.handleError('User not found', null)}
+                        })
+                    )
+                }
+                console.log('user not found in saveProfileState');
+            })
+        )
+    }
+
+    getProfileState(userId: string): Promise<UserModel | null> {
+        console.log('getProfileState called uid:' + userId);
+        return this.firestoreService.getUser(userId).then(
+            (profile) => {
+                console.log('getProfileState profile:' + profile);
+                if(profile) {
+                    this.userProfileSubject.next(profile);
+                }
+                return profile;
+            }
+        )
     }
     
   }

@@ -8,8 +8,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserModel } from '../../shared/dataModels/userModels/user.model';
-import { UserService } from '../../shared/userService/data-access/user.service';
 import { Auth, getAuth } from '@angular/fire/auth';
+import { AuthStateService } from '../../shared/states/auth-state.service';
+import { UserProfileFacade } from '../../shared/facades/userFacades/user-profile.facade';
 
 @Component({
   selector: 'app-user-profile',
@@ -18,13 +19,13 @@ import { Auth, getAuth } from '@angular/fire/auth';
 })
 export class ProfileComponent {
 
-  public userService = inject(UserService);
+  public profileFacade = inject(UserProfileFacade);
 
-  public userRole$ = this.userService.viewRole$;
-  public userPhone$ = this.userService.viewPhone$;
-  public userName$ = this.userService.username$;
+  public userRole$ = this.profileFacade.viewRole$;
+  public userPhone$ = this.profileFacade.viewPhone$;
+  public userName$ = this.profileFacade.username$;
 
-  constructor(private router: Router, private auth: Auth) { }
+  constructor(private router: Router, private authState: AuthStateService) { }
 
   // Stores the user's profile image
   selectedFile: File | null = null;
@@ -46,21 +47,23 @@ export class ProfileComponent {
   // with wherever you wanna store these pictures in the DB. Maybe a helper method to get
   // profile pictures would be useful?
   uploadProfileImage(): void {
-    // Makes sure there is a selected file
-    if (this.selectedFile) {
-
-      // This method call is kind of upset I think because the actual placeInProfile method
-      // is nothing. Once you wire that up, this should work I think?
-      this.userService.uploadProfilePicture(this.userService.getCurrentUser().id, this.selectedFile).then();
-    }
-    else {
-      console.warn('No file selected');
-    }
+    const uid = this.authState.getUid$;
+    uid.subscribe((uid) => {
+      if(uid && this.selectedFile){
+        this.profileFacade.uploadProfilePicture(this.authState.getUid$, this.selectedFile);
+      } else if(!this.selectedFile){
+        console.warn('No file selected');
+      } else if(!uid){
+        console.warn('No user ID found');
+      } else{
+        console.warn('Unknown error - Profile Picture not uploaded');
+      }
+    });
   }
 
 
   public refreshUser() {
-    console.log(this.userService.userProfile$);
+    console.log(this.authState.userProfile$);
   }
 
 

@@ -2,20 +2,20 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
-import { UserService } from '../userService/data-access/user.service';
 import { UserRole } from '../dataModels/userModels/userRole.model';
+import { AuthStateService } from '../states/auth-state.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuardService {
   constructor(
-    private userService: UserService,
-    private router: Router
+    private router: Router,
+    private authState: AuthStateService
   ) {}
 
   canActivate() {
-    return this.userService.userProfile$.pipe(
+    return this.authState.userProfile$.pipe(
       take(1),
       map(user => {
         // If no user or role is guest, allow access

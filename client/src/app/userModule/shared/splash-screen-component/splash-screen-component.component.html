@@ -8,10 +8,10 @@
 
     <div class="flex flex-col items-center gap-3
      justify-center">
-      @if(userService.isLoggedIn$ | async){
+      @if(authState.isLoggedIn$ | async){
       <h1 class="text-2xl">
         You are logged in as <span class="font-bold bg-amber-500 rounded-md p-2 text-white">
-          {{userService.username$ | async}}
+          {{authState.username$ | async}}
         </span>
       </h1>
       }

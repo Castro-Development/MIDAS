@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
-import { UserApplication } from "../../dataModels/userModels/user.model";
-import { Firestore, doc, setDoc } from "@angular/fire/firestore";
-import { Observable, Subject, from, map, switchMap } from "rxjs";
-import { SecurityStatus } from "../../facades/userFacades/user-security.facade";
-import { DocumentSnapshot, collection, getDoc, onSnapshot } from "firebase/firestore";
-import { ErrorHandlingService } from "../error-handling.service";
+import { UserApplication } from "../../../shared/dataModels/userModels/user.model";
+import { Firestore, doc, docData, setDoc } from "@angular/fire/firestore";
+import { Observable, Subject, catchError, from, map, of, switchMap, tap } from "rxjs";
+import { SecurityStatus } from "../../../shared/facades/userFacades/user-security.facade";
+import { DocumentData, DocumentReference, DocumentSnapshot, collection, getDoc, onSnapshot } from "firebase/firestore";
+import { ErrorHandlingService } from "../../../shared/services/error-handling.service";
 import { User as FirebaseUser } from "firebase/auth";
 
 
@@ -12,6 +12,7 @@ import { User as FirebaseUser } from "firebase/auth";
     providedIn: 'root'
 })
 export class UserAdminFirestoreService {
+    
 
     constructor(
         private firestore: Firestore,
@@ -44,21 +45,32 @@ export class UserAdminFirestoreService {
         return setDoc(appDocRef, userApplication);
     }
 
-    getUserSecurityStatus(username: string): Observable<SecurityStatus | null>  {
-        const uid = this.getUid(username);
-        return uid.pipe(
-            switchMap((uid) => {
-                const userSecurityDocRef = doc(this.firestore, 'userSecurity', uid);
-                return getDoc(userSecurityDocRef)
-                    .then((doc) => {
-                        if(doc.exists()) {
-                            return doc.data() as SecurityStatus;
-                        }
-                        return null;
-                    })
+    getUserSecurityStatus(uid: string): Observable<SecurityStatus>  {
+        const userSecurityDocRef = doc(this.firestore, 'userSecurity', uid);
+        console.log(userSecurityDocRef);
+        return from(getDoc(userSecurityDocRef)).pipe(
+            map(docSnapshot => {
+                if (!docSnapshot.exists()) {
+                    throw new Error('Security status does not exist');
+                }
+                return docSnapshot.data() as SecurityStatus;
+            }),
+            catchError(error => {
+                console.error('Error getting security status:', error);
+                throw error;
             })
-            
+        );
+    }
+
+    setSecurityStatus(username: string, blankStatus: SecurityStatus): SecurityStatus {
+        const uid = this.getUid(username).pipe(
+            tap((uid) => {
+                const userSecurityDocRef = doc(this.firestore, 'userSecurity', uid);
+                return setDoc(userSecurityDocRef, blankStatus);
+            })
         )
+        return blankStatus;
+        
     }
 
     private getUid(username: string): Observable<string> {

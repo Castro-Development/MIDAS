@@ -2,10 +2,9 @@
 import { Component, inject, OnDestroy, OnInit } from "@angular/core";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { collection, doc, Firestore, getDocs } from "@angular/fire/firestore";
-import { onSnapshot } from "firebase/firestore";
-import { JournalEntryFacade } from "../../../shared/facades/transactionManagementFacades/journal-entries.facade";
-import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
+import { JournalEntry } from "../../../../shared/dataModels/financialModels/account-ledger.model";
 import { Router } from "@angular/router";
+import { JournalEntryFacade } from "../../journal-entries.facade";
 
 @Component({
     selector: 'app-journal-entry-form',

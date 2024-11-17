@@ -2,12 +2,12 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, merge } from 'rxjs';
 import { takeUntil, map, tap } from 'rxjs/operators';
-import { AccountLedger, AccountCategory, AccountFilter, AccountSubcategories, NormalSide } from '../../dataModels/financialModels/account-ledger.model';
-import { ErrorHandlingService } from '../../services/error-handling.service';
-import { AccountingStateService } from '../../states/accounting-state.service';
-import { AuthStateService } from '../../states/auth-state.service';
-import { EventLogService } from '../../services/event-log.service';
-import { AccountCreationEvent, EventType } from '../../dataModels/loggingModels/event-logging.model';
+import { AccountLedger, AccountCategory, AccountFilter, AccountSubcategories, NormalSide } from '../../../../shared/dataModels/financialModels/account-ledger.model';
+import { ErrorHandlingService } from '../../../../shared/services/error-handling.service';
+import { AccountingStateService } from '../state/accounting-state.service';
+import { AuthStateService } from '../../../../shared/states/auth-state.service';
+import { EventLogService } from '../../../../shared/services/event-log.service';
+import { AccountCreationEvent, EventType } from '../../../../shared/dataModels/loggingModels/event-logging.model';
 
 
 type SubcategoryMap = {

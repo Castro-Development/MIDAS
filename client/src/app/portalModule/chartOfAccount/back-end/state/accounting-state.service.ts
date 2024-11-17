@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, combineLatest, map, distinctUntilChanged, shareReplay, Subject, takeUntil, tap, catchError, Observable, of, switchMap, from } from "rxjs";
-import { AccountLedger, AccountFilter, NormalSide } from "../dataModels/financialModels/account-ledger.model";
-import { ErrorHandlingService } from "../services/error-handling.service";
-import { AccountFirestoreService } from "../services/firestoreService/account-firestore.service";
-import { FilteringService } from "../services/filter.service";
-import { AccountResponseDTO, CreateAccountDTO } from "../facades/accountFacades/chart-of-accounts.facade";
+import { AccountLedger, AccountFilter, NormalSide } from "../../../../shared/dataModels/financialModels/account-ledger.model";
+import { ErrorHandlingService } from "../../../../shared/services/error-handling.service";
+import { AccountFirestoreService } from "../firestore/account-firestore.service";
+import { FilteringService } from "../../../../shared/services/filter.service";
+import { AccountResponseDTO, CreateAccountDTO } from "../facade/chart-of-accounts.facade";
 import { serverTimestamp } from "firebase/firestore";
 import { timeStamp } from "console";
 
@@ -33,7 +33,7 @@ import { timeStamp } from "console";
     }
 
     initializeAccountingState() {
-      this.accountingFirestoreService.accounts$.pipe(
+      this.accountingFirestoreService.getAllAccounts().pipe(
         takeUntil(this.destroy$),
         catchError(error => {
           return this.errorHandlingService.handleError(error, [] as AccountLedger[]);
@@ -92,7 +92,7 @@ import { timeStamp } from "console";
             subcategory: account.subcategory,
             normalSide: account.normalSide,
             accountNumber: accNum,
-            isActive: true,
+            isActive: false,
             version: 1,
             createdAt: new Date(Date.now()),
             createdBy: userId,
@@ -103,7 +103,9 @@ import { timeStamp } from "console";
           };
           
           // Convert Promise to Observable
-          return from(this.accountingFirestoreService.createAccount(newAccount));
+          return this.accountingFirestoreService.createAccount(newAccount).then(() => {
+            return newAccount;
+          })
         })
       );
     }

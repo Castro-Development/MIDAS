@@ -1,18 +1,17 @@
 import { Injectable } from "@angular/core";
 import { UserRole } from "../../dataModels/userModels/userRole.model";
-import { Observable, Subject, catchError, combineLatest, filter, from, of, switchMap, tap } from "rxjs";
-import { UserAdminFirestoreService } from "../../services/firestoreService/user-admin-firestore.service";
-import { UserAdminFacade } from "./user-administration.facade";
+import { Observable, Subject, catchError, combineLatest, filter, from, map, of, switchMap, take, tap } from "rxjs";
 import { AuthStateService } from "../../states/auth-state.service";
 import { ErrorHandlingService } from "../../services/error-handling.service";
 import { Auth, User as FirebaseUser } from "@angular/fire/auth";
 import { doc } from "@angular/fire/firestore";
 import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
-import { AccountFirestoreService } from "../../services/firestoreService/account-firestore.service";
+import { AccountFirestoreService } from "../../../portalModule/chartOfAccount/back-end/firestore/account-firestore.service";
 import { PermissionType } from "../../dataModels/userModels/permissions.model";
 import { AccountAccessEvent, EventType } from "../../dataModels/loggingModels/event-logging.model";
 import { EventLogService } from "../../services/event-log.service";
 import { UserProfileFacade } from "./user-profile.facade";
+import { UserAdminFirestoreService } from "../../../adminModule/back-end/firestore/user-admin-firestore.service";
 
 
 
@@ -87,30 +86,53 @@ export class UserSecurityFacade {
                                 /* * * * * Authentication Methods * * * * */
                                 //-----------------------------------------//
 
-    login(username: string, password: string): Observable<boolean> {
-        const userStatus = this.getUserSecurityStatus(username);
-            return userStatus.pipe(
-            switchMap(status => {
-                if (status.isLocked) {
-                    return of(false);
-                }
-                if (status.suspension) {
-                    return of(false);
-                }
-                if (status.passwordStatus === 'expired') {
-                    return of(false);
-                }
-                // Check failed login attempts
-                if (status.failedAttempts >= 3) {
-                    return of(false);
-                }
-                // Authenticate user
-                    return of(true);
-                }),
-            catchError((error) => this.errorHandling.handleError(error, false)),
-            tap((success) => { if(success) { this.authState.login(username, password) }})
-    )
+    // login(username: string, password: string): Observable<boolean> {
+    //     console.log("Logging in user");
+    //     return this.getUserSecurityStatus(username).pipe(
+    //         switchMap(status => {
+    //             if (status && status.isLocked) {
+    //                 console.log("User is locked");
+    //                 return of(false);
+    //             }
+    //             if (status && status.suspension) {
+    //                 console.log("User is suspended");
+    //                 return of(false);
+    //             }
+    //             if (status && status.passwordStatus === 'expired') {
+    //                 console.log("Password is expired");
+    //                 return of(false);
+    //             }
+    //             // Check failed login attempts
+    //             if (status && status.failedAttempts >= 3) {
+    //                 console.log("User has exceeded login attempts");
+    //                 return of(false);
+    //             }
+    //             // Authenticate user
+    //                 console.log("User authenticated");
+    //                 return of(true);
+    //             }),
+    //             catchError((error) => this.errorHandling.handleError(error, false)),
+    //             tap((success) => { 
+    //                 if(success) { 
+    //                     this.authState.login(username, password) 
+    //                 }
+    //                 this.userProfileFacade.loginProfile(username, this.authState.user$);
+    //             })
+    //             );
+    //         }
+        
+    // } Can't get this shit to work, so I'm commenting it out for now.
+    
+
+    login(username: string, password: string)  {
+
+        this.userProfileFacade.loginProfile(this.authState.login(username, password))
+
+
     }
+
+    
+    
 
     requestSystemAccess(user: UserApplication): Promise<void> {
         this.userProfileFacade.createProfile(user, this.authState.user$);
@@ -118,20 +140,11 @@ export class UserSecurityFacade {
     }
 
 
-    private getUserSecurityStatus(uid: string): Observable<SecurityStatus> {
-        return this.userAdminFirestore.getUserSecurityStatus(uid).pipe(
-            // Filter out null values
-            filter((status): status is SecurityStatus => status !== null),
-            catchError((error) => {
-                return this.errorHandling.handleError(error, {
-                    isLocked: true,
-                    suspension: null,
-                    passwordStatus: 'expired',
-                    failedAttempts: 3,
-                } as SecurityStatus);
-            })
-        );
-    }
+    // private getUserSecurityStatus(uid: string): Observable<SecurityStatus> {
+    //     console.log("Getting user security status");
+    //     return this.userAdminFirestore.getUserSecurityStatus(uid);
+    // } Can't get this S***T to work, so I'm commenting it out for now...
+
     // Password Management Methods
     validatePassword(uid: string, password: string): Observable<boolean> {
         const passwordComplexity = this.validatePasswordComplexity(password);
@@ -154,35 +167,35 @@ export class UserSecurityFacade {
                                 /* * * * * Access Management Methods * * * * */
                                 //-------------------------------------------//
 
-    grantAccess(accountId: string, userId: string): Promise<void> {
-        return this.accountFirestore.addAuthorizedUser(accountId, userId);
-    }
+    // grantAccess(accountId: string, userId: string): Promise<void> {
+    //     return this.accountFirestore.addAuthorizedUser(accountId, userId);
+    // }
 
-    revokeAccess(accountId: string, userId: string): Promise<void> {
-        return this.accountFirestore.removeAuthorizedUser(accountId, userId);
-    }
+    // revokeAccess(accountId: string, userId: string): Promise<void> {
+    //     return this.accountFirestore.removeAuthorizedUser(accountId, userId);
+    // }
 
-    getAccountAccessList(accountId: string): Promise<string[]> {
-        return this.accountFirestore.getAuthorizedUsers(accountId);
-      }
+    // getAccountAccessList(accountId: string): Promise<string[]> {
+    //     return this.accountFirestore.getAuthorizedUsers(accountId);
+    //   }
 
                                 //--------------------------------------------//
                                 /* * * * * Access Validation Methods * * * * */
                                 //-------------------------------------------//
 
-    validateAccess(user: UserModel, accountId: string): Promise<boolean> {
-        return this.accountFirestore.getAuthorizedUsers(accountId).then((authorizedUserIds: string[]) => {
-           const authorized = authorizedUserIds.includes(user.id);
-           if(authorized) {
-               this.eventLogging.logEvent(EventType.ACCOUNT_ACCESS, {
-                accountId: accountId,
-                userId: user.id,
-                authorized: true} as AccountAccessEvent);
-               return true;
-           }
-           return authorized;
-        });
-    }
+    // validateAccess(user: UserModel, accountId: string): Promise<boolean> {
+    //     return this.accountFirestore.getAuthorizedUsers(accountId).then((authorizedUserIds: string[]) => {
+    //        const authorized = authorizedUserIds.includes(user.id);
+    //        if(authorized) {
+    //            this.eventLogging.logEvent(EventType.ACCOUNT_ACCESS, {
+    //             accountId: accountId,
+    //             userId: user.id,
+    //             authorized: true} as AccountAccessEvent);
+    //            return true;
+    //        }
+    //        return authorized;
+    //     });
+    // }
 
     validatePermissions(permissionType: PermissionType, accountId: string): boolean {
         // Check if user has permission required to perform action

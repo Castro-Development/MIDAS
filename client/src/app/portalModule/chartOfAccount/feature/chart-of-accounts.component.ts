@@ -4,7 +4,7 @@ import { AccountLedger } from '../../../shared/dataModels/financialModels/accoun
 import { AccountFilter } from '../../../shared/dataModels/financialModels/account-ledger.model';
 import { BehaviorSubject, Subject, map } from 'rxjs';
 import { Router } from '@angular/router';
-import { ChartOfAccountsFacade } from '../../../shared/facades/accountFacades/chart-of-accounts.facade';
+import { ChartOfAccountsFacade } from '../back-end/facade/chart-of-accounts.facade';
 
 
 @Component({

@@ -1,9 +1,9 @@
 import { BehaviorSubject, Observable, Subject, catchError, combineLatest, distinctUntilChanged, from, map, of } from "rxjs";
-import { JournalEntry, JournalEntryStatus } from "../dataModels/financialModels/account-ledger.model";
+import { JournalEntry, JournalEntryStatus } from "../../shared/dataModels/financialModels/account-ledger.model";
 import { Injectable } from "@angular/core";
-import { JournalEntryFirestoreService } from "../services/firestoreService/journal-firestore.service";
-import { ErrorHandlingService } from "../services/error-handling.service";
-import { FilteringService } from "../services/filter.service";
+import { JournalEntryFirestoreService } from "./journal-firestore.service";
+import { ErrorHandlingService } from "../../shared/services/error-handling.service";
+import { FilteringService } from "../../shared/services/filter.service";
 import { Firestore, collection, getDocs, where } from "firebase/firestore";
 import { query } from "@angular/fire/firestore";
 
