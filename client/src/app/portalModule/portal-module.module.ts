@@ -27,6 +27,7 @@ import { JournalEntryReviewComponent } from './journalEntry/entryReview/journal-
 import { JournalReviewCard } from './journalEntry/entryReview/journal-entry-review.card';
 import { JournalSubmissionComponent } from './journalEntry/entrySubmissionReview/journal-submission.component';
 import { JournalSubmissionCard } from './journalEntry/entrySubmissionReview/journal-submission.card';
+import { FiscalPeriodManagementComponent } from './fiscalPeriod/fiscal-period-management.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { JournalSubmissionCard } from './journalEntry/entrySubmissionReview/jour
     JournalEntryReviewComponent,
     JournalReviewCard,
     JournalSubmissionComponent,
-    JournalSubmissionCard
+    JournalSubmissionCard,
+    FiscalPeriodManagementComponent
 
   ],
   imports: [

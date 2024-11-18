@@ -8,6 +8,7 @@ import { JournalEntryReviewComponent } from "./journalEntry/entryReview/journal-
 import { AccountLedgerComponent } from "./accountLedger/feature/account-ledger.component";
 import { AccountEventLogComponent } from "./accountEventLog/feature/account-event-log.component";
 import { JournalSubmissionComponent } from "./journalEntry/entrySubmissionReview/journal-submission.component";
+import { FiscalPeriodManagementComponent } from "./fiscalPeriod/fiscal-period-management.component";
 
 const routes: Routes = [
     {
@@ -34,6 +35,10 @@ const routes: Routes = [
     {
         path: 'journal-entry-review',
         component: JournalEntryReviewComponent
+    },
+    {
+        path: 'fiscal-period',
+        component: FiscalPeriodManagementComponent
     },
     // {
     //     path: 'journal-entry-review/:id',
