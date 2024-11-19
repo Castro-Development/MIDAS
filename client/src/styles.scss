@@ -23,13 +23,84 @@ $client-theme: mat.define-theme((
   density: (
     scale: 0,
   )
+
 ));
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
+
+*{
+  color: var(--text-white);
+  --text-white: #cec6b2;
+  --header-color:#cec6b2;
+
+  --main-black: #0a0a0a;
+  --form-black:#1b1b1b;
+  --text-gold:#FFD700;
+
+
+  --button-gold:#d39c06;
+  --button-gold-hover:#e9b60e;
+  --button-gold-disabled:#cfaf58;
+
+  --button-slate:#313c4b;
+  --button-slate-hover:#465161;
+  --button-slate-disabled:#5c5c5c;
+
+  --auth-error-bg:#FEE2E2;
+  --auth-error-text:#991B1B;
+
+  .auth-error {
+    background-color: var(--auth-error-bg);
+    color: var(--auth-error-text);
+    padding: 12px;
+    border-radius: 4px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    display: block
+  }
+
+  .button, .gold-button, .slate-button {
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.125rem;
+    width: 100%;
+    font-weight: 500;
+    text-align: center;
+    color: #ffffff;
+  }
+  .gold-button:disabled{
+    background-color: var(--button-gold-disabled);
+  }
+  .gold-button:enabled{
+    background-color: var(--button-gold);
+  }
+  .gold-button:enabled:hover {
+    background-color: var(--button-gold-hover);
+  }
+  .slate-button:disabled{
+    background-color: var(--button-slate-disabled);
+  }
+  .slate-button:enabled{
+    background-color: var(--button-slate);
+  }
+  .slate-button:enabled:hover {
+    background-color: var(--button-slate-hover);
+  }
+
+
+}
 :root {
   @include mat.all-component-themes($client-theme);
+}
+
+::ng-deep .customize {
+  background: red;
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.

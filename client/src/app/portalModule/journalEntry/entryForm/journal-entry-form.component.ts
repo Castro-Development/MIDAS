@@ -2,7 +2,7 @@ import { Component, inject } from "@angular/core";
 import { Firestore, collection } from "@angular/fire/firestore";
 import { addDoc } from "firebase/firestore";
 import { Router } from "@angular/router";
-import { AccountLedgerFacade } from "../../accountLedger/back-end/facade/account-ledger.facade";
+import { AccountLedgerFacade } from "../../accountLedger/back-end/account-ledger.facade";
 import { JournalEntryFacade } from "../journal-entries.facade";
 import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
 
@@ -10,7 +10,7 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
     selector: 'app-journal-entry-form',
     template: `
     <div class="journal-entry-form">
-        <journal-entry-form-card 
+        <journal-entry-form-card
         [accounts]="accounts$ | async"
         (formSubmit)="handleJournalEntry($event)">
         </journal-entry-form-card>

@@ -14,13 +14,12 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatCardModule } from '@angular/material/card';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ChartOfAccountsCard } from './chartOfAccount/ui/chart-of-accounts.card';
-import { FilterDialogComponent } from './chartOfAccount/utils/account-filter.component';
-import { AccountEventLogComponent } from './accountEventLog/feature/account-event-log.component';
-import { AccountEventCard } from './accountEventLog/ui/account-event.card';
-import { AccountLedgerComponent } from './accountLedger/feature/account-ledger.component';
-import { AccountLedgerCard } from './accountLedger/ui/account-ledger.card';
-import { ChartOfAccountsComponent } from './chartOfAccount/feature/chart-of-accounts.component';
+import { ChartOfAccountsCard } from './chartOfAccount/chart-of-accounts.card';
+import { FilterDialogComponent } from './chartOfAccount/account-filter.component';
+import { AccountEventLogComponent } from './accountEventLog/account-event-log.component';
+import { AccountLedgerComponent } from './accountLedger/account-ledger.component';
+import { AccountLedgerCard } from './accountLedger/account-ledger.card';
+import { ChartOfAccountsComponent } from './chartOfAccount/chart-of-accounts.component';
 import { JournalEntryFormCard } from './journalEntry/entryForm/journal-entry-card.component';
 import { JournalEntryFormComponent } from './journalEntry/entryForm/journal-entry-form.component';
 import { JournalEntryReviewComponent } from './journalEntry/entryReview/journal-entry-review.component';
@@ -28,6 +27,9 @@ import { JournalReviewCard } from './journalEntry/entryReview/journal-entry-revi
 import { JournalSubmissionComponent } from './journalEntry/entrySubmissionReview/journal-submission.component';
 import { JournalSubmissionCard } from './journalEntry/entrySubmissionReview/journal-submission.card';
 import { FiscalPeriodManagementComponent } from './fiscalPeriod/fiscal-period-management.component';
+import { ChartAccountSVG } from './portalDashboard/utils/chart-of-accounts.svg';
+import { JournalEntrySVG } from './portalDashboard/utils/journal-entry.svg';
+import { JournalReviewSVG } from './portalDashboard/utils/journal-review.svg';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,6 @@ import { FiscalPeriodManagementComponent } from './fiscalPeriod/fiscal-period-ma
     ChartOfAccountsCard,
     FilterDialogComponent,
     AccountEventLogComponent,
-    AccountEventCard,
     AccountLedgerComponent,
     AccountLedgerCard,
     ChartOfAccountsComponent,
@@ -64,7 +65,11 @@ import { FiscalPeriodManagementComponent } from './fiscalPeriod/fiscal-period-ma
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatCardModule
+    MatCardModule,
+    ChartAccountSVG,
+    JournalEntrySVG,
+    JournalReviewSVG,
+
   ]
 })
 export class PortalModule { }

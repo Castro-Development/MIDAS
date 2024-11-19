@@ -1,10 +1,10 @@
 <div class="min-h-screen flex flex-col items-center pt-20">
     <div class="w-full max-w-3xl">
-        <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">Accounting Dashboard</h1>
-        
+        <h1 class="header">Accounting Dashboard</h1>
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
             <!-- Chart of Accounts Button -->
-            <button routerLink="/portal/chart-of-accounts" class="bg-gray-700 hover:bg-gray-500 transition-all p-6 rounded-lg shadow-md flex flex-col items-center justify-center border border-gray-700 hover:border-yellow-400 group">
+            <button routerLink="/portal/chart-of-accounts" class="dashboard-card">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240">
                     <defs>
                       <linearGradient id="chartGold" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -13,7 +13,7 @@
                         <stop offset="75%" style="stop-color:#DAA520"/>
                         <stop offset="100%" style="stop-color:#B8860B"/>
                       </linearGradient>
-                      
+
                       <filter id="chartGlow" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur stdDeviation="3" result="blur1"/>
                         <feGaussianBlur stdDeviation="5" result="blur2"/>
@@ -23,7 +23,7 @@
                           <feMergeNode in="SourceGraphic"/>
                         </feMerge>
                       </filter>
-                      
+
                       <!-- Text glow effect -->
                       <filter id="textGlow" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur stdDeviation="2" result="blur"/>
@@ -33,67 +33,67 @@
                         </feMerge>
                       </filter>
                     </defs>
-                  
+
                     <!-- Original icon content moved down slightly -->
                     <g transform="translate(0, -20)">
                       <!-- Background structure -->
-                      <rect x="40" y="40" width="120" height="120" rx="10" 
-                            fill="none" stroke="url(#chartGold)" stroke-width="4" 
+                      <rect x="40" y="40" width="120" height="120" rx="10"
+                            fill="none" stroke="url(#chartGold)" stroke-width="4"
                             filter="url(#chartGlow)">
-                        <animate attributeName="stroke-opacity" 
-                                 values="1;0.7;1" dur="3s" 
+                        <animate attributeName="stroke-opacity"
+                                 values="1;0.7;1" dur="3s"
                                  repeatCount="indefinite"/>
                       </rect>
-                  
+
                       <!-- Hierarchical lines representing chart structure -->
                       <g stroke="#FFD700" stroke-width="2" filter="url(#chartGlow)" opacity="0.8">
                         <!-- Horizontal lines -->
                         <line x1="50" y1="70" x2="150" y2="70">
-                          <animate attributeName="opacity" values="0.8;0.4;0.8" 
+                          <animate attributeName="opacity" values="0.8;0.4;0.8"
                                    dur="2s" repeatCount="indefinite"/>
                         </line>
                         <line x1="50" y1="100" x2="150" y2="100">
-                          <animate attributeName="opacity" values="0.8;0.4;0.8" 
+                          <animate attributeName="opacity" values="0.8;0.4;0.8"
                                    dur="2s" begin="0.2s" repeatCount="indefinite"/>
                         </line>
                         <line x1="50" y1="130" x2="150" y2="130">
-                          <animate attributeName="opacity" values="0.8;0.4;0.8" 
+                          <animate attributeName="opacity" values="0.8;0.4;0.8"
                                    dur="2s" begin="0.4s" repeatCount="indefinite"/>
                         </line>
-                  
+
                         <!-- Vertical lines suggesting hierarchy -->
                         <line x1="60" y1="70" x2="60" y2="130">
-                          <animate attributeName="opacity" values="0.8;0.4;0.8" 
+                          <animate attributeName="opacity" values="0.8;0.4;0.8"
                                    dur="2.5s" repeatCount="indefinite"/>
                         </line>
                         <line x1="90" y1="70" x2="90" y2="130">
-                          <animate attributeName="opacity" values="0.8;0.4;0.8" 
+                          <animate attributeName="opacity" values="0.8;0.4;0.8"
                                    dur="2.5s" begin="0.3s" repeatCount="indefinite"/>
                         </line>
                         <line x1="120" y1="70" x2="120" y2="130">
-                          <animate attributeName="opacity" values="0.8;0.4;0.8" 
+                          <animate attributeName="opacity" values="0.8;0.4;0.8"
                                    dur="2.5s" begin="0.6s" repeatCount="indefinite"/>
                         </line>
                       </g>
-                  
+
                       <!-- Mystical runes at key intersections -->
                       <g fill="#FFD700" font-size="12" filter="url(#chartGlow)">
                         <text x="60" y="65" text-anchor="middle">ᚠ</text>
                         <text x="90" y="65" text-anchor="middle">ᚱ</text>
                         <text x="120" y="65" text-anchor="middle">ᚻ</text>
-                        
+
                         <text x="60" y="95" text-anchor="middle">ᛈ</text>
                         <text x="90" y="95" text-anchor="middle">ᛉ</text>
                         <text x="120" y="95" text-anchor="middle">ᛊ</text>
-                        
+
                         <text x="60" y="125" text-anchor="middle">ᛗ</text>
                         <text x="90" y="125" text-anchor="middle">ᛝ</text>
                         <text x="120" y="125" text-anchor="middle">ᛟ</text>
                       </g>
-                  
+
                       <!-- Rotating outer border -->
-                      <rect x="35" y="35" width="130" height="130" rx="15" 
-                            fill="none" stroke="#FFD700" stroke-width="1" 
+                      <rect x="35" y="35" width="130" height="130" rx="15"
+                            fill="none" stroke="#FFD700" stroke-width="1"
                             opacity="0.4" filter="url(#chartGlow)">
                         <animateTransform attributeName="transform"
                                           type="rotate"
@@ -103,23 +103,23 @@
                                           repeatCount="indefinite"/>
                       </rect>
                     </g>
-                  
+
                     <!-- Stylized title text -->
-                    <text x="100" y="220" 
-                          text-anchor="middle" 
-                          fill="url(#chartGold)" 
-                          font-family="Copperplate Gothic, Luminari, Fantasy" 
-                          font-size="16" 
+                    <text x="100" y="220"
+                          text-anchor="middle"
+                          fill="url(#chartGold)"
+                          font-family="Copperplate Gothic, Luminari, Fantasy"
+                          font-size="16"
                           letter-spacing="1"
                           filter="url(#textGlow)">
-                      <tspan style="font-size: 22px">Chart of Accounts</tspan>
+                      <tspan style="font-size: 15px">Chart of Accounts</tspan>
                     </text>
                   </svg>
-                <span class="text-lg font-semibold text-gray-700">Chart of Accounts</span>
+                <!-- <span class="text-lg font-semibold text-gray-700">Chart of Accounts</span> -->
             </button>
 
             <!-- Journal Entry Review Button -->
-            <button routerLink="/portal/journal-entry-review" class="bg-gray-700 hover:bg-gray-500 transition-all p-6 rounded-lg shadow-md flex flex-col items-center justify-center border border-gray-200 hover:border-blue-500 group">
+            <button routerLink="/portal/journal-entry-review" class="dashboard-card">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240">
                     <defs>
                       <linearGradient id="archiveGold" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -128,7 +128,7 @@
                         <stop offset="75%" style="stop-color:#DAA520"/>
                         <stop offset="100%" style="stop-color:#B8860B"/>
                       </linearGradient>
-                      
+
                       <filter id="archiveGlow" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur stdDeviation="3" result="blur1"/>
                         <feGaussianBlur stdDeviation="5" result="blur2"/>
@@ -138,7 +138,7 @@
                           <feMergeNode in="SourceGraphic"/>
                         </feMerge>
                       </filter>
-                  
+
                       <filter id="textGlow" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur stdDeviation="2" result="blur"/>
                         <feMerge>
@@ -147,13 +147,13 @@
                         </feMerge>
                       </filter>
                     </defs>
-                  
+
                     <!-- Main icon group -->
                     <g transform="translate(0, -20)">
                       <!-- Outer rotating ring with runes -->
                       <g filter="url(#archiveGlow)">
-                        <circle cx="100" cy="100" r="60" 
-                                fill="none" stroke="url(#archiveGold)" stroke-width="2" 
+                        <circle cx="100" cy="100" r="60"
+                                fill="none" stroke="url(#archiveGold)" stroke-width="2"
                                 opacity="0.6">
                           <animateTransform attributeName="transform"
                                            type="rotate"
@@ -163,11 +163,11 @@
                                            repeatCount="indefinite"/>
                         </circle>
                       </g>
-                  
+
                       <!-- Inner rotating ring -->
                       <g filter="url(#archiveGlow)">
-                        <circle cx="100" cy="100" r="45" 
-                                fill="none" stroke="url(#archiveGold)" stroke-width="2" 
+                        <circle cx="100" cy="100" r="45"
+                                fill="none" stroke="url(#archiveGold)" stroke-width="2"
                                 opacity="0.6">
                           <animateTransform attributeName="transform"
                                            type="rotate"
@@ -177,27 +177,27 @@
                                            repeatCount="indefinite"/>
                         </circle>
                       </g>
-                  
+
                       <!-- Central hourglass symbol -->
                       <g transform="translate(100 100)" filter="url(#archiveGlow)">
                         <!-- Upper triangle -->
-                        <path d="M-20,-20 L20,-20 L0,0 Z" 
+                        <path d="M-20,-20 L20,-20 L0,0 Z"
                               fill="none" stroke="url(#archiveGold)" stroke-width="2">
                           <animate attributeName="fill-opacity"
                                    values="0;0.3;0"
                                    dur="3s"
                                    repeatCount="indefinite"/>
                         </path>
-                        
+
                         <!-- Lower triangle -->
-                        <path d="M-20,20 L20,20 L0,0 Z" 
+                        <path d="M-20,20 L20,20 L0,0 Z"
                               fill="none" stroke="url(#archiveGold)" stroke-width="2">
                           <animate attributeName="fill-opacity"
                                    values="0.3;0;0.3"
                                    dur="3s"
                                    repeatCount="indefinite"/>
                         </path>
-                        
+
                         <!-- Flowing particles -->
                         <g fill="#FFD700">
                           <circle cx="0" cy="-8" r="1">
@@ -220,7 +220,7 @@
                           </circle>
                         </g>
                       </g>
-                  
+
                       <!-- Orbital runes -->
                       <g fill="#FFD700" font-size="14" filter="url(#archiveGlow)">
                         <!-- Orbiting runes -->
@@ -237,7 +237,7 @@
                           <text x="100" y="40" text-anchor="middle">ᚨ</text>
                         </g>
                       </g>
-                  
+
                       <!-- Energy beams -->
                       <g stroke="url(#archiveGold)" stroke-width="1" opacity="0.5">
                         <line x1="100" y1="40" x2="100" y2="160">
@@ -254,23 +254,23 @@
                         </line>
                       </g>
                     </g>
-                  
+
                     <!-- Title -->
-                    <text x="100" y="220" 
-                          text-anchor="middle" 
-                          fill="url(#archiveGold)" 
-                          font-family="Copperplate Gothic, Luminari, Fantasy" 
-                          font-size="16" 
+                    <text x="100" y="220"
+                          text-anchor="middle"
+                          fill="url(#archiveGold)"
+                          font-family="Copperplate Gothic, Luminari, Fantasy"
+                          font-size="16"
                           letter-spacing="1"
                           filter="url(#textGlow)">
-                      <tspan style="font-size: 18px">Journal Review</tspan>
+                      <tspan style="font-size: 15px">Journal Review</tspan>
                     </text>
                   </svg>
-                <span class="text-lg font-semibold text-gray-700">Journal Entry Review</span>
+                <!-- <span class="text-lg font-semibold text-gray-700">Journal Entry Review</span> -->
             </button>
 
             <!-- Account Ledger Button -->
-            <button routerLink="/portal/journal-entry-form" class="bg-gray-700 hover:bg-gray-500 transition-all p-6 rounded-lg shadow-md flex flex-col items-center justify-center border border-gray-200 hover:border-blue-500 group">
+            <button routerLink="/portal/journal-entry-form" class="dashboard-card">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240">
                     <defs>
                       <linearGradient id="ledgerGold" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -279,7 +279,7 @@
                         <stop offset="75%" style="stop-color:#DAA520"/>
                         <stop offset="100%" style="stop-color:#B8860B"/>
                       </linearGradient>
-                      
+
                       <filter id="ledgerGlow" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur stdDeviation="3" result="blur1"/>
                         <feGaussianBlur stdDeviation="5" result="blur2"/>
@@ -289,14 +289,14 @@
                           <feMergeNode in="SourceGraphic"/>
                         </feMerge>
                       </filter>
-                  
+
                       <!-- Multiple paths for dense rune flows -->
                       <path id="runePath1" d="M40,65 Q100,60 160,65" />
                       <path id="runePath2" d="M40,95 Q100,90 160,95" />
                       <path id="runePath3" d="M40,125 Q100,120 160,125" />
                       <path id="runePathMid1" d="M40,80 Q100,75 160,80" />
                       <path id="runePathMid2" d="M40,110 Q100,105 160,110" />
-                                            
+
                       <filter id="textGlow" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur stdDeviation="2" result="blur"/>
                         <feMerge>
@@ -305,21 +305,21 @@
                         </feMerge>
                       </filter>
                     </defs>
-                  
+
                     <!-- Main icon group -->
                     <g transform="translate(0, -20)">
                       <!-- Background frame -->
-                      <rect x="35" y="40" width="130" height="120" rx="5" 
-                            fill="none" stroke="url(#ledgerGold)" stroke-width="3" 
+                      <rect x="35" y="40" width="130" height="120" rx="5"
+                            fill="none" stroke="url(#ledgerGold)" stroke-width="3"
                             filter="url(#ledgerGlow)"/>
-                  
+
                       <!-- Strong ledger lines - just three main lines -->
                       <g stroke="url(#ledgerGold)" stroke-width="4" filter="url(#ledgerGlow)">
                         <line x1="40" y1="65" x2="160" y2="65"/>
                         <line x1="40" y1="95" x2="160" y2="95"/>
                         <line x1="40" y1="125" x2="160" y2="125"/>
                       </g>
-                  
+
                       <!-- Dense flowing runes -->
                       <g fill="#FFD700" filter="url(#ledgerGlow)" opacity="0.8">
                         <!-- First line runes - multiple streams -->
@@ -341,7 +341,7 @@
                                      repeatCount="indefinite"/>
                           </textPath>
                         </text>
-                  
+
                         <!-- Middle streams -->
                         <text font-size="14">
                           <textPath href="#runePathMid1" startOffset="30%">
@@ -361,7 +361,7 @@
                                      repeatCount="indefinite"/>
                           </textPath>
                         </text>
-                  
+
                         <!-- Second line runes -->
                         <text font-size="14">
                           <textPath href="#runePath2" startOffset="20%">
@@ -381,7 +381,7 @@
                                      repeatCount="indefinite"/>
                           </textPath>
                         </text>
-                  
+
                         <!-- Third line runes -->
                         <text font-size="14">
                           <textPath href="#runePath3" startOffset="-30%">
@@ -403,19 +403,19 @@
                         </text>
                       </g>
                     </g>
-                  
+
                     <!-- Title -->
-                    <text x="100" y="220" 
-                          text-anchor="middle" 
-                          fill="url(#ledgerGold)" 
-                          font-family="Copperplate Gothic, Luminari, Fantasy" 
-                          font-size="16" 
+                    <text x="100" y="220"
+                          text-anchor="middle"
+                          fill="url(#ledgerGold)"
+                          font-family="Copperplate Gothic, Luminari, Fantasy"
+                          font-size="16"
                           letter-spacing="1"
                           filter="url(#textGlow)">
-                      <tspan style="font-size: 18px">Journal Entry Form</tspan>
+                      <tspan style="font-size: 15px">Journal Entry Form</tspan>
                     </text>
                   </svg>
-                <span class="text-lg font-semibold text-gray-700">Account Ledger</span>
+                <!-- <span class="text-lg font-semibold text-gray-700">Account Ledger</span> -->
             </button>
         </div>
     </div>

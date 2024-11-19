@@ -6,7 +6,8 @@ import { BehaviorSubject, Observable, map } from 'rxjs';
 import { UserRole } from '../../shared/dataModels/userModels/userRole.model';
 import { AuthStateService } from '../../shared/states/auth-state.service';
 import { UserSecurityFacade } from '../../shared/facades/userFacades/user-security.facade';
-import { UserAdminFacade } from '../../adminModule/back-end/facade/user-administration.facade';
+import { UserAdminFacade } from '../../adminModule/back-end/user-administration.facade';
+
 
 
 @Component({
@@ -29,8 +30,8 @@ export class RequestSystemAccessComponent {
   showEdit!: boolean;
   currentId: string = '';
   authState = inject(AuthStateService);
-  
-  
+
+
   errorSubject = new BehaviorSubject<string | null>(null);
 
 
@@ -53,9 +54,9 @@ export class RequestSystemAccessComponent {
 
 
   submitApplication() {
-    
+    console.log('Start Submit Application');
     this.errorSubject.next(null);
-    
+
     // this.userService.application({
     //   id: this.currentId,
     //   username: '',
@@ -75,37 +76,39 @@ export class RequestSystemAccessComponent {
     //     'priority': 'all',
     //     'type': 'all'
     //   }
-      
+
     // }).then(() => {
     //   console.log('User created successfully');
     // }).catch((error) => {
     //   console.error('User creation failed:', error);
     //   this.errorSubject.next(this.getErrorMessage(error));
     // })
+    console.log('Error Check');
+    this.adminFacade.generateUsername(this.formValue.value.firstname, this.formValue.value.lastname, new Date()).then((username) => {
+      this.securityFacade.requestSystemAccess({
+        id: this.currentId,
+        username: username,
+        firstname: this.formValue.value.firstname,
+        lastname: this.formValue.value.lastname,
+        phone: this.formValue.value.phone,
+        street: this.formValue.value.street,
+        zip: this.formValue.value.zip,
+        state: this.formValue.value.state,
+        password: this.formValue.value.password,
+        requestedRole: this.formValue.value.role,
+        role: UserRole.Guest,
+        status: 'pending',
+        dateRequested: new Date(),
+        notificationFilter: {
+          'category': 'all',
+          'priority': 'all',
+          'type': 'all'
+        },
+      });
 
-    const userName = this.adminFacade.generateUsername(this.formValue.value.firstname, this.formValue.value.lastname, new Date());
-    this.securityFacade.requestSystemAccess({
-      id: this.currentId,
-      username: '',
-      firstname: this.formValue.value.firstname,
-      lastname: this.formValue.value.lastname,
-      phone: this.formValue.value.phone,
-      street: this.formValue.value.street,
-      zip: this.formValue.value.zip,
-      state: this.formValue.value.state,
-      password: this.formValue.value.password,
-      requestedRole: this.formValue.value.role,
-      role: UserRole.Guest,
-      status: 'pending',
-      dateRequested: new Date(),
-      notificationFilter: {
-        'category': 'all',
-        'priority': 'all',
-        'type': 'all'
-      },
     });
     //Make a dialog box pop up for 5-10 seconds that says "Your application has been submitted. You will receive an email when your account has been approved. Your username is: ..."
-    
+
   }
 
   private getErrorMessage(error: any): string {

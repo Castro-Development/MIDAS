@@ -1,1 +1,5 @@
-<p>admin-users-chart works!</p>
+<div *ngFor="let user of users$ | async; let i = index">{{user.firstname}}</div>
+<!-- <div *ngFor="let userm of usersM ; let i = index">{{userm.firstname}}</div> -->
+
+<!-- {{userCount}} -->
+

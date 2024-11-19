@@ -9,12 +9,12 @@ import { UserRole } from "../dataModels/userModels/userRole.model";
 import { ErrorHandlingService } from "../services/error-handling.service";
 import { SecurityStatus } from "../facades/userFacades/user-security.facade";
 import { User as FirebaseUser } from "firebase/auth";
-import { UserAdminFirestoreService } from "../../adminModule/back-end/firestore/user-admin-firestore.service";
-  
+import { UserAdminFirestoreService } from "../../adminModule/back-end/user-admin-firestore.service";
+
   @Injectable({ providedIn: 'root' })
   export class UserProfileStateService {
-    
-    
+
+
     private readonly userProfileSubject = new BehaviorSubject<UserModel>({} as UserModel);
 
     private readonly destroy$ = new Subject<void>();
@@ -26,16 +26,16 @@ import { UserAdminFirestoreService } from "../../adminModule/back-end/firestore/
         private errorHandling: ErrorHandlingService,
         private userAdminService: UserAdminFirestoreService
     ) { }
-  
-    
-    
+
+
+
     // Don't forget to add in your class:
-    
+
     readonly activeRole$ = this.userProfileSubject.pipe(
       map(profile => profile.role),
       distinctUntilChanged()
     );
-  
+
     readonly activeProfile$ = this.userProfileSubject.pipe(
       map(profile => profile as UserModel ),
       distinctUntilChanged()
@@ -80,5 +80,5 @@ import { UserAdminFirestoreService } from "../../adminModule/back-end/firestore/
             }
         )
     }
-    
+
   }

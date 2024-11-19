@@ -8,7 +8,7 @@ import { QueryConstraint, orderBy, query, where } from 'firebase/firestore';
 import { EventLogService } from '../../shared/services/event-log.service';
 import { EventType } from '../../shared/dataModels/loggingModels/event-logging.model';
 import { AuthStateService } from '../../shared/states/auth-state.service';
-import { AccountFirestoreService } from '../chartOfAccount/back-end/firestore/account-firestore.service'
+import { AccountFirestoreService } from '../chartOfAccount/back-end/account-firestore.service'
 import { JournalEntryStateService } from './journal-entry-state.service';
 import { Router } from '@angular/router';
 
@@ -30,10 +30,10 @@ enum JournalEntryStatus {
   providedIn: 'root'
 })
 export class JournalEntryFacade {
-    
-    
-  
-  
+
+
+
+
   // Subjects
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private errorSubject = new BehaviorSubject<string | null>(null);
@@ -49,7 +49,7 @@ export class JournalEntryFacade {
     private accountService: AccountFirestoreService,
     private journalState: JournalEntryStateService,
     private router: Router
-  ) {}
+  ) { }
 
   saveEntryDraft(journalEntry: JournalEntry): Promise<string> {
     return this.journalState.saveEntryDraft(journalEntry);
@@ -73,8 +73,8 @@ export class JournalEntryFacade {
       tap(() => {
         this.eventLog
       }),
-    //   catchError(this.errorHandling.handleError('createJournalEntry')),
-      
+      //   catchError(this.errorHandling.handleError('createJournalEntry')),
+
     );
   }
 
@@ -85,7 +85,7 @@ export class JournalEntryFacade {
           this.journalState.selectEntry(entry);
           this.router.navigate(['/journal-entry-review/' + entry.id]);
         }
-      }) 
+      })
     )
   }
 
@@ -111,7 +111,7 @@ export class JournalEntryFacade {
       tap(() => {
         this.eventLog.logEvent(EventType.JOURNAL_ENTRY_SUBMITTED, { entryId });
       }),
-    //   catchError(this.errorHandling.handleError('submitForApproval')),
+      //   catchError(this.errorHandling.handleError('submitForApproval')),
       finalize(() => this.loadingSubject.next(false))
     );
   }
@@ -121,22 +121,22 @@ export class JournalEntryFacade {
    */
   approveEntry(entryId: string) {
     this.loadingSubject.next(true);
-  
+
     const currentUserId = this.authState.getUid$;
-  
+
     return this.getJournalEntry(entryId).pipe(
       switchMap(entry => {
         if (!entry) {
           return throwError(() => new Error('Journal entry not found'));
         }
-  
+
         const updatedEntry = {
           ...entry,
           status: JournalEntryStatus.APPROVED,
           approvedBy: currentUserId,
           approvedAt: new Date()
         };
-  
+
         return this.saveJournalEntry(updatedEntry).pipe(
           map(() => this.postToAccounts(updatedEntry))
         );
@@ -172,7 +172,7 @@ export class JournalEntryFacade {
       tap(() => {
         this.eventLog.logEvent(EventType.JOURNAL_ENTRY_REJECTED, { entryId, reason });
       }),
-    //   catchError(this.errorHandling.handleError('rejectEntry')),
+      //   catchError(this.errorHandling.handleError('rejectEntry')),
       finalize(() => this.loadingSubject.next(false))
     );
   }
@@ -184,28 +184,28 @@ export class JournalEntryFacade {
     status?: JournalEntryStatus;
     startDate?: Date;
     endDate?: Date;
-}): Observable<JournalEntry[]> {
+  }): Observable<JournalEntry[]> {
     this.loadingSubject.next(true);
 
     return this.fetchJournalEntries(filters).pipe(
-        finalize(() => this.loadingSubject.next(false))
+      finalize(() => this.loadingSubject.next(false))
     );
-}
+  }
 
-    getAccountLedgerEntries(accountNumber: string): Observable<LedgerEntry[]> {
-      return this.journalState.getJournalEntriesForAccount(accountNumber).pipe(
-        map(entries => entries.map(entry => {
-          return {
-            date: entry.date,
-            description: entry.description,
-            debitAmount: entry.transactions.find(t => t.accountId === accountNumber)?.debitAmount || 0,
-            creditAmount: entry.transactions.find(t => t.accountId === accountNumber)?.creditAmount || 0,
-            runningBalance: 0,
-            journalEntryId: entry.id
-          };
-        }))
-      );
-    }
+  getAccountLedgerEntries(accountNumber: string): Observable<LedgerEntry[]> {
+    return this.journalState.getJournalEntriesForAccount(accountNumber).pipe(
+      map(entries => entries.map(entry => {
+        return {
+          date: entry.date,
+          description: entry.description,
+          debitAmount: entry.transactions.find(t => t.accountId === accountNumber)?.debitAmount || 0,
+          creditAmount: entry.transactions.find(t => t.accountId === accountNumber)?.creditAmount || 0,
+          runningBalance: 0,
+          journalEntryId: entry.id
+        };
+      }))
+    );
+  }
 
 
   private validateJournalEntry(entry: JournalEntry): Observable<boolean> {
@@ -220,7 +220,7 @@ export class JournalEntryFacade {
     // Validate debits and credits balance
     const totalDebits = entry.transactions.reduce((sum, t) => sum + t.debitAmount, 0);
     const totalCredits = entry.transactions.reduce((sum, t) => sum + t.creditAmount, 0);
-    
+
     if (totalDebits !== totalCredits) {
       errors.push('Total debits must equal total credits');
     }
@@ -243,19 +243,19 @@ export class JournalEntryFacade {
 
           const updatedDebitAccount = {
             ...account,
-            totalDebits: account.totalDebits? account.totalDebits + transaction.debitAmount : transaction.debitAmount,
-            totalCredits: account.totalCredits? account.totalCredits + transaction.creditAmount : transaction.creditAmount,
-            currentBalance: account.currentBalance? account.currentBalance + transaction.debitAmount - transaction.creditAmount : transaction.debitAmount - transaction.creditAmount
+            totalDebits: account.totalDebits ? account.totalDebits + transaction.debitAmount : transaction.debitAmount,
+            totalCredits: account.totalCredits ? account.totalCredits + transaction.creditAmount : transaction.creditAmount,
+            currentBalance: account.currentBalance ? account.currentBalance + transaction.debitAmount - transaction.creditAmount : transaction.debitAmount - transaction.creditAmount
           };
 
           const updatedCreditAccount = {
             ...account,
-            totalDebits: account.totalDebits? account.totalDebits + transaction.debitAmount : transaction.debitAmount,
-            totalCredits: account.totalCredits? account.totalCredits + transaction.creditAmount : transaction.creditAmount,
-            currentBalance: account.currentBalance? account.currentBalance + transaction.creditAmount - transaction.debitAmount : transaction.creditAmount - transaction.debitAmount
+            totalDebits: account.totalDebits ? account.totalDebits + transaction.debitAmount : transaction.debitAmount,
+            totalCredits: account.totalCredits ? account.totalCredits + transaction.creditAmount : transaction.creditAmount,
+            currentBalance: account.currentBalance ? account.currentBalance + transaction.creditAmount - transaction.debitAmount : transaction.creditAmount - transaction.debitAmount
           };
 
-          if(account.normalSide === NormalSide.CREDIT){
+          if (account.normalSide === NormalSide.CREDIT) {
             return this.accountService.updateAccount(accountId, updatedCreditAccount);
           }
 
@@ -263,7 +263,7 @@ export class JournalEntryFacade {
         })
       );
     });
-    
+
   }
 
   getAccounts() {
@@ -285,7 +285,7 @@ export class JournalEntryFacade {
     status?: JournalEntryStatus;
     startDate?: Date;
     endDate?: Date;
-}): Observable<JournalEntry[]> {
+  }): Observable<JournalEntry[]> {
     // Get reference to Firestore
     const journalCollection = collection(this.firestore, 'journalEntries');
 
@@ -294,17 +294,17 @@ export class JournalEntryFacade {
 
     // Add filters if they exist
     if (filters) {
-        if (filters.status) {
-            constraints.push(where('status', '==', filters.status));
-        }
-        
-        if (filters.startDate) {
-            constraints.push(where('date', '>=', filters.startDate));
-        }
-        
-        if (filters.endDate) {
-            constraints.push(where('date', '<=', filters.endDate));
-        }
+      if (filters.status) {
+        constraints.push(where('status', '==', filters.status));
+      }
+
+      if (filters.startDate) {
+        constraints.push(where('date', '>=', filters.startDate));
+      }
+
+      if (filters.endDate) {
+        constraints.push(where('date', '<=', filters.endDate));
+      }
     }
 
     // Add default ordering
@@ -315,13 +315,13 @@ export class JournalEntryFacade {
 
     // Return the query result as an observable
     return collectionData(journalQuery).pipe(
-        map(entries => entries as JournalEntry[]),
-        catchError(error => {
-            console.error('Error fetching journal entries:', error);
-            return of([]);
-        })
+      map(entries => entries as JournalEntry[]),
+      catchError(error => {
+        console.error('Error fetching journal entries:', error);
+        return of([]);
+      })
     );
-}
+  }
 
 
 }

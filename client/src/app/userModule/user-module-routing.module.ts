@@ -6,8 +6,9 @@ import { InboxComponent } from "./inbox/inbox.component";
 import { LoginComponent } from "./login/login.component";
 import { ProfileComponent } from "./profile/profile.component";
 import { RequestSystemAccessComponent } from "./requestSystemAccess/request-system-access.component";
-import { SplashScreenComponent } from "./shared/splash-screen-component/splash-screen-component.component";
+import { SplashScreenComponent } from "./splash-screen-component/splash-screen-component.component";
 import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
+
 
 const routes: Routes = [
     {

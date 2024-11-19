@@ -1,7 +1,7 @@
 
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AccountCreationComponent } from './adminAccountCreate/feature/admin-account-creation.component';
+import { AccountCreationComponent } from './adminAccountCreate/admin-account-creation.component';
 
 const routes: Routes = [
   {

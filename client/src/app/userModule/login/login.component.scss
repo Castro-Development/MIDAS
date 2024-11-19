@@ -1,0 +1,110 @@
+.main-login-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.mid-login-container{
+
+  padding-bottom: 1rem;
+  width: 100%;
+  max-height: 100%;
+  width: 40%;
+  max-width: 600px;
+  margin-top: 5%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.login-form-box{
+  position: relative;
+  border-radius: 0.5rem;
+  color: #ffffff;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  background-color: var(--form-black);
+}
+
+.login-form-content{
+  display: flex;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  border-bottom-width: 1px;
+
+
+  @media (min-width: 768px) {
+    padding: 1.25rem;
+   }
+
+    .form-title {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+      font-weight: 600;
+      color: #F3F4F6;
+    }
+
+    .close-button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 0.5rem;
+      width: 2rem;
+      height: 2rem;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      color: #F3F4F6;
+      background-color: transparent;
+
+
+    }
+
+    .close-button:hover {
+      color: #F3F4F6;
+      background-color: #e5e7eb27;
+    }
+
+}
+
+.form {
+  padding: 1rem;
+
+  @media (min-width: 768px) {
+    padding: 1.25rem;
+  }
+
+  .form-grid {
+    display: grid;
+    margin-bottom: 1rem;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .form-input {
+    display: block;
+    padding: 0.625rem;
+    border-radius: 0.5rem;
+    border-width: 1px;
+    border-color: #D1D5DB;
+    width: 100%;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #111827;
+    background-color: #F9FAFB;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: #F3F4F6;
+  }
+
+
+}
+

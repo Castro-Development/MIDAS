@@ -1,10 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CalendarModule } from 'angular-calendar';
 import { HelpGlobalModule } from '../shared/helpFeature/help-global.module';
 import { UserModuleRoutingModule } from './user-module-routing.module';
 import { RequestSystemAccessComponent } from './requestSystemAccess/request-system-access.component';
-import { CalendarComponent } from './calendar/calendar.component';
 import { ForgotPasswordComponent } from './forgotPassword/forgot-password.component';
 import { InboxComponent } from './inbox/inbox.component';
 import { LoginComponent } from './login/login.component';
@@ -15,8 +13,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SplashScreenComponent } from './shared/splash-screen-component/splash-screen-component.component';
+import { SplashScreenComponent } from './splash-screen-component/splash-screen-component.component';
 import { AppPhoneInputComponent } from './requestSystemAccess/utils/app-phone-input.component'
+import { CalendarComponent } from './calendar/calendar.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+
+
+
+
+
 
 
 
@@ -31,6 +36,7 @@ import { AppPhoneInputComponent } from './requestSystemAccess/utils/app-phone-in
     SplashScreenComponent,
     AppPhoneInputComponent,
 
+
   ],
   imports: [
     CommonModule,
@@ -43,7 +49,8 @@ import { AppPhoneInputComponent } from './requestSystemAccess/utils/app-phone-in
     MatIconModule,
     FormsModule,
     ReactiveFormsModule,
-    
+    FullCalendarModule,
+
   ]
 })
 export class UserModule { }

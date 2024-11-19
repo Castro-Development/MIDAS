@@ -1,12 +1,12 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
-import { ChartOfAccountsComponent } from "./chartOfAccount/feature/chart-of-accounts.component";
+import { ChartOfAccountsComponent } from "./chartOfAccount/chart-of-accounts.component";
 import { JournalEntryFormComponent } from "./journalEntry/entryForm/journal-entry-form.component";
 import { PortalDashboardComponent } from "./portalDashboard/portal-dashboard.component";
 import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
 import { JournalEntryReviewComponent } from "./journalEntry/entryReview/journal-entry-review.component";
-import { AccountLedgerComponent } from "./accountLedger/feature/account-ledger.component";
-import { AccountEventLogComponent } from "./accountEventLog/feature/account-event-log.component";
+import { AccountLedgerComponent } from "./accountLedger/account-ledger.component";
+import { AccountEventLogComponent } from "./accountEventLog/account-event-log.component";
 import { JournalSubmissionComponent } from "./journalEntry/entrySubmissionReview/journal-submission.component";
 import { FiscalPeriodManagementComponent } from "./fiscalPeriod/fiscal-period-management.component";
 

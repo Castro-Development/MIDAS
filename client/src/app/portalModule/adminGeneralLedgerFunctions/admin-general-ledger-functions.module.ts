@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AccountCreationCard } from './adminAccountCreate/ui/admin-account-creation.card';
-import { AccountCreationComponent } from './adminAccountCreate/feature/admin-account-creation.component';
+import { AccountCreationCard } from './adminAccountCreate/admin-account-creation.card';
+import { AccountCreationComponent } from './adminAccountCreate/admin-account-creation.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AdminGLFuncsRoutingModule } from './admin-general-ledger-routing.module';
 
@@ -16,7 +16,7 @@ import { AdminGLFuncsRoutingModule } from './admin-general-ledger-routing.module
     CommonModule,
     ReactiveFormsModule,
     AdminGLFuncsRoutingModule
-    
+
   ]
 })
 export class AdminGeneralLedgerFunctionsModule { }
