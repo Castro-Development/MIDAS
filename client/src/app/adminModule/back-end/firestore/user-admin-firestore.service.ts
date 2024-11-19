@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { UserApplication } from "../../../shared/dataModels/userModels/user.model";
-import { Firestore, doc, docData, setDoc } from "@angular/fire/firestore";
+import { Firestore, addDoc, doc, docData, setDoc } from "@angular/fire/firestore";
 import { Observable, Subject, catchError, from, map, of, switchMap, tap } from "rxjs";
 import { SecurityStatus } from "../../../shared/facades/userFacades/user-security.facade";
 import { DocumentData, DocumentReference, DocumentSnapshot, collection, getDoc, onSnapshot } from "firebase/firestore";
@@ -21,9 +21,13 @@ export class UserAdminFirestoreService {
     
     // Submit a new user application
     submitApplication(userApplication: UserApplication, userAuth: Observable<FirebaseUser | null> ): Promise<void> {
-        const appDocRef = doc(this.firestore, 'applications', userApplication.id);
-        this.mapUserToUid(userApplication.username, userApplication.id);
-        return setDoc(appDocRef, userApplication);
+        const appCollectionRef = collection(this.firestore, 'applications');
+        return addDoc(appCollectionRef, userApplication).then((docRef) => {
+            this.mapUserToUid(userApplication.username, docRef.id);
+            userApplication.id = docRef.id;
+            this.updateApplication(userApplication);
+            return void 0;
+        });
     }
 
     getApplication(uid: string): Observable<UserApplication> {
@@ -90,12 +94,17 @@ export class UserAdminFirestoreService {
         return setDoc(usernameMapDocRef, {uid: uid});
     }
 
-    getUsernames(): Observable<string[]> {
-        const usernamesSubject = new Subject<string[]>();
-        onSnapshot(collection(this.firestore, 'usernameMap'), (snapshot) => {
-            usernamesSubject.next(snapshot.docs.map((doc) => doc.id));
+    getUsernames(): Observable<Record<string,string>> {
+        return new Observable<Record<string,string>>(observer => {
+            const unsubscribe = onSnapshot(collection(this.firestore, 'usernameMap'), (snapshot) => {
+                const usernameMap: Record<string,string> = {};
+                snapshot.docs.map((doc) => {
+                    usernameMap[doc.id] = doc.data()['uid'];
+                });
+                observer.next(usernameMap);
+            });
+            return unsubscribe;
         });
-        return usernamesSubject.asObservable();
     }
     suspendAccount() {}
 }

@@ -16,22 +16,15 @@ export class UserFirestoreService implements OnDestroy{
 
   private userCollectionLoadingSubject = new BehaviorSubject<boolean>(false);              
   private userCollectionErrorSubject = new BehaviorSubject<any | null>(null);
-  private userCollectionSnapshotSubject = new BehaviorSubject<QuerySnapshot | null>(null);
 
-  userCollectionSnapshot$ = this.userCollectionSnapshotSubject.asObservable();
 
   private readonly destroySubject = new BehaviorSubject<void>(undefined);
 
   
   constructor(private firestore: Firestore, private auth: Auth) {
-    this.initializeUserFirestoreService();
    }
 
 
-   initializeUserFirestoreService(){
-    console.log('UserFirestoreService initializing...');
-      
-   }
   
 
   // Get user from uid
@@ -79,11 +72,14 @@ export class UserFirestoreService implements OnDestroy{
 
 
   getAllUsers(): Observable<UserModel[]> {
-    return this.userCollectionSnapshot$.pipe(
-      map((snapshot: QuerySnapshot<DocumentData, DocumentData> | null) => {
-        return snapshot ? snapshot.docs.map(doc => doc.data() as UserModel) : [];
-      })
-    );
+    return new Observable<UserModel[]>((observer) => {
+      const usersRef = collection(this.firestore, 'users');
+      const unsubscribe = onSnapshot(usersRef, (snapshot) => {
+        const users = snapshot.docs.map(doc => doc.data() as UserModel);
+        observer.next(users);
+      });
+      return () => unsubscribe();
+    });
   }
 
   async getUser(uid: string): Promise<UserModel | null> {
@@ -96,34 +92,11 @@ export class UserFirestoreService implements OnDestroy{
     return snapshot.docs.map(doc => doc.data() as UserModel);
   }
   
-  
-  // get all users with optional filter (consider adding type safety here)
-  getAllUsersWhere(
-    property: keyof UserModel,
-    operator: '==' | '<' | '<=' | '>' | '>=',
-    value: any
-  ): Observable<UserModel[]> {
-    return this.userCollectionSnapshot$.pipe(
-      map((snapshot) => {
-        if (!snapshot) return [];
-        return snapshot.docs
-          .map(doc => doc.data() as UserModel)
-          .filter(user => {
-            // Add type checking and null/undefined checks for propertyValue
-            // ...
-          });
-      })
-    );
-  }
-
-
-  
 
   ngOnDestroy(): void {
     this.userCollectionLoadingSubject.complete();
     this.userCollectionErrorSubject.complete();
 
-    this.userCollectionSnapshotSubject.complete();
     this.destroySubject.next(); 
     this.destroySubject.complete();
   }
