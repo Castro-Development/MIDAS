@@ -140,6 +140,7 @@ export class UserSecurityFacade {
 
     requestSystemAccess(user: UserApplication): Promise<void> {
         this.userProfileFacade.createProfile(user, this.authState.user$);
+        console.log('profile created')
         return this.userAdminFirestore.submitApplication(user, this.authState.user$);
     }
 
