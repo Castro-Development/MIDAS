@@ -34,11 +34,11 @@ export class LoginComponent {
   login() {
     console.log(this.formValue.value.username); console.log(this.formValue.value.password);
     this.securityFacade.login(this.formValue.value.username, this.formValue.value.password);
-    // interval(1000).subscribe(() => {
-    //   if (this.authState.isLoggedIn$) {
-    //     this.router.navigate(['']);
-    //   }
-    // });
+    interval(2000).subscribe(() => {
+      if (this.authState.isLoggedIn$) {
+        this.router.navigate(['']);
+      }
+    });
   }
 
 

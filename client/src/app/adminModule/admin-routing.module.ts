@@ -5,35 +5,40 @@ import { AdminExpiredPasswordReportComponent } from "./adminExpiredPasswordRepor
 import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
 import { AdminDashboardComponent } from "./adminDashboard/admin-dashboard.component";
 import { AdminUserApplicationsComponent } from "./admin-user-applications/admin-user-applications.component";
+import { AdminAppFormComponent } from "./admin-app-form/admin-app-form.component";
 
 const routes: Routes = [
-    {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'admin-dashboard',
-    },
-    {
-        path: 'admin-users-chart',
-        component: AdminUsersChartComponent,
-    },
-    {
-        path: 'admin-expired-passwords-report',
-        component: AdminExpiredPasswordReportComponent,
-    },
-    {
-        path: 'admin-dashboard',
-        canActivate: [AuthGuardService],
-        component: AdminDashboardComponent,
-    },
-    {
-        path: 'admin-user-applications',
-        component: AdminUserApplicationsComponent,
-    }
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'admin-dashboard',
+  },
+  {
+    path: 'admin-users-chart',
+    component: AdminUsersChartComponent,
+  },
+  {
+    path: 'admin-expired-passwords-report',
+    component: AdminExpiredPasswordReportComponent,
+  },
+  {
+    path: 'admin-dashboard',
+    canActivate: [AuthGuardService],
+    component: AdminDashboardComponent,
+  },
+  {
+    path: 'admin-user-applications',
+    component: AdminUserApplicationsComponent,
+  },
+  {
+    path: 'admin-app-form',
+    component: AdminAppFormComponent,
+  },
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
 
-export class AdminRoutingModule {}
+export class AdminRoutingModule { }

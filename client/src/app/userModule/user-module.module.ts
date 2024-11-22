@@ -50,6 +50,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     FormsModule,
     ReactiveFormsModule,
     FullCalendarModule,
+    MatIcon,
 
   ]
 })

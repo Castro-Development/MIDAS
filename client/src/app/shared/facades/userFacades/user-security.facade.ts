@@ -144,6 +144,12 @@ export class UserSecurityFacade {
         return this.userAdminFirestore.submitApplication(user, this.authState.user$);
     }
 
+    approveUser(user: UserApplication): Promise<void> {
+      this.userProfileFacade.createProfile(user, this.authState.user$);
+      console.log('profile created')
+      return this.userAdminFirestore.submitApplication(user, this.authState.user$);
+    }
+
 
     // private getUserSecurityStatus(uid: string): Observable<SecurityStatus> {
     //     console.log("Getting user security status");

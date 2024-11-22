@@ -12,7 +12,7 @@ import { FilteringService } from '../filter.service';
   providedIn: 'root'
 })
 export class ApplicationFirestoreService implements OnDestroy{
-  
+
   private appCollectionSnapshotSubject = new BehaviorSubject<QuerySnapshot | null>(null);
   private appCollectionErrorSubject = new BehaviorSubject<any | null>(null);
   private appCollectionLoadingSubject = new BehaviorSubject<boolean>(false);
@@ -21,7 +21,7 @@ export class ApplicationFirestoreService implements OnDestroy{
 
   private readonly destroySubject = new BehaviorSubject<void>(undefined);
 
-  
+
   constructor(private firestore: Firestore, private authStateService: AuthStateService, private filterService: FilteringService) {
     this.initializeAppFirestoreService();
    }
@@ -34,27 +34,27 @@ export class ApplicationFirestoreService implements OnDestroy{
     ).subscribe(isLoggedIn => {
       if(!isLoggedIn){
         // Unsubscribe from previous snapshots when user logs in again
-        this.destroySubject.next(); 
+        this.destroySubject.next();
 
-        onSnapshot(collection(this.firestore, 'applications'), 
-          (snapshot) => this.appCollectionSnapshotSubject.next(snapshot), 
+        onSnapshot(collection(this.firestore, 'applications'),
+          (snapshot) => this.appCollectionSnapshotSubject.next(snapshot),
           (error) => this.appCollectionErrorSubject.next(error)
         );
-      } 
+      }
     });
    }
-  
+
 
   // Get user from uid
   getAppObservable(uid: string): Observable<UserApplicationWithMetaData | null> {
     return this.authStateService.isLoggedIn$.pipe(
       switchMap(isLoggedIn => {
         if (!isLoggedIn) {
-          return of(null); 
+          return of(null);
         }
         const appDocRef = doc(this.firestore, 'applications', uid);
-        return new Observable<UserApplicationWithMetaData | null>(observer => { 
-          const unsubscribe = onSnapshot(appDocRef, 
+        return new Observable<UserApplicationWithMetaData | null>(observer => {
+          const unsubscribe = onSnapshot(appDocRef,
             (docSnapshot: DocumentSnapshot<DocumentData>) => {
               if (docSnapshot.exists()) {
                 observer.next(docSnapshot.data() as UserApplicationWithMetaData);
@@ -65,24 +65,24 @@ export class ApplicationFirestoreService implements OnDestroy{
             (error) => observer.error(error)
           );
           // Return the unsubscribe function to be called when the Observable is unsubscribed
-          return unsubscribe; 
+          return unsubscribe;
         });
       })
     );
   }
 
 
-  
 
 
-  
+
+
 
   ngOnDestroy(): void {
     this.appCollectionLoadingSubject.complete();
     this.appCollectionErrorSubject.complete();
 
     this.appCollectionSnapshotSubject.complete();
-    this.destroySubject.next(); 
+    this.destroySubject.next();
     this.destroySubject.complete();
   }
 }

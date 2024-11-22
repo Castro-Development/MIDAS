@@ -4,9 +4,10 @@ import { Auth, User as FirebaseUser, user } from '@angular/fire/auth'
 import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
 import { BehaviorSubject, Observable, distinctUntilChanged, firstValueFrom, map, of, switchMap, takeUntil, tap, catchError, throwError } from 'rxjs';
 
-import { UserApplication, UserModel } from '../../dataModels/userModels/user.model';
+import { UserApplication, UserApplicationWithMetaData, UserModel } from '../../dataModels/userModels/user.model';
 import { AuthStateService } from '../../states/auth-state.service';
 import { SecurityStatus } from '../../facades/userFacades/user-security.facade';
+import { FilteringService } from '../filter.service';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +77,17 @@ export class UserFirestoreService implements OnDestroy{
       const usersRef = collection(this.firestore, 'users');
       const unsubscribe = onSnapshot(usersRef, (snapshot) => {
         const users = snapshot.docs.map(doc => doc.data() as UserModel);
+        observer.next(users);
+      });
+      return () => unsubscribe();
+    });
+  }
+
+  getAllApplications(): Observable<UserApplicationWithMetaData[]> {
+    return new Observable<UserApplicationWithMetaData[]>((observer) => {
+      const appDocRef = collection(this.firestore,  'applications');
+      const unsubscribe = onSnapshot(appDocRef, (snapshot) => {
+        const users = snapshot.docs.map(doc => doc.data() as UserApplicationWithMetaData);
         observer.next(users);
       });
       return () => unsubscribe();

@@ -37,6 +37,8 @@ $client-theme: mat.define-theme((
 
   --main-black: #0a0a0a;
   --form-black:#1b1b1b;
+  --form-content-color:#707070;
+  --form-group-color:#383838;
   --text-gold:#FFD700;
 
 
@@ -49,7 +51,7 @@ $client-theme: mat.define-theme((
   --button-slate-disabled:#5c5c5c;
 
   --auth-error-bg:#FEE2E2;
-  --auth-error-text:#991B1B;
+  --auth-error-text:#c70000;
 
   .auth-error {
     background-color: var(--auth-error-bg);
@@ -61,7 +63,30 @@ $client-theme: mat.define-theme((
     display: block
   }
 
+
+
   .button, .gold-button, .slate-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    //width: 100%;
+    font-weight: 500;
+    text-align: center;
+    color: #ffffff;
+  }
+
+  .button{
+    padding-top: 0.45rem;
+    padding-bottom: 0.45rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.125rem
+  }
+
+
+  .gold-button, .slate-button{
     padding-top: 0.625rem;
     padding-bottom: 0.625rem;
     padding-left: 1.25rem;
@@ -69,11 +94,23 @@ $client-theme: mat.define-theme((
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
     border-radius: 0.125rem;
-    width: 100%;
-    font-weight: 500;
-    text-align: center;
-    color: #ffffff;
+    //width: auto;
+    //width: 100%;
   }
+
+  .button:disabled{
+    //background-color:darken($color: #4b4b4b7e, $amount: 5%);
+    filter: brightness(85%);
+  }
+  .button:enabled{
+    //background-color: var(--button-gold);
+  }
+  .button:enabled:hover {
+    //background-color: lighten($color: #ffffff1e, $amount: 5%);
+    filter: brightness(120%);
+
+  }
+
   .gold-button:disabled{
     background-color: var(--button-gold-disabled);
   }
@@ -91,6 +128,17 @@ $client-theme: mat.define-theme((
   }
   .slate-button:enabled:hover {
     background-color: var(--button-slate-hover);
+  }
+
+
+
+  .section-header-global {
+    //margin-bottom: 2rem;
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 700;
+    //text-align: center;
+    color: var(--header-color);
   }
 
 

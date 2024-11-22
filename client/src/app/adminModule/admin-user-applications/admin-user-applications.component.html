@@ -1,1 +1,62 @@
-<p>admin-user-applications works!</p>
+
+
+<div class="main-container">
+
+<div class="header">
+  <h2 class="section-header-global">User Applications</h2>
+
+</div>
+<div class="header">
+  <button class="button return" routerLink="/admin"><mat-icon class="mat-icon">arrow_back</mat-icon> Return to Admin Dashboard</button>
+  <button class="button create-user">Create New User</button>
+</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>User ID</th>
+
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Phone</th>
+        <th>Street</th>
+        <th>Zip</th>
+        <th>State</th>
+        <th>Password</th>
+        <th>Submit Date</th>
+        <th>Date Approved</th>
+        <th>Assigned GL?</th>
+        <th>Assigned Accounts?</th>
+        <th>Requested Role</th>
+        <th>Edit Request</th>
+        <th>View Application</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users$ | async; let i = index">
+        <td>{{user.id}}</td>
+        <td>{{user.firstname}}</td>
+        <td>{{user.lastname}}</td>
+        <td>{{user.phone}}</td>
+        <td>{{user.street}}</td>
+        <td>{{user.zip}}</td>
+        <td>{{user.state}}</td>
+        <td>{{user.password}}</td>
+        <td>{{user.dateRequested}}</td>
+        <td>{{user.dateApproved}}</td>
+        <td>{{user.assignedGL}}</td>
+        <td>{{user.assignedAccounts}}</td>
+        <td>{{user.requestedRole}}</td>
+        <!-- <td><button class="edit">User</button></td> -->
+        <td><mat-icon>edit</mat-icon></td>
+        <td><button class="edit" (click)="decideUser(user)">{{user.username}}</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+

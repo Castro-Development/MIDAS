@@ -7,50 +7,52 @@ import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } f
 @Component({
   selector: 'journal-entry-form-card',
   template: `
-    <div class="p-6 bg-gray-900">
+  <div class="main-container">
+    <div class="header">
+      <h2 class="section-header-global">Create Journal Entry</h2>
+    </div>
+    <div class="form-container">
       <form [formGroup]="journalEntryForm" (ngSubmit)="onSubmit()" class="space-y-6">
         <!-- Header Section -->
-        <div class="text-xl font-bold text-white mb-6">
+        <!-- <div class="text-xl font-bold text-white mb-6">
           Create Journal Entry
-        </div>
+        </div> -->
 
         <!-- Basic Information Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="form-grid">
           <!-- Entry Title -->
           <div>
-            <label for="entryTitle" class="block text-sm font-medium text-white mb-2">
+            <label for="entryTitle" class="form-label">
               Entry Title
             </label>
-            <input 
-              id="entryTitle" 
-              type="text" 
+            <input
+              id="entryTitle"
+              type="text"
               formControlName="entryTitle"
-              class="w-full p-2 bg-gray-800 border border-gray-700 rounded-md text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="form-input"
               placeholder="Enter Entry Title"
             >
-            <div *ngIf="journalEntryForm.get('entryTitle')?.touched && 
+            <div *ngIf="journalEntryForm.get('entryTitle')?.touched &&
                         journalEntryForm.get('entryTitle')?.invalid"
-                 class="text-red-500 text-sm mt-1">
+                 class="invalid-container">
               Entry Title is required
             </div>
           </div>
 
           <!-- Date -->
           <div>
-            <label for="date" class="block text-sm font-medium text-white mb-2">
+            <label for="date" class="form-label">
               Date
             </label>
-            <input 
-              id="date" 
-              type="date" 
+            <input
+              id="date"
+              type="date"
               formControlName="date"
-              class="w-full p-2 bg-gray-800 border border-gray-700 rounded-md text-white
-                     focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="form-input"
             >
-            <div *ngIf="journalEntryForm.get('date')?.touched && 
+            <div *ngIf="journalEntryForm.get('date')?.touched &&
                         journalEntryForm.get('date')?.invalid"
-                 class="text-red-500 text-sm mt-1">
+                 class="invalid-container">
               Date is required
             </div>
           </div>
@@ -58,20 +60,19 @@ import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } f
 
         <!-- Description Section -->
         <div>
-          <label for="description" class="block text-sm font-medium text-white mb-2">
+          <label for="description" class="form-label">
             Description
           </label>
-          <textarea 
-            id="description" 
+          <textarea
+            id="description"
             formControlName="description"
             rows="3"
-            class="w-full p-2 bg-gray-800 border border-gray-700 rounded-md text-white
-                   focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="form-input"
             placeholder="Enter a description for this journal entry..."
           ></textarea>
-          <div *ngIf="journalEntryForm.get('description')?.touched && 
+          <div *ngIf="journalEntryForm.get('description')?.touched &&
                       journalEntryForm.get('description')?.invalid"
-               class="text-red-500 text-sm mt-1">
+               class="invalid-container">
             Description is required
           </div>
         </div>
@@ -79,32 +80,30 @@ import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } f
         <!-- Transactions Section -->
         <div formArrayName="transactions" class="space-y-4">
           <div class="flex justify-between items-center">
-            <h3 class="text-lg font-medium text-white">Transactions</h3>
-            <button 
-              type="button" 
+            <h3 class="form-section-header">Transactions</h3>
+            <button
+              type="button"
               (click)="addTransaction()"
-              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700
-                     transition-colors duration-200"
+              class="gold-button"
             >
               Add Transaction
             </button>
           </div>
 
           <!-- Individual Transactions -->
-          <div *ngFor="let transaction of transactions.controls; let i=index" 
+          <div *ngFor="let transaction of transactions.controls; let i=index"
                [formGroupName]="i"
-               class="p-4 bg-gray-800 rounded-lg border border-gray-700 space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+               class="transaction-box">
+            <div class="transaction-grid">
               <!-- Account Selection -->
               <div>
-                <label [for]="'accountId-' + i" class="block text-sm font-medium text-white mb-2">
+                <label [for]="'accountId-' + i" class="form-label">
                   Account
                 </label>
-                <select 
-                  [id]="'accountId-' + i" 
+                <select
+                  [id]="'accountId-' + i"
                   formControlName="accountId"
-                  class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white
-                         focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="transaction-selection"
                 >
                   <option value="" disabled selected>Select an account</option>
                   <option *ngFor="let account of accounts" [value]="account.accountNumber">
@@ -115,30 +114,28 @@ import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } f
 
               <!-- Transaction Description -->
               <div>
-                <label [for]="'description-' + i" class="block text-sm font-medium text-white mb-2">
+                <label [for]="'description-' + i" class="form-label">
                   Description
                 </label>
-                <input 
-                  [id]="'description-' + i" 
-                  type="text" 
+                <input
+                  [id]="'description-' + i"
+                  type="text"
                   formControlName="description"
-                  class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white
-                         focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="transaction-selection"
                   placeholder="Transaction description"
                 >
               </div>
 
               <!-- Debit Amount -->
               <div>
-                <label [for]="'debitAmount-' + i" class="block text-sm font-medium text-white mb-2">
+                <label [for]="'debitAmount-' + i" class="form-label">
                   Debit
                 </label>
-                <input 
-                  [id]="'debitAmount-' + i" 
-                  type="number" 
+                <input
+                  [id]="'debitAmount-' + i"
+                  type="number"
                   formControlName="debitAmount"
-                  class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white
-                         focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="transaction-selection"
                   min="0"
                   step="0.01"
                 >
@@ -146,15 +143,14 @@ import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } f
 
               <!-- Credit Amount -->
               <div>
-                <label [for]="'creditAmount-' + i" class="block text-sm font-medium text-white mb-2">
+                <label [for]="'creditAmount-' + i" class="form-label">
                   Credit
                 </label>
-                <input 
-                  [id]="'creditAmount-' + i" 
-                  type="number" 
+                <input
+                  [id]="'creditAmount-' + i"
+                  type="number"
                   formControlName="creditAmount"
-                  class="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-white
-                         focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  class="transaction-selection"
                   min="0"
                   step="0.01"
                 >
@@ -162,14 +158,14 @@ import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } f
             </div>
 
             <!-- Remove Transaction Button -->
-            <div class="flex justify-end">
-              <button 
+            <div class="remove-container">
+              <button
                 type="button"
                 (click)="removeTransaction(i)"
-                class="text-red-500 hover:text-red-400 transition-colors duration-200"
+                class="remove-transaction"
                 *ngIf="transactions.length > 1"
               >
-                <span class="material-icons">delete</span>
+                <mat-icon class="mat-icon">delete</mat-icon>
                 Remove
               </button>
             </div>
@@ -177,14 +173,14 @@ import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } f
         </div>
 
         <!-- Totals Section -->
-        <div class="grid grid-cols-2 gap-4 p-4 bg-gray-800 rounded-lg border border-gray-700">
+        <div class="totals-section">
           <div>
-            <p class="text-lg font-medium text-yellow-500">
+            <p class="totals-font">
               Total Debits: {{ calculateTotalDebits() | currency }}
             </p>
           </div>
           <div>
-            <p class="text-lg font-medium text-yellow-500">
+            <p class="totals-font">
               Total Credits: {{ calculateTotalCredits() | currency }}
             </p>
           </div>
@@ -192,39 +188,38 @@ import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } f
 
         <!-- Validation Messages -->
         <div class="space-y-2">
-          <div *ngIf="!isBalanced() && journalEntryForm.touched" 
-               class="p-3 bg-red-900 text-red-200 rounded-md">
+          <div *ngIf="!isBalanced() && journalEntryForm.touched"
+               class="violation-message">
             Debits and credits must be equal
           </div>
           <div *ngIf="!validateTransactions() && journalEntryForm.touched"
-               class="p-3 bg-red-900 text-red-200 rounded-md">
+               class="violation-message">
             Each transaction must have either a debit or credit amount, not both
           </div>
         </div>
 
         <!-- Submit Button -->
         <div class="flex justify-end space-x-4">
-          <button 
+          <button
             type="button"
             (click)="journalEntryForm.reset()"
-            class="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700
-                   transition-colors duration-200"
+            class="slate-button"
           >
             Reset
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             [disabled]="!canSubmit()"
-            class="px-6 py-2 bg-green-600 text-white rounded-md 
-                   hover:bg-green-700 transition-colors duration-200
-                   disabled:bg-gray-600 disabled:cursor-not-allowed"
+            class="gold-button"
           >
             Submit Journal Entry
           </button>
         </div>
       </form>
     </div>
-  `
+  </div>
+  `,
+  styleUrl: './journal-entry-form-card.component.scss'
 })
 
 export class JournalEntryFormCard {
@@ -233,7 +228,7 @@ export class JournalEntryFormCard {
 
   journalEntryForm!: FormGroup;
 
-  
+
 
   constructor(private fb: FormBuilder) {
     this.createForm();
@@ -286,7 +281,7 @@ export class JournalEntryFormCard {
 
 
   validateTransactions(): boolean {
-    return this.transactions.controls.every(control => 
+    return this.transactions.controls.every(control =>
       this.isTransactionValid(control.value)
     );
   }
@@ -316,7 +311,7 @@ export class JournalEntryFormCard {
   onSubmit() {
     if (this.journalEntryForm.valid && this.isBalanced()) {
       const formValue = this.journalEntryForm.value as JournalEntryFormValue;
-      
+
       const accountsFromTransactions = formValue.transactions.map((transaction: JournalTransaction) => transaction.accountId);
 
       // Prepare the journal entry object

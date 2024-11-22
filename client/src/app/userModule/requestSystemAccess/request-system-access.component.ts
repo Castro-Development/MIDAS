@@ -80,6 +80,14 @@ export class RequestSystemAccessComponent {
 
   });
 
+  alert("User has been successfully added!")
+  let ref = document.getElementById('cancel');
+  ref?.click();
+  this.formValue.reset();
+  this.router.navigate(['login']);
+
+
+
 
     //Make a dialog box pop up for 5-10 seconds that says "Your application has been submitted. You will receive an email when your account has been approved. Your username is: ..."
 

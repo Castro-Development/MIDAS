@@ -1,0 +1,325 @@
+<!-- {{user.username}} -->
+
+
+<div class="main-container">
+  <div class="header">
+  <h2 class="section-header-global">Review Applications</h2>
+
+</div>
+<div class="header">
+  <button class="button return" routerLink="/admin/admin-user-applications"><mat-icon class="mat-icon">arrow_back</mat-icon> Return to User Applications</button>
+  <!-- <button class="button create-user">Create New User</button> -->
+</div>
+  <div class="form-container">
+    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <!-- Header Section -->
+      <!-- <div class="text-xl font-bold text-white mb-6">
+        Create Journal Entry
+      </div> -->
+
+      <!-- User ID -->
+      <h3 class="form-section-header">Edit User Identification</h3>
+      <div class="transaction-box">
+        <div class="form-grid">
+          <div class="grid-item-3-span">
+            <label for="userId" class="form-label">
+              User Id (Read Only)
+            </label>
+            <input
+              id="userId"
+              type="text"
+              formControlName="userId"
+              class="form-input"
+              placeholder="Enter User ID"
+              readonly
+            >
+            <div *ngIf="applicationForm.get('userId')?.touched &&
+                        applicationForm.get('userId')?.invalid"
+                 class="invalid-container">
+              User ID is required
+            </div>
+          </div>
+
+          <div class="grid-item-3-span">
+            <label for="username" class="form-label">
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
+              class="form-input"
+              placeholder="Edit User ID"
+            >
+            <div *ngIf="applicationForm.get('username')?.touched &&
+                        applicationForm.get('username')?.invalid"
+                 class="invalid-container">
+              Username is required
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- User Details -->
+      <h3 class="form-section-header">Edit User Details</h3>
+      <div class="transaction-box">
+        <div class="form-grid">
+          <div class="grid-item-3-span">
+            <label for="firstname" class="form-label">
+              Firstname
+            </label>
+            <input
+              id="firstname"
+              type="text"
+              formControlName="firstname"
+              class="form-input"
+              placeholder="Edit User's First Name"
+            >
+            <div *ngIf="applicationForm.get('firstname')?.touched &&
+                        applicationForm.get('firstname')?.invalid"
+                 class="invalid-container">
+              Firstname is required
+            </div>
+          </div>
+
+
+          <div class="grid-item-3-span">
+            <label for="lastname" class="form-label">
+              Lastname
+            </label>
+            <input
+              id="lastname"
+              type="text"
+              formControlName="lastname"
+              class="form-input"
+              placeholder="Edit User's First Name"
+            >
+            <div *ngIf="applicationForm.get('lastname')?.touched &&
+                        applicationForm.get('lastname')?.invalid"
+                 class="invalid-container">
+              Lastname is required
+            </div>
+          </div>
+
+
+          <div class="grid-item-3-span">
+            <label for="phone" class="form-label">
+              Phone Number
+            </label>
+            <input
+              id="phone"
+              type="text"
+              formControlName="phone"
+              class="form-input"
+              placeholder="Edit User's Phone Number"
+            >
+            <div *ngIf="applicationForm.get('phone')?.touched &&
+                        applicationForm.get('phone')?.invalid"
+                 class="invalid-container">
+                 Phone Number required
+            </div>
+          </div>
+
+
+          <div class="grid-item-3-span">
+            <label for="street" class="form-label">
+              Street
+            </label>
+            <input
+              id="street"
+              type="text"
+              formControlName="street"
+              class="form-input"
+              placeholder="Edit User's Street"
+            >
+            <div *ngIf="applicationForm.get('street')?.touched &&
+                        applicationForm.get('street')?.invalid"
+                 class="invalid-container">
+                 Street required
+            </div>
+          </div>
+
+
+          <div class="grid-item-3-span">
+            <label for="zip" class="form-label">
+              Zip
+            </label>
+            <input
+              id="zip"
+              type="text"
+              formControlName="zip"
+              class="form-input"
+              placeholder="Edit User's Zip"
+            >
+            <div *ngIf="applicationForm.get('zip')?.touched &&
+                        applicationForm.get('zip')?.invalid"
+                 class="invalid-container">
+                 Zip required
+            </div>
+          </div>
+
+
+          <div class="grid-item-3-span">
+            <label for="state" class="form-label">
+              State
+            </label>
+            <input
+              id="state"
+              type="text"
+              formControlName="state"
+              class="form-input"
+              placeholder="Edit User's State"
+            >
+            <div *ngIf="applicationForm.get('state')?.touched &&
+                        applicationForm.get('state')?.invalid"
+                 class="invalid-container">
+                 State required
+            </div>
+          </div>
+
+
+          <div class="grid-item-3-span">
+            <label for="role" class="form-label">
+              Requested Role
+            </label>
+            <input
+              id="role"
+              type="text"
+              formControlName="role"
+              class="form-input"
+              placeholder="Edit User's Role"
+            >
+            <div *ngIf="applicationForm.get('role')?.touched &&
+                        applicationForm.get('role')?.invalid"
+                 class="invalid-container">
+                 Role required
+            </div>
+          </div>
+
+
+          <div class="grid-item-3-span">
+            <label for="dateRequested" class="form-label">
+              Date Requested
+            </label>
+            <input
+              id="dateRequested"
+              type="text"
+              formControlName="dateRequested"
+              class="form-input"
+              placeholder="Edit User's dateRequested"
+            >
+            <div *ngIf="applicationForm.get('dateRequested')?.touched &&
+                        applicationForm.get('dateRequested')?.invalid"
+                 class="invalid-container">
+                 Date Requested required
+            </div>
+          </div>
+
+
+          <div class="grid-item-3-span">
+            <label for="password" class="form-label">
+              Password
+            </label>
+            <input
+              id="password"
+              type="text"
+              formControlName="password"
+              class="form-input"
+              placeholder="Edit User's Password"
+            >
+            <div *ngIf="applicationForm.get('password')?.touched &&
+                        applicationForm.get('password')?.invalid"
+                 class="invalid-container">
+                 Password required
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+
+      <div class="form-grid">
+
+
+        <!-- Entry Title -->
+
+
+        <!-- Date -->
+        <div class="grid-item-3-span">
+          <label for="dateUpdated" class="form-label">
+            Date Approved / Rejected
+          </label>
+          <input
+            id="dateUpdated"
+            type="date"
+            formControlName="dateUpdated"
+            class="form-input"
+          >
+          <div *ngIf="applicationForm.get('dateUpdated')?.touched &&
+                      applicationForm.get('dateUpdated')?.invalid"
+               class="invalid-container">
+            Date is required
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Description Section -->
+      <div>
+        <label for="reason" class="form-label">
+          Reason for Decision
+        </label>
+        <textarea
+          id="reason"
+          formControlName="reason"
+          rows="3"
+          class="form-input"
+          placeholder="Enter the reason for your decision..."
+        ></textarea>
+        <div *ngIf="applicationForm.get('reason')?.touched &&
+                    applicationForm.get('reason')?.invalid"
+             class="invalid-container">
+          Reason is required
+        </div>
+      </div>
+
+      <!-- Transactions Section -->
+
+      <!-- Validation Messages -->
+      <div class="space-y-2">
+        <div *ngIf="true && applicationForm.touched"
+             class="violation-message">
+          Debits and credits must be equal
+        </div>
+        <div *ngIf="true && applicationForm.touched"
+             class="violation-message">
+          Each transaction must have either a debit or credit amount, not both
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="flex justify-end space-x-4">
+        <button
+          type="button"
+          (click)="createForm()"
+          class="slate-button"
+        >
+          Reset
+        </button>
+        <button
+          type="submit"
+          [disabled]="!canSubmit()"
+          class="gold-button"
+        >
+          Submit Application Decision
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
