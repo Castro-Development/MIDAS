@@ -1,10 +1,10 @@
-import { Component} from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 
 
 @Component({
     selector: 'chart-account-svg',
     template: `
-    <!-- Header Section -->
+
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240">
                     <defs>
                       <linearGradient id="chartGold" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -112,13 +112,17 @@ import { Component} from "@angular/core";
                           font-size="16"
                           letter-spacing="1"
                           filter="url(#textGlow)">
-                      <tspan style="font-size: 22px">Chart of Accounts</tspan>
+                      <tspan style="font-size: 22px">{{text}}</tspan>
                     </text>
                   </svg>
+
     `,
-      standalone: true,
-      imports: [],
+
 })
 export class ChartAccountSVG{
+
+  @Input() text: string='';
+  @Input() routerLink: string='/portal/chart-of-accounts';
+
 
 }

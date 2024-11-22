@@ -34,7 +34,8 @@
   border-radius: 0.5rem;
   border-width: 1px;
   border-color: #E5E7EB;
-  background-color: #374151;
+  //background-color: #374151;
+  background-color: var(--form-black);
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
@@ -51,6 +52,26 @@
 }
 
 .dashboard-card:hover {
-  border-color: #3B82F6;
-  background-color: #6B7280;
+  border-color: var(--button-gold);
+  transform: scale(1.05);
+  filter: brightness(150%);
+
+}
+
+.svg{
+  margin-bottom: 1rem;
+  width: 3rem;
+  height: 3rem;
+  color: var(--form-black);
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+.svg:hover{
+  // transition-property: transform;
+  // transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  // transition-duration: 300ms;
+  --transform-scale-x: 1.1;
+  --transform-scale-y: 1.1;
+  filter: brightness(150%);
 }

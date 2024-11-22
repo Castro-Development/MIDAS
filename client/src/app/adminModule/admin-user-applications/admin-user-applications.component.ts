@@ -21,9 +21,9 @@ export class AdminUserApplicationsComponent {
   constructor(){}
 
 
-  editUser(user: any) {
-    this.router.navigate(['/admin-app-form'], { queryParams: { data: JSON.stringify(user) } });
-  }
+  // editUser(user: any) {
+  //   this.router.navigate(['/admin-app-form'], { queryParams: { data: JSON.stringify(user) } });
+  // }
   decideUser(user: any) {
     this.router.navigate(['/admin-app-form'], { queryParams: { data: JSON.stringify(user) } });
   }

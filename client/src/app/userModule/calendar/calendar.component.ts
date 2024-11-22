@@ -23,6 +23,6 @@ export class CalendarComponent {
   };
 
   handleDateClick(arg: any) {
-    alert('date click! ' + arg.dateStr)
+    //alert('date click! ' + arg.dateStr)
   }
 }

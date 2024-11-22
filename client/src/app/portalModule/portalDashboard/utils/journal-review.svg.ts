@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 
 
 @Component({
@@ -147,13 +147,14 @@ import { Component } from "@angular/core";
             font-size="16"
             letter-spacing="1"
             filter="url(#textGlow)">
-        <tspan style="font-size: 18px">Journal Review</tspan>
+        <tspan style="font-size: 18px">{{text}}</tspan>
       </text>
     </svg>
     `,
-  standalone: true,
-  imports: [],
+
 })
 export class JournalReviewSVG {
+
+@Input() text: string='';
 
 }

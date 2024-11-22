@@ -90,6 +90,10 @@ import { CalendarComponent } from './userModule/calendar/calendar.component';
   declarations: [
     AppComponent,
     NavbarComponent,
+    ChartAccountSVG,
+    JournalEntrySVG,
+    JournalReviewSVG,
+
 
     //portal module
     // JournalEntryFormComponent,

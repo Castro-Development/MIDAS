@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ChartAccountSVG } from './utils/chart-of-accounts.svg';
+
 
 @Component({
   selector: 'app-portal-dashboard',

@@ -47,7 +47,10 @@ import { JournalReviewSVG } from './portalDashboard/utils/journal-review.svg';
     JournalReviewCard,
     JournalSubmissionComponent,
     JournalSubmissionCard,
-    FiscalPeriodManagementComponent
+    FiscalPeriodManagementComponent,
+    // ChartAccountSVG,
+    // JournalEntrySVG,
+    // JournalReviewSVG,
 
   ],
   imports: [
@@ -66,9 +69,7 @@ import { JournalReviewSVG } from './portalDashboard/utils/journal-review.svg';
     MatPaginatorModule,
     MatSortModule,
     MatCardModule,
-    ChartAccountSVG,
-    JournalEntrySVG,
-    JournalReviewSVG,
+
 
   ]
 })
