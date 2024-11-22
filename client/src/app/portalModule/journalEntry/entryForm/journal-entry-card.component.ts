@@ -12,7 +12,7 @@ import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } f
       <h2 class="section-header-global">Create Journal Entry</h2>
     </div>
     <div class="header">
-      <button class="button return" routerLink="/portal/"><mat-icon class="mat-icon">arrow_back</mat-icon> Return to Accounting Dashboard</button>
+      <button class="button return" routerLink="/portal-dashboard"><mat-icon class="mat-icon">arrow_back</mat-icon> Return to Accounting Dashboard</button>
     </div>
     <div class="form-container">
       <form [formGroup]="journalEntryForm" (ngSubmit)="onSubmit()" class="space-y-6">

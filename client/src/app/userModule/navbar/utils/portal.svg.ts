@@ -4,7 +4,7 @@ import { Component } from "@angular/core";
 @Component({
   selector: 'portal-svg',
   template: `
-    <svg routerLink="/portal/" viewBox="0 0 200 200" style="height: 50px; width: 50px;" xmlns="http://www.w3.org/2000/svg">
+    <svg routerLink="portal-dashboard" viewBox="0 0 200 200" style="height: 50px; width: 50px;" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <filter id="portalGlow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="3" result="blur1"/>
