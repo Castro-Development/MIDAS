@@ -8,17 +8,15 @@ import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } f
   selector: 'journal-entry-form-card',
   template: `
   <div class="main-container">
-    <div class="header">
+    <div class="title-header">
       <h2 class="section-header-global">Create Journal Entry</h2>
+    </div>
+    <div class="header">
+      <button class="button return" routerLink="/portal/"><mat-icon class="mat-icon">arrow_back</mat-icon> Return to Accounting Dashboard</button>
     </div>
     <div class="form-container">
       <form [formGroup]="journalEntryForm" (ngSubmit)="onSubmit()" class="space-y-6">
-        <!-- Header Section -->
-        <!-- <div class="text-xl font-bold text-white mb-6">
-          Create Journal Entry
-        </div> -->
 
-        <!-- Basic Information Section -->
         <div class="form-grid">
           <!-- Entry Title -->
           <div>

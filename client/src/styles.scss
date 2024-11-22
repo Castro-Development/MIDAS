@@ -108,6 +108,7 @@ $client-theme: mat.define-theme((
   .button:enabled:hover {
     //background-color: lighten($color: #ffffff1e, $amount: 5%);
     filter: brightness(120%);
+    transform: scale(1.05);
 
   }
 
@@ -119,6 +120,7 @@ $client-theme: mat.define-theme((
   }
   .gold-button:enabled:hover {
     background-color: var(--button-gold-hover);
+    transform: scale(1.05);
   }
   .slate-button:disabled{
     background-color: var(--button-slate-disabled);
@@ -128,6 +130,7 @@ $client-theme: mat.define-theme((
   }
   .slate-button:enabled:hover {
     background-color: var(--button-slate-hover);
+    transform: scale(1.05);
   }
 
 

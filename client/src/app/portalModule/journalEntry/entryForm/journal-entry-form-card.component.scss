@@ -13,13 +13,55 @@
 .main-container{
   display: flex;
   flex-direction: column;
-  margin: 5% auto 5% auto;
+  margin: 5% auto 0 auto;
   border-radius: 5px;
   width: 90%;
   //background-color: var(--main-black);
   font-size: .80rem;
   //padding: 20px;
-  padding-bottom: 3%;
+}
+
+.header, .title-header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  //background-color: #1d1d1d;
+  //margin-bottom: 1rem;
+}
+.header{
+  margin-bottom: 1rem;
+}
+
+.edit, .create-user, .general-button, .return{
+  //background-color: var(--button-gold);
+  padding: .3rem .5rem .3rem .5rem;
+  border-radius: 5px;
+  font-weight: 700;
+  color: white;
+}
+
+.edit{
+  background-color: var(--button-gold);
+  color: var(--main-black) ;
+}
+
+.create-user{
+  background-color: var(--button-gold);
+  width: 15rem;
+  height: 2rem;
+}
+
+.return{
+  background-color: var(--button-slate);
+  color: white;
+}
+
+
+
+.mat-icon{
+  margin: 0 5px 0 0px
 }
 
 .section-header-global {

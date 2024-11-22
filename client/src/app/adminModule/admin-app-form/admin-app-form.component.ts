@@ -1,9 +1,11 @@
-import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserApplicationWithMetaData, UserApplication, UserModel } from '../../shared/dataModels/userModels/user.model';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { getAuth } from 'firebase/auth';
 import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } from '../../shared/dataModels/financialModels/account-ledger.model';
+import { AuthStateService } from '../../shared/states/auth-state.service';
+import { User } from "firebase/auth";
 
 @Component({
   selector: 'app-admin-app-form',
@@ -14,8 +16,12 @@ export class AdminAppFormComponent implements OnInit{
 
   user!: UserApplicationWithMetaData;
   @Output() formSubmit = new EventEmitter<any>();
-  //@Input() accounts: AccountLedger[] | null = [] as AccountLedger[];
   applicationForm!: FormGroup;
+  authState = inject(AuthStateService);
+  reviewer!: User;
+  reviewer2!: UserModel;
+  reviewer3!:string;
+
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder){
 
@@ -43,6 +49,7 @@ export class AdminAppFormComponent implements OnInit{
       reason: ['', Validators.required],
       //reviewedBy: [this.user.reviewedBy, Validators.required],
       chosenRole: ['', Validators.required],
+      reviewedBy: [this.reviewer3, Validators.required],
 
     });
 
@@ -55,6 +62,15 @@ export class AdminAppFormComponent implements OnInit{
   }
 
   ngOnInit() {
+    //this.reviewer = this.authState.user$;
+    this.authState.username$.subscribe(s => {
+      if(s != null){
+        //this.reviewer = s;
+        //this.reviewer2 = s;
+        this.reviewer3 = s;
+      }
+    })
+
     this.route.queryParams.subscribe(params => {
       if (params['data']) {
         this.user = JSON.parse(params['data']);

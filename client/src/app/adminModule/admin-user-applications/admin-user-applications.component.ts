@@ -13,11 +13,12 @@ import { Router } from '@angular/router';
 })
 export class AdminUserApplicationsComponent {
 
+  router = inject(Router);
   userService = inject(UserFirestoreService);
   users$ = this.userService.getAllApplications();
   userCount$ = this.users$.pipe(map(users => users.length));
 
-  constructor(private router: Router){}
+  constructor(){}
 
 
   editUser(user: any) {

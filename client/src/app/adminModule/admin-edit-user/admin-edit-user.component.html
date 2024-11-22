@@ -3,12 +3,12 @@
 
 <div class="main-container">
   <div class="title-header">
-    <h2 class="section-header-global">Review {{user.username}}'s Applications</h2>
+    <h2 class="section-header-global">Edit {{user.username}}'s Details</h2>
 
   </div>
   <div class="header">
-    <button class="button return" routerLink="/admin/admin-user-applications"><mat-icon
-        class="mat-icon">arrow_back</mat-icon> Return to User Applications</button>
+    <button class="button return" routerLink="/admin/admin-users-chart"><mat-icon
+        class="mat-icon">arrow_back</mat-icon> Return to User Chart</button>
     <!-- <button class="button create-user">Create New User</button> -->
   </div>
   <div class="form-container">
@@ -172,7 +172,7 @@
       <div class="form-grid">
         <div class="grid-item-3-span">
           <label for="dateUpdated" class="form-label">
-            Date Approved / Rejected
+            Date Updated
           </label>
           <input id="dateUpdated" type="date" formControlName="dateUpdated" class="form-input">
           <div *ngIf="applicationForm.get('dateUpdated')?.touched &&
@@ -182,34 +182,15 @@
         </div>
 
 
-        <div class="grid-item-3-span">
-          <label for="reviewedBy" class="form-label">
-            Reviewed By
-          </label>
-          <input id="reviewedBy" type="text" formControlName="reviewedBy" class="form-input"
-            placeholder="Application Reviewer">
-          <div *ngIf="applicationForm.get('reviewedBy')?.touched &&
-                    applicationForm.get('reviewedBy')?.invalid" class="invalid-container">
-            A Reviewer is Required
-          </div>
-        </div>
+
+
       </div>
 
 
 
 
       <!-- Description Section -->
-      <div>
-        <label for="reason" class="form-label">
-          Reason for Decision
-        </label>
-        <textarea id="reason" formControlName="reason" rows="3" class="form-input"
-          placeholder="Enter the reason for your decision..."></textarea>
-        <div *ngIf="applicationForm.get('reason')?.touched &&
-                    applicationForm.get('reason')?.invalid" class="invalid-container">
-          Reason is required
-        </div>
-      </div>
+
 
       <!-- Transactions Section -->
 
@@ -228,7 +209,7 @@
         <button type="button" (click)="createForm()" class="slate-button">
           Reset
         </button>
-        <button type="submit" [disabled]="!canSubmit()" class="gold-button">
+        <button type="submit" [disabled]="false" class="gold-button">
           Submit Application Decision
         </button>
       </div>

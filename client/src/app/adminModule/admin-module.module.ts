@@ -8,6 +8,7 @@ import { AdminUserApplicationsComponent } from './admin-user-applications/admin-
 import { MatIcon } from '@angular/material/icon';
 import { AdminAppFormComponent } from './admin-app-form/admin-app-form.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AdminEditUserComponent } from './admin-edit-user/admin-edit-user.component';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     AdminUsersChartComponent,
     AdminUserApplicationsComponent,
     AdminAppFormComponent,
+    AdminEditUserComponent,
   ],
   imports: [
     CommonModule,

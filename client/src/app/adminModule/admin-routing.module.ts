@@ -6,6 +6,7 @@ import { AuthGuardService } from "../shared/authGuard/auth-guard.service";
 import { AdminDashboardComponent } from "./adminDashboard/admin-dashboard.component";
 import { AdminUserApplicationsComponent } from "./admin-user-applications/admin-user-applications.component";
 import { AdminAppFormComponent } from "./admin-app-form/admin-app-form.component";
+import { AdminEditUserComponent } from './admin-edit-user/admin-edit-user.component';
 
 const routes: Routes = [
   {
@@ -33,6 +34,10 @@ const routes: Routes = [
   {
     path: 'admin-app-form',
     component: AdminAppFormComponent,
+  },
+  {
+    path: 'admin-edit-user',
+    component: AdminEditUserComponent,
   },
 ];
 
