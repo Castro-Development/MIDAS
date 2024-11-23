@@ -23,6 +23,7 @@ import { LoginComponent } from './userModule/login/login.component';
 import { ProfileComponent } from './userModule/profile/profile.component';
 import { RequestSystemAccessComponent } from './userModule/requestSystemAccess/request-system-access.component';
 import { SplashScreenComponent } from './userModule/splash-screen-component/splash-screen-component.component';
+import { MessagingComponent } from './userModule/messaging/messaging.component';
 
 export const routes: Routes = [
 
@@ -55,6 +56,10 @@ export const routes: Routes = [
       path: 'request-system-access',
       component: RequestSystemAccessComponent
   },
+  {
+    path: 'messaging',
+    component: MessagingComponent
+},
 
   // {
   //     path: '',

@@ -31,12 +31,15 @@ a {
   display: flex;
   flex-direction: rows;
   align-items: center;
+  justify-content: center;
   text-transform: uppercase;
   font-weight: 600;
   font-size: 1rem;
   padding: 5px 10px 5px 2px;
   margin-right: 20px;
   border-radius: 4px;
+  overflow: hidden;
+  height: 60px;
 }
 .section-button:hover{
   background-color: #141413;
@@ -52,3 +55,9 @@ a {
   align-items: center;
   justify-content: center;
 }
+
+.svg{
+  margin-top: 20px;
+  //margin-bottom: auto;
+}
+

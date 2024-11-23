@@ -4,7 +4,7 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 @Component({
   selector: 'journal-review-svg',
   template: `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" height="60px">
       <defs>
         <linearGradient id="archiveGold" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style="stop-color:#FFE5A0"/>
@@ -151,10 +151,14 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
       </text>
     </svg>
     `,
+    standalone: true,
+    imports: [],
 
 })
 export class JournalReviewSVG {
 
 @Input() text: string='';
+@Input() height!: number;
+@Input() width!: number;
 
 }

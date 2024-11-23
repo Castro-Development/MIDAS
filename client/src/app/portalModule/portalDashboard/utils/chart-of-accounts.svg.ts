@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
     selector: 'chart-account-svg',
     template: `
 
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" height="60px">
                     <defs>
                       <linearGradient id="chartGold" x1="0%" y1="0%" x2="100%" y2="100%">
                         <stop offset="0%" style="stop-color:#FFE5A0"/>
@@ -117,12 +117,15 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
                   </svg>
 
     `,
+    standalone: true,
+    imports: [],
 
 })
 export class ChartAccountSVG{
 
   @Input() text: string='';
-  @Input() routerLink: string='/portal/chart-of-accounts';
+  @Input() height!: number;
+  @Input() width!: number;
 
 
 }

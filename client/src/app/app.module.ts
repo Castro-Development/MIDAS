@@ -77,6 +77,7 @@ import { ProfileComponent } from './userModule/profile/profile.component';
 import { RequestSystemAccessComponent } from './userModule/requestSystemAccess/request-system-access.component';
 import { AppPhoneInputComponent } from './userModule/requestSystemAccess/utils/app-phone-input.component';
 import { SplashScreenComponent } from './userModule/splash-screen-component/splash-screen-component.component';
+import { MessagingComponent } from './userModule/messaging/messaging.component';
 
 
 
@@ -84,9 +85,6 @@ import { SplashScreenComponent } from './userModule/splash-screen-component/spla
   declarations: [
     AppComponent,
     NavbarComponent,
-    ChartAccountSVG,
-    JournalEntrySVG,
-    JournalReviewSVG,
     //Admin Module
     AdminExpiredPasswordReportComponent,
     AdminDashboardComponent,
@@ -123,6 +121,7 @@ import { SplashScreenComponent } from './userModule/splash-screen-component/spla
     RequestSystemAccessComponent,
     SplashScreenComponent,
     AppPhoneInputComponent,
+    MessagingComponent,
 
   ],
   imports: [
@@ -147,6 +146,9 @@ import { SplashScreenComponent } from './userModule/splash-screen-component/spla
     AdminSVG,
     CalendarSVG,
     PortalSVG,
+    ChartAccountSVG,
+    JournalEntrySVG,
+    JournalReviewSVG,
     FullCalendarModule,
     MatIcon,
 
