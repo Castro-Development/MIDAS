@@ -1,4 +1,5 @@
-import { NotificationFilter } from "../../states/notification-state.service";
+import { NotificationFilter } from "../../notification/notification-state.service";
+import { ApplicationStatus } from "./user-filter.model";
 import { UserRole } from "./userRole.model";
 
 export interface UserModel{
@@ -22,7 +23,7 @@ export interface UserModel{
 export interface UserApplication extends UserModel{
   requestedRole: UserRole;
   dateRequested: Date;
-  status: 'pending' | 'approved' | 'denied';
+  status: ApplicationStatus;
   datesDenied?: Date[];
   reviewedBy?: string;
   notes?: string;
@@ -31,5 +32,17 @@ export interface UserApplication extends UserModel{
 export interface UserApplicationWithMetaData extends UserApplication{
   submittedOn: Date;
   
+}
+
+export interface ApprovalDetails {
+  reviewerId: string;
+  notes?: string;
+  assignedRole: UserRole;
+}
+
+export interface RejectionDetails {
+  reviewerId: string;
+  reason: string;
+  notes?: string;
 }
 

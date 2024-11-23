@@ -1,15 +1,15 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, map, distinctUntilChanged, Subject, switchMap, of, filter, takeUntil, catchError, tap, empty, Observable, interval } from "rxjs";
-import { UserApplication, UserApplicationWithMetaData, UserModel } from "../dataModels/userModels/user.model";
-import { AuthStateService } from "./auth-state.service";
-import { UserFirestoreService } from "../services/firestoreService/user-firestore.service";
+import { UserApplication, UserApplicationWithMetaData, UserModel } from "../../dataModels/userModels/user.model";
+import { AuthStateService } from "../auth/auth-state.service";
+import { UserFirestoreService } from "../user-firestore.service";
 import { FirebaseApp } from "@angular/fire/app";
 import { serverTimestamp } from "firebase/firestore";
-import { UserRole } from "../dataModels/userModels/userRole.model";
-import { ErrorHandlingService } from "../services/error-handling.service";
-import { SecurityStatus } from "../facades/userFacades/user-security.facade";
+import { UserRole } from "../../dataModels/userModels/userRole.model";
+import { ErrorHandlingService } from "../../error-handling/error-handling.service";
+import { SecurityStatus } from "../auth/user-security.facade";
 import { User as FirebaseUser } from "firebase/auth";
-import { UserAdminFirestoreService } from "../../adminModule/back-end/user-admin-firestore.service";
+import { UserAdminFirestoreService } from "../admin/user-admin-firestore.service";
 
   @Injectable({ providedIn: 'root' })
   export class UserProfileStateService {
@@ -41,14 +41,12 @@ import { UserAdminFirestoreService } from "../../adminModule/back-end/user-admin
       distinctUntilChanged()
     );
 
-    createProfile(user: UserApplication, userAuth$: Observable<FirebaseUser | null>) {
+    createProfile(user: UserApplication, userAuth$: Promise<FirebaseUser | null>) {
         // associate UserApplication data with the UserAuth's uid
-        return userAuth$.pipe(
-            switchMap(userAuth => {
-                user.id = userAuth?.uid || '';
-                return this.firestoreService.createProfile(user);
-            })
-        );
+        return userAuth$.then((userAuth) =>{
+            user.id = userAuth?.uid || '';
+            return this.firestoreService.createProfile(user);
+        });
     }
 
     saveProfileState(username: string, user$: Observable<FirebaseUser | null>) {

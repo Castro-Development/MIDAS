@@ -4,7 +4,7 @@ import { UserApplicationWithMetaData, UserApplication, UserModel } from '../../s
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { getAuth } from 'firebase/auth';
 import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } from '../../shared/dataModels/financialModels/account-ledger.model';
-import { AuthStateService } from '../../shared/states/auth-state.service';
+import { AuthStateService } from '../../shared/user/auth/auth-state.service';
 import { User } from "firebase/auth";
 
 @Component({

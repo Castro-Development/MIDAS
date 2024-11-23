@@ -47,9 +47,6 @@ Thumbs.db
 .runtimeconfig.json
 
 
-<<<<<<< HEAD
-=======
 ./node_modules/*
 node_modules/*
->>>>>>> 76d40ddb0fa80cf195e13b735895a63cbac2ba8d
 node_modules/

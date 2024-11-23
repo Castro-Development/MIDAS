@@ -1,12 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Firestore, CollectionReference, where, doc, getDocs, query, setDoc, onSnapshot, getDoc, DocumentSnapshot } from '@angular/fire/firestore';
+import { Firestore, CollectionReference, where, doc, getDocs, query, setDoc, onSnapshot, getDoc, DocumentSnapshot, deleteDoc } from '@angular/fire/firestore';
 import { User as FirebaseUser, user } from '@angular/fire/auth'
 import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
 import { BehaviorSubject, Observable, distinctUntilChanged, firstValueFrom, map, of, switchMap, takeUntil, tap, catchError } from 'rxjs';
 
 import { UserApplication, UserApplicationWithMetaData, UserModel } from '../../dataModels/userModels/user.model';
-import { AuthStateService } from '../../states/auth-state.service';
-import { FilteringService } from '../filter.service';
+import { AuthStateService } from '../auth/auth-state.service';
+import { FilteringService } from '../../filter/filter.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,27 +23,35 @@ export class ApplicationFirestoreService implements OnDestroy{
 
 
   constructor(private firestore: Firestore, private authStateService: AuthStateService, private filterService: FilteringService) {
-    this.initializeAppFirestoreService();
+    
    }
 
 
-   initializeAppFirestoreService(){
-    console.log('ApplicationService initializing...');
-    this.authStateService.isLoggedIn$.pipe(
-      takeUntil(this.destroySubject)
-    ).subscribe(isLoggedIn => {
-      if(!isLoggedIn){
-        // Unsubscribe from previous snapshots when user logs in again
-        this.destroySubject.next();
 
-        onSnapshot(collection(this.firestore, 'applications'),
-          (snapshot) => this.appCollectionSnapshotSubject.next(snapshot),
-          (error) => this.appCollectionErrorSubject.next(error)
-        );
+  createApplication(app: UserApplication): Promise<void>{
+    return setDoc(doc(this.firestore, 'applications', app.id), app);
+  }
+
+  getApplication(uid: string): Promise<UserApplicationWithMetaData | null> {
+    return firstValueFrom(this.getAppObservable(uid));
+  }
+
+  deleteApplication(uid: string): Promise<UserApplication | null> {
+    const app = this.getApplication(uid);
+    return deleteDoc(doc(this.firestore, 'applications', uid)).then(() => {
+      return app;
+    });
+  }
+
+  updateApplication(uid: string): Promise<void> {
+    return this.getApplication(uid).then(app => {
+      if (app) {
+        return setDoc(doc(this.firestore, 'applications', uid), app);
+      } else{
+        throw new Error('Application not found');
       }
     });
-   }
-
+  }
 
   // Get user from uid
   getAppObservable(uid: string): Observable<UserApplicationWithMetaData | null> {

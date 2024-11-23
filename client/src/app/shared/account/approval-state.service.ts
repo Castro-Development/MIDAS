@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import { Firestore, collection, onSnapshot, setDoc, doc, updateDoc, arrayUnion, getDoc } from "@angular/fire/firestore";
 import { BehaviorSubject, Observable, catchError, distinctUntilChanged, from, map, switchMap, tap, throwError } from "rxjs";
-import { ErrorHandlingService } from "../services/error-handling.service";
+import { ErrorHandlingService } from "../error-handling/error-handling.service";
 import { JournalEntry, JournalEntryStatus } from "../dataModels/financialModels/account-ledger.model";
-import { EventLogService } from "../services/event-log.service";
+import { EventLogService } from "../logging/event-log.service";
 import { EventType } from "../dataModels/loggingModels/event-logging.model";
 
 @Injectable({ providedIn: 'root' })

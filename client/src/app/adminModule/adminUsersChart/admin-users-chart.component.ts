@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Observable, map, pipe } from 'rxjs';
-import { UserFirestoreService } from '../../shared/services/firestoreService/user-firestore.service';
+import { UserFirestoreService } from '../../shared/user/user-firestore.service';
 import { UserModel } from '../../shared/dataModels/userModels/user.model';
 import { Router } from '@angular/router';
 

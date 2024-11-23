@@ -2,12 +2,12 @@ import { Injectable } from "@angular/core";
 import { Observable, catchError, combineLatest, config, map, of, switchMap, tap, throwError } from "rxjs";
 import { AccountLedger, JournalEntry, AccountSubcategories, LedgerEntry, LedgerFilter } from "../../../shared/dataModels/financialModels/account-ledger.model";
 
-import { ErrorHandlingService } from "../../../shared/services/error-handling.service";
-import { AuthStateService } from "../../../shared/states/auth-state.service";
-import { EventLogService } from "../../../shared/services/event-log.service";
-import { ApprovalStateService } from "../../../shared/states/approval-state.service";
+import { ErrorHandlingService } from "../../../shared/error-handling/error-handling.service";
+import { AuthStateService } from "../../../shared/user/auth/auth-state.service";
+import { EventLogService } from "../../../shared/logging/event-log.service";
+import { ApprovalStateService } from "../../../shared/account/approval-state.service";
 import { AccountLedgerStateService } from "./account-ledger-state.service";
-import { UserSecurityFacade } from "../../../shared/facades/userFacades/user-security.facade";
+import { UserSecurityFacade } from "../../../shared/user/auth/user-security.facade";
 import { PermissionType } from "../../../shared/dataModels/userModels/permissions.model";
 import { AccountAccessEvent, AccountEventLog, EventLog, EventLogFilter, EventMetadata, EventType }  from "../../../shared/dataModels/loggingModels/event-logging.model";
 

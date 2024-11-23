@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from 'express';
 import { inject } from '@angular/core';
 import { async } from 'rxjs';
-import { AuthStateService } from '../../shared/states/auth-state.service';
+import { AuthStateService } from '../../shared/user/auth/auth-state.service';
 @Component({
   selector: 'app-splash',
   templateUrl: './splash-screen-component.component.html',

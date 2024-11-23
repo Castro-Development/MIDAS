@@ -8,8 +8,8 @@ import {
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Auth } from '@angular/fire/auth';
-import { AuthStateService } from '../../shared/states/auth-state.service';
-import { UserSecurityFacade } from '../../shared/facades/userFacades/user-security.facade';
+import { AuthStateService } from '../../shared/user/auth/auth-state.service';
+import { UserSecurityFacade } from '../../shared/user/auth/user-security.facade';
 import { interval, tap } from 'rxjs';
 
 @Component({
@@ -34,11 +34,7 @@ export class LoginComponent {
   login() {
     console.log(this.formValue.value.username); console.log(this.formValue.value.password);
     this.securityFacade.login(this.formValue.value.username, this.formValue.value.password);
-    interval(2000).subscribe(() => {
-      if (this.authState.isLoggedIn$) {
-        this.router.navigate(['']);
-      }
-    });
+    
   }
 
 

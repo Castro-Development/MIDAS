@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { type } from "os";
 import { BehaviorSubject, map, distinctUntilChanged, combineLatest, shareReplay, Subject, takeUntil, catchError, tap } from "rxjs";
-import { FilteringService } from "../services/filter.service";
-import { ErrorHandlingService } from "../services/error-handling.service";
-import { NotificationFirestoreService } from "../services/firestoreService/notification-firestore.service";
+import { FilteringService } from "../filter/filter.service";
+import { ErrorHandlingService } from "../error-handling/error-handling.service";
+import { NotificationFirestoreService } from "./notification-firestore.service";
+import { Notification } from "../dataModels/messageModel/message.model";
 
 export interface NotificationFilter {
     type: 'all' | 'EMAIL' | 'ALERT' | 'SYSTEM';
@@ -11,16 +12,6 @@ export interface NotificationFilter {
     category: 'all' | 'system' | 'approval' | 'alert';
 }
 
-export interface Notification{
-    id: string;
-    type: 'EMAIL' | 'ALERT' | 'SYSTEM';
-    priority:  'low' | 'medium' | 'high';
-    category: 'all' | 'system' | 'approval' | 'alert';
-    read: boolean;
-    sentAt: Date;
-    recipient: string;
-    successful: boolean;
-}
 
 
   

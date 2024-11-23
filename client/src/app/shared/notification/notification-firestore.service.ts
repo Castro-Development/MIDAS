@@ -10,8 +10,8 @@ import {
   deleteDoc
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { ErrorHandlingService } from '../error-handling.service';
-import { Notification } from '../../dataModels/messageModel/message.model';
+import { ErrorHandlingService } from '../error-handling/error-handling.service';
+import { Notification } from '../dataModels/messageModel/message.model';
 
 @Injectable({
   providedIn: 'root'

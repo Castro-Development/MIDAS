@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap, finalize } from 'rxjs/operators';
-import { ErrorHandlingService } from '../../shared/services/error-handling.service'
+import { ErrorHandlingService } from '../../shared/error-handling/error-handling.service'
 import { JournalEntry, LedgerEntry, NormalSide } from '../../shared/dataModels/financialModels/account-ledger.model';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { QueryConstraint, orderBy, query, where } from 'firebase/firestore';
-import { EventLogService } from '../../shared/services/event-log.service';
+import { EventLogService } from '../../shared/logging/event-log.service';
 import { EventType } from '../../shared/dataModels/loggingModels/event-logging.model';
-import { AuthStateService } from '../../shared/states/auth-state.service';
+import { AuthStateService } from '../../shared/user/auth/auth-state.service';
 import { AccountFirestoreService } from '../chartOfAccount/back-end/account-firestore.service'
 import { JournalEntryStateService } from './journal-entry-state.service';
 import { Router } from '@angular/router';

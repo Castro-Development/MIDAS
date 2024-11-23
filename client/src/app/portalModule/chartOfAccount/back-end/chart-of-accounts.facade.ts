@@ -3,10 +3,10 @@ import { Router } from '@angular/router';
 import { Observable, Subject, from, merge, of } from 'rxjs';
 import { takeUntil, map, tap } from 'rxjs/operators';
 import { AccountLedger, AccountCategory, AccountFilter, AccountSubcategories, NormalSide } from '../../../shared/dataModels/financialModels/account-ledger.model';
-import { ErrorHandlingService } from '../../../shared/services/error-handling.service';
+import { ErrorHandlingService } from '../../../shared/error-handling/error-handling.service';
 import { AccountingStateService } from './accounting-state.service';
-import { AuthStateService } from '../../../shared/states/auth-state.service';
-import { EventLogService } from '../../../shared/services/event-log.service';
+import { AuthStateService } from '../../../shared/user/auth/auth-state.service';
+import { EventLogService } from '../../../shared/logging/event-log.service';
 import { AccountCreationEvent, EventType } from '../../../shared/dataModels/loggingModels/event-logging.model';
 
 

@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 
 import { Router, RouterLink } from '@angular/router';
-import { AuthStateService } from '../../shared/states/auth-state.service';
+import { AuthStateService } from '../../shared/user/auth/auth-state.service';
 import { combineLatest, distinctUntilChanged, map } from 'rxjs';
-import { UserProfileFacade } from '../../shared/facades/userFacades/user-profile.facade';
+import { UserProfileFacade } from '../../shared/user/profile/user-profile.facade';
 import { UserRole } from '../../shared/dataModels/userModels/userRole.model';
 
 @Component({
