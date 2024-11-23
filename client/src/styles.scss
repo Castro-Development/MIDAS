@@ -36,6 +36,7 @@ $client-theme: mat.define-theme((
   --header-color:#cec6b2;
 
   --main-black: #0a0a0a;
+  --main-black-shadow: #0a0a0a42;
   --form-black:#1b1b1b;
   --form-content-color:#707070;
   --form-group-color:#383838;
@@ -73,6 +74,11 @@ $client-theme: mat.define-theme((
     font-weight: 500;
     text-align: center;
     color: #ffffff;
+    box-shadow: 2px 2px 5px var(--main-black-shadow);
+  }
+
+  .shadow{
+    box-shadow: 2px 2px 5px var(--main-black-shadow);
   }
 
   .button{
@@ -150,9 +156,6 @@ $client-theme: mat.define-theme((
   @include mat.all-component-themes($client-theme);
 }
 
-::ng-deep .customize {
-  background: red;
-}
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.
 // For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.

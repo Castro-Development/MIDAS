@@ -19,7 +19,8 @@ export class CalendarComponent {
     events: [
       { title: 'Transaction 1 between cash and assets $1000', date: '2024-11-01', url: 'https://www.google.com' },
       { title: 'event 2', date: '2024-11-02', url: 'https://www.google.com' }
-    ]
+    ],
+
   };
 
   handleDateClick(arg: any) {
