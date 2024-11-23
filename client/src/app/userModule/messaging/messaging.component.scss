@@ -1,4 +1,42 @@
-// Hoving styling at the bottom
+*{
+  input, textarea, select{
+    margin: 0;
+    padding: 0;
+
+    background-color: red;
+    background-color: transparent;
+    height: auto;
+    flex: 1;
+    box-shadow: none;
+    outline: none;
+    border: none;
+    border-color: transparent;
+    box-shadow: none;
+
+  }
+  input{
+    margin-left: 5px;
+  }
+  textarea{
+
+    height: 98%;
+    width: 100%;
+  }
+
+  textarea:focus, input:focus{
+    outline: none;
+    border: none;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  ::placeholder {
+    color: var(--form-black);
+    opacity: 0.75; /* Firefox */
+  }
+
+
+}
 
 .main-container{
   display: flex;
@@ -38,7 +76,9 @@
 }
 
 .mat-icon{
-  margin: 0 5px 0 0px
+  display: flex;
+  margin: 0 5px 0 0px;
+  //transform: scale(.8);
 }
 
 .notification-container{
@@ -55,12 +95,13 @@
     background-color: var(--form-black);
     border-radius: 10px;
     padding: 20px;
-    overflow: hidden;
+    //overflow: hidden;
     gap: 20px;
     box-shadow: 2px 2px 5px var(--main-black-shadow);
 
 
     .menu-item{
+      display: flex;
       max-width: 100%;
       background-color: var(--main-black);
       align-items: center;
@@ -70,6 +111,23 @@
       font-weight: 700;
       text-transform: uppercase;
       //box-shadow: 2px 2px 5px var(--main-black-shadow);
+      position: relative;
+      .floating-icon{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin: -10px -10px 0 0;
+        height: 1.5rem;
+        width: 1.5rem;
+        border-radius: 50%;
+        background-color: var(--auth-error-text);
+        font-size: .8rem;
+        z-index: 2;
+        padding: 2px;
+      }
     }
 
 
@@ -100,12 +158,13 @@
       .row-item, .full-row-item, .title-row-item, .small-row-item{
         display: flex;
         background-color: var(--main-black);
-        flex: 1 0 47.5%;
+        flex: 1 0 27.5%;
         align-items: center;
         //box-shadow: 2px 2px 5px var(--main-black-shadow);
         border-radius: 5px;
         padding: 10px;
         overflow: hidden;
+        position: relative;
       }
       .title-row-item{
         flex: 1;
@@ -119,9 +178,31 @@
         //flex: 1 0 22%;
         width: 20px;
       }
+      .menu-bar{
+        display: flex;
+        background-color: transparent;
+        //background-color: var(--form-content-color);
+        justify-content: right;
+        gap: 20px;
+      }
+      .send{
+        color: var(--main-black);
+        background-color: var(--form-content-color);
+      }
+      .view{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 20px;
+        font-size: .6rem;
+        padding: 2px;
 
+        .mail-item{
 
+        }
+      }
     }
+
 
     .display-buttons{
       display: flex;
@@ -153,7 +234,7 @@
 
 
 
-    .content{
+    .content, .content-send{
       display: block;
       border-radius: 5px;
       background-color: var(--main-black);
@@ -161,26 +242,38 @@
       padding: 10px;
       align-items: flex-start;
       flex: 1;
+      height: auto;
       //padding-bottom: 20px;
       //margin-bottom: 20px;
       overflow:auto;
       scrollbar-color: var(--form-content-color) var(--main-black);
       box-shadow: 2px 2px 5px var(--main-black-shadow);
       //scrollbar-width: thin;
-      .inset{
-        height: auto;
-      }
+      font-size: .8rem;
+      font-weight: 500;
+      text-transform: none;
 
-      .message{
-        font-size: .8rem;
-        font-weight: 500;
-        text-transform: none;
-      }
+
     }
+    .content-send{
+      color: var(--main-black);
+      background-color: var(--form-content-color);
+    }
+  }
+
+  .view-display{
+    gap: 5px;
   }
 }
 
-.menu-item:hover, .reply:hover, .delete:hover{
+
+
+
+.menu-item:hover, .reply:hover, .delete:hover, .clickable:hover{
   transform: scale(1.05);
   filter: brightness(1.40);
 }
+
+
+
+
