@@ -1,3 +1,5 @@
+// Hoving styling at the bottom
+
 .main-container{
   display: flex;
   flex-direction: column;
@@ -69,11 +71,7 @@
       text-transform: uppercase;
       //box-shadow: 2px 2px 5px var(--main-black-shadow);
     }
-    .menu-item:hover{
-      transform: scale(1.05);
-      //filter: drop-shadow(2px 2px var(--main-black-shadow));
-      filter: brightness(1.40);
-    }
+
 
   }
   .notification-display{
@@ -140,13 +138,17 @@
         border-radius: 5px;
         width: 8rem;
         box-shadow: 2px 2px 5px var(--main-black-shadow);
-        background-color: var(--form-group-color);
+        //background-color: var(--main-black);
+        background-color: var(--button-gold);
+        color: var(--main-black);
       }
       .delete{
-        color: var(--form-black);
+        color: var(--form-header);
         width: 6rem;
-        background-color: var(--form-content-color);
+        //background-color: var(--form-content-color);
+        background-color: var(--button-slate);
       }
+
     }
 
 
@@ -176,4 +178,9 @@
       }
     }
   }
+}
+
+.menu-item:hover, .reply:hover, .delete:hover{
+  transform: scale(1.05);
+  filter: brightness(1.40);
 }
