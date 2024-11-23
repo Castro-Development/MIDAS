@@ -3,22 +3,22 @@ import { Injectable } from "@angular/core";
 @Injectable({ providedIn: 'root' })
 export class FilteringService {
 
-  const timestampToDate = (timestamp) => {
-  // Handle if the timestamp is already a Date
-  if (timestamp instanceof Date) return timestamp;
-  
-  // Handle if the timestamp is a Firebase Timestamp
-  if (timestamp?.toDate) return timestamp.toDate();
-  
-  // Handle if the timestamp is a number (seconds or milliseconds)
-  if (typeof timestamp === 'number') {
-    // Check if it's seconds (Firebase) or milliseconds (JavaScript)
-    return new Date(timestamp < 1000000000000 ? timestamp * 1000 : timestamp);
+  compareTimestampDates(itemTimestamp: Timestamp, filterValue: Date | Timestamp | string): boolean {
+    const itemDate = itemTimestamp.toDate();
+    const filterDate = filterValue instanceof Date 
+      ? filterValue 
+      : filterValue instanceof Timestamp 
+        ? filterValue.toDate()
+        : new Date(filterValue);
+
+    return this.isSameDay(itemDate, filterDate);
   }
-  
-  // Return null for invalid input
-  return null;
-};
+
+  private isSameDay(date1: Date, date2: Date): boolean {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
+  }
 
   filter<T extends Record<string, any>>(items: T[], filters: any, filterProperties: string[]): T[] {
     return items.filter((item: T) => {
