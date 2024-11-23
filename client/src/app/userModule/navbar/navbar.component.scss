@@ -1,0 +1,63 @@
+.logo-text{
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 700;
+  text-decoration:none;
+  color: var(--text-gold);
+}
+
+.logo-img{
+  max-height: 40px;
+  margin: 1rem;
+}
+
+mat-toolbar{
+  background-color: var(--main-black);
+  height: 60px;
+}
+a {
+  text-decoration: none;
+}
+.mat-menu-panel{
+  background-color: var(--main-black);
+  padding: 10px;
+}
+
+.menu-button{
+  background-color: var(--main-black);
+}
+
+.section-button{
+  display: flex;
+  flex-direction: rows;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 5px 10px 5px 2px;
+  margin-right: 20px;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 60px;
+}
+.section-button:hover{
+  background-color: #141413;
+}
+
+.user-content{
+  margin-left: auto;
+}
+.user-menu{
+  display: flex;
+  //gap: 20px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.svg{
+  margin-top: 20px;
+  //margin-bottom: auto;
+}
+

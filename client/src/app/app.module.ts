@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -15,6 +14,9 @@ import { MatFormField, MatInputModule } from '@angular/material/input';
 import { map } from 'rxjs/operators';
 
 
+//import { AdminRoutingModule } from './adminModule/admin-routing.module';
+import { MatIcon } from '@angular/material/icon';
+
 import {
   FormBuilder,
   FormGroup,
@@ -26,13 +28,56 @@ import { HttpClientModule, HttpClient, provideHttpClient } from '@angular/common
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
-import { CalendarModule } from './userModule/calendar/calendar.module';
-import { UserModule } from './userModule/user-module.module';
-import { AdminModule } from './adminModule/admin-module.module';
-import { NavbarComponent } from './shared/navbar/navbar.component';
-import { NavbarModule } from './shared/navbar/navbar.module';
+import { NavbarComponent } from './userModule/navbar/navbar.component';
 import { ErrorHandlingService } from './shared/services/error-handling.service';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { AdminSVG } from './userModule/navbar/utils/admin.svg';
+import { CalendarSVG } from './userModule/navbar/utils/calendar.svg';
+import { PortalSVG } from './userModule/navbar/utils/portal.svg';
+import { ChartAccountSVG } from './portalModule/portalDashboard/utils/chart-of-accounts.svg';
+import { JournalEntrySVG } from './portalModule/portalDashboard/utils/journal-entry.svg';
+import { JournalReviewSVG } from './portalModule/portalDashboard/utils/journal-review.svg';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import { CalendarComponent } from './userModule/calendar/calendar.component';
+import { AdminAppFormComponent } from './adminModule/admin-app-form/admin-app-form.component';
+import { AdminEditUserComponent } from './adminModule/admin-edit-user/admin-edit-user.component';
+import { AdminUserApplicationsComponent } from './adminModule/admin-user-applications/admin-user-applications.component';
+import { AdminDashboardComponent } from './adminModule/adminDashboard/admin-dashboard.component';
+import { AdminExpiredPasswordReportComponent } from './adminModule/adminExpiredPasswordReport/admin-expired-password-report.component';
+import { AdminUsersChartComponent } from './adminModule/adminUsersChart/admin-users-chart.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { AccountEventLogComponent } from './portalModule/accountEventLog/account-event-log.component';
+import { AccountLedgerCard } from './portalModule/accountLedger/account-ledger.card';
+import { AccountLedgerComponent } from './portalModule/accountLedger/account-ledger.component';
+import { AccountCreationCard } from './portalModule/adminGeneralLedgerFunctions/adminAccountCreate/admin-account-creation.card';
+import { AccountCreationComponent } from './portalModule/adminGeneralLedgerFunctions/adminAccountCreate/admin-account-creation.component';
+import { FilterDialogComponent } from './portalModule/chartOfAccount/account-filter.component';
+import { ChartOfAccountsCard } from './portalModule/chartOfAccount/chart-of-accounts.card';
+import { ChartOfAccountsComponent } from './portalModule/chartOfAccount/chart-of-accounts.component';
+import { FiscalPeriodManagementComponent } from './portalModule/fiscalPeriod/fiscal-period-management.component';
+import { JournalEntryFormCard } from './portalModule/journalEntry/entryForm/journal-entry-card.component';
+import { JournalEntryFormComponent } from './portalModule/journalEntry/entryForm/journal-entry-form.component';
+import { JournalReviewCard } from './portalModule/journalEntry/entryReview/journal-entry-review.card';
+import { JournalEntryReviewComponent } from './portalModule/journalEntry/entryReview/journal-entry-review.component';
+import { JournalSubmissionCard } from './portalModule/journalEntry/entrySubmissionReview/journal-submission.card';
+import { JournalSubmissionComponent } from './portalModule/journalEntry/entrySubmissionReview/journal-submission.component';
+import { PortalDashboardComponent } from './portalModule/portalDashboard/portal-dashboard.component';
+import { RouterLink } from '@angular/router';
+import { HelpGlobalModule } from './shared/helpFeature/help-global.module';
+import { ForgotPasswordComponent } from './userModule/forgotPassword/forgot-password.component';
+import { InboxComponent } from './userModule/inbox/inbox.component';
+import { LoginComponent } from './userModule/login/login.component';
+import { ProfileComponent } from './userModule/profile/profile.component';
+import { RequestSystemAccessComponent } from './userModule/requestSystemAccess/request-system-access.component';
+import { AppPhoneInputComponent } from './userModule/requestSystemAccess/utils/app-phone-input.component';
+import { SplashScreenComponent } from './userModule/splash-screen-component/splash-screen-component.component';
+import { MessagingComponent } from './userModule/messaging/messaging.component';
 
 
 
@@ -40,6 +85,44 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
   declarations: [
     AppComponent,
     NavbarComponent,
+    //Admin Module
+    AdminExpiredPasswordReportComponent,
+    AdminDashboardComponent,
+    AdminUsersChartComponent,
+    AdminUserApplicationsComponent,
+    AdminAppFormComponent,
+    AdminEditUserComponent,
+    //General Ledger Functions
+    AccountCreationComponent,
+    AccountCreationCard,
+    //Portal Module
+    JournalEntryFormComponent,
+    JournalEntryFormCard,
+    PortalDashboardComponent,
+    ChartOfAccountsCard,
+    FilterDialogComponent,
+    AccountEventLogComponent,
+    AccountLedgerComponent,
+    AccountLedgerCard,
+    ChartOfAccountsComponent,
+    ChartOfAccountsCard,
+    JournalEntryReviewComponent,
+    JournalReviewCard,
+    JournalSubmissionComponent,
+    JournalSubmissionCard,
+    FiscalPeriodManagementComponent,
+
+    // User Module
+    CalendarComponent,
+    ForgotPasswordComponent,
+    InboxComponent,
+    LoginComponent,
+    ProfileComponent,
+    RequestSystemAccessComponent,
+    SplashScreenComponent,
+    AppPhoneInputComponent,
+    MessagingComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -59,13 +142,33 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
     FormsModule,
     HttpClientModule,
     MatFormField,
-    UserModule,
-    AdminModule,
-    
-    
+    //AdminModule,
+    AdminSVG,
+    CalendarSVG,
+    PortalSVG,
+    ChartAccountSVG,
+    JournalEntrySVG,
+    JournalReviewSVG,
+    FullCalendarModule,
+    MatIcon,
 
+    //General Ledger
 
-  ],
+    //Portal Module
+    MatDialogModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatCardModule,
+
+    //User Module
+    CommonModule,
+    HelpGlobalModule,
+    RouterLink,
+
+],
   providers: [
     provideClientHydration(),
     provideAnimationsAsync(),

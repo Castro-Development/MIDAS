@@ -1,1 +1,54 @@
-<p>admin-users-chart works!</p>
+
+
+<div class="main-container">
+  <div class="title-header">
+    <h2 class="section-header-global">Current Users</h2>
+
+  </div>
+  <div class="header">
+    <button class="button return" routerLink="/admin-dashboard"><mat-icon class="mat-icon">arrow_back</mat-icon> Return to Admin Dashboard</button>
+    <!-- <button class="button create-user">Create New User</button> -->
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>User ID</th>
+        <th>Username: Profile</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Phone</th>
+        <th>Street</th>
+        <th>Zip</th>
+        <th>State</th>
+        <th>Password</th>
+        <th>Login Attemps</th>
+        <th>Date Approved</th>
+        <th>Assigned GL?</th>
+        <th>Assigned Accounts?</th>
+        <th>Role</th>
+        <th>Edit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users$ | async; let i = index">
+        <td>{{user.id}}</td>
+        <td><button class="edit">{{user.username}}</button></td>
+        <td>{{user.firstname}}</td>
+        <td>{{user.lastname}}</td>
+        <td>{{user.phone}}</td>
+        <td>{{user.street}}</td>
+        <td>{{user.zip}}</td>
+        <td>{{user.state}}</td>
+        <td>{{user.password}}</td>
+        <td>{{user.numDenied}}</td>
+        <td>{{user.dateApproved}}</td>
+        <td>{{user.assignedGL}}</td>
+        <td>{{user.assignedAccounts}}</td>
+        <td>{{user.role}}</td>
+        <!-- <td><button class="edit">User</button></td> -->
+        <td class="icon-button" (click)="editUser(user)"><mat-icon>edit</mat-icon></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Observable, Subject, map, switchMap } from "rxjs";
+import { Observable, Subject, firstValueFrom, map, switchMap } from "rxjs";
 import { UserProfileStateService } from "../../../shared/states/user-profile-state.service";
 import { AuthStateService } from "../../../shared/states/auth-state.service";
 import { UserApplication } from "../../../shared/dataModels/userModels/user.model";
@@ -146,23 +146,18 @@ export class UserAdminFacade {
         *   
         *   @returns string
         */
-    generateUsername(firstName: string, lastName: string, dateCreated: Date): Observable<string> {
-        const usernameSubject = new Subject<string>();
+    async generateUsername(firstName: string, lastName: string, dateCreated: Date): Promise<string> {
         // generate a username based on the given parameters
         const suffix = this.getSuffix(dateCreated);
         const username = `${firstName[0]}${lastName}${suffix}`;
-        while(this.validateUniqueUsername(username)) {
-            const newUsername = username + (Math.random() * 10).toString();
-            if(!this.validateUniqueUsername(newUsername)) {
-                usernameSubject.next(newUsername);
-            }
+        if(await this.validateUniqueUsername(username)) {
+            return username;
+        } else {
+            return `${username}${Math.floor(Math.random() * 100)}`;
         }
-        usernameSubject.next(username);
-        return usernameSubject.asObservable();
     }
         /*
         *   Validates that the username is unique
-        *   @param username: string
         *   
         *   @returns observable<boolean>
         */
@@ -173,11 +168,11 @@ export class UserAdminFacade {
         const MM = date.getMonth();
         return `${YY}${MM}`;
     }
-    private validateUniqueUsername(username: string): Observable<boolean>{
-        return this.userAdminService.getUsernames().pipe(
-            map((usernames: string[]) => {
-                return usernames.includes(username);
-            })
+    private validateUniqueUsername(username: string): Promise<boolean>{
+        return firstValueFrom(this.userAdminService.getUsernames()).then(
+            (usernameMap: Record<string,string>) => {
+                return !usernameMap[username];
+            }
         )
         // check if the given username is unique
     }

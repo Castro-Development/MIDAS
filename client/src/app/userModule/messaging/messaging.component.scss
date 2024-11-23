@@ -1,0 +1,186 @@
+// Hoving styling at the bottom
+
+.main-container{
+  display: flex;
+  flex-direction: column;
+  margin: 5% auto 0 auto;
+  border-radius: 5px;
+  width: 90%;
+  //background-color: var(--main-black);
+  font-size: .80rem;
+  padding-bottom: 50px;
+}
+
+.header, .title-header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  //background-color: #1d1d1d;
+  //margin-bottom: 1rem;
+}
+.header{
+  margin-bottom: 1rem;
+}
+
+.edit, .create-user, .general-button, .return{
+  //background-color: var(--button-gold);
+  padding: .3rem .5rem .3rem .5rem;
+  border-radius: 5px;
+  font-weight: 700;
+  color: white;
+}
+
+.return{
+  background-color: var(--button-slate);
+  color: white;
+}
+
+.mat-icon{
+  margin: 0 5px 0 0px
+}
+
+.notification-container{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  //background-color: var(--form-black);
+
+  .notification-menu{
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    height: 65vh;
+    background-color: var(--form-black);
+    border-radius: 10px;
+    padding: 20px;
+    overflow: hidden;
+    gap: 20px;
+    box-shadow: 2px 2px 5px var(--main-black-shadow);
+
+
+    .menu-item{
+      max-width: 100%;
+      background-color: var(--main-black);
+      align-items: center;
+      border-radius: 5px;
+      padding: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      text-transform: uppercase;
+      //box-shadow: 2px 2px 5px var(--main-black-shadow);
+    }
+
+
+  }
+  .notification-display{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 65vh;
+    background-color: var(--form-black);
+    border-radius: 10px;
+    padding: 20px;
+    overflow: hidden;
+    box-shadow: 2px 2px 5px var(--main-black-shadow);
+    gap: 20px;
+
+    .display-headers, .display-buttons{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      max-width: 100%;
+      align-items: center;
+      //height: 2.4rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      gap: 20px;
+
+      .row-item, .full-row-item, .title-row-item, .small-row-item{
+        display: flex;
+        background-color: var(--main-black);
+        flex: 1 0 47.5%;
+        align-items: center;
+        //box-shadow: 2px 2px 5px var(--main-black-shadow);
+        border-radius: 5px;
+        padding: 10px;
+        overflow: hidden;
+      }
+      .title-row-item{
+        flex: 1;
+      }
+
+      .full-row-item{
+        flex: 1 0 90%;
+      }
+
+      .small-row-item{
+        //flex: 1 0 22%;
+        width: 20px;
+      }
+
+
+    }
+
+    .display-buttons{
+      display: flex;
+      justify-content: right;
+      align-items: center;
+      .mat-icon{
+        //color: var(--main-black);
+      }
+      .reply, .delete{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        border-radius: 5px;
+        width: 8rem;
+        box-shadow: 2px 2px 5px var(--main-black-shadow);
+        //background-color: var(--main-black);
+        background-color: var(--button-gold);
+        color: var(--main-black);
+      }
+      .delete{
+        color: var(--form-header);
+        width: 6rem;
+        //background-color: var(--form-content-color);
+        background-color: var(--button-slate);
+      }
+
+    }
+
+
+
+    .content{
+      display: block;
+      border-radius: 5px;
+      background-color: var(--main-black);
+      //flex-direction: column;
+      padding: 10px;
+      align-items: flex-start;
+      flex: 1;
+      //padding-bottom: 20px;
+      //margin-bottom: 20px;
+      overflow:auto;
+      scrollbar-color: var(--form-content-color) var(--main-black);
+      box-shadow: 2px 2px 5px var(--main-black-shadow);
+      //scrollbar-width: thin;
+      .inset{
+        height: auto;
+      }
+
+      .message{
+        font-size: .8rem;
+        font-weight: 500;
+        text-transform: none;
+      }
+    }
+  }
+}
+
+.menu-item:hover, .reply:hover, .delete:hover{
+  transform: scale(1.05);
+  filter: brightness(1.40);
+}

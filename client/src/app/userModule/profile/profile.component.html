@@ -6,7 +6,7 @@
 <div class="flex" style="background-color:#242525; color:white;" >
   <div class="container mx-auto my-0 p-8 shadow-md rounded-md max-w-md" style="background-color:#1b1c1f; color: white; max-width:600px">
     <h1 class="text-3xl text-gray-100 font-bold mb-4 text-center">
-      {{profileFacade.username$ | async}}'s User Profile 
+      {{profileFacade.username$ | async}}'s User Profile
     </h1>
     <div>
       <div class="text-center">
@@ -26,7 +26,7 @@
       <div class="grid grid-cols-2 gap-4">
         <div class="text-gray-100 font-bold">Full Name</div>
         <div class="text-gray-300 font-medium">{{profileFacade.username$ | async}} </div> <!-- Damien: erased " | titlecase" from the two properties on this line -->
-<!-- 
+<!--
         <div class="text-gray-100 font-bold">Email</div>
         <div class="text-gray-300 font-medium">{{profileDetail.email}}</div> Damien: Commented as we don't need email-->
 

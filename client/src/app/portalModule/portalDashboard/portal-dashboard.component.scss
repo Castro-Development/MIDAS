@@ -1,0 +1,38 @@
+* {
+  color: rgb(223, 223, 223);
+}
+
+.header{
+  margin-bottom: 2rem;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--header-color);
+}
+
+.dashboard-card {
+  display: flex;
+  padding: 1.5rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  border-color: #E5E7EB;
+  background-color: var(--form-black);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+}
+
+.dashboard-card:hover {
+  border-color: var(--button-gold);
+  transform: scale(1.05);
+  filter: brightness(150%);
+
+}
+
+

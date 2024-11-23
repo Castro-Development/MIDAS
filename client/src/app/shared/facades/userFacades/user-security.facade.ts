@@ -6,12 +6,12 @@ import { ErrorHandlingService } from "../../services/error-handling.service";
 import { Auth, User as FirebaseUser } from "@angular/fire/auth";
 import { doc } from "@angular/fire/firestore";
 import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
-import { AccountFirestoreService } from "../../../portalModule/chartOfAccount/back-end/firestore/account-firestore.service";
+import { AccountFirestoreService } from "../../../portalModule/chartOfAccount/back-end/account-firestore.service";
 import { PermissionType } from "../../dataModels/userModels/permissions.model";
 import { AccountAccessEvent, EventType } from "../../dataModels/loggingModels/event-logging.model";
 import { EventLogService } from "../../services/event-log.service";
 import { UserProfileFacade } from "./user-profile.facade";
-import { UserAdminFirestoreService } from "../../../adminModule/back-end/firestore/user-admin-firestore.service";
+import { UserAdminFirestoreService } from "../../../adminModule/back-end/user-admin-firestore.service";
 import { AccountLedger } from "../../dataModels/financialModels/account-ledger.model";
 
 
@@ -42,7 +42,7 @@ export interface SecurityStatus {
     suspension: SuspensionInfo | null;
     passwordStatus: 'valid' | 'expiring' | 'expired';
     failedAttempts: number;
-      
+
 }
 
 export interface PermissionCheckResult {
@@ -55,11 +55,11 @@ export interface PermissionCheckResult {
 export class UserSecurityFacade {
   /* * * * * Access Management Methods * * * * */
   //-------------------------------------------//
-  
-  
-  
-    
-    
+
+
+
+
+
   // Role-Based Authorization
 //   readonly hasRole$(role: UserRole): Observable<PermissionCheckResult>
 
@@ -73,7 +73,7 @@ export class UserSecurityFacade {
 //   readonly isAccountLocked$: Observable<boolean>
 //   readonly passwordExpiresIn$: Observable<number>
 //   readonly requiresPasswordChange$: Observable<boolean>
-  
+
   // Consolidated Security Status
   readonly securityStatus$ = new Subject<SecurityStatus>();
 
@@ -82,7 +82,7 @@ export class UserSecurityFacade {
                     private authState: AuthStateService,
                     private accountFirestore: AccountFirestoreService,
                     private eventLogging: EventLogService,
-                    private userProfileFacade: UserProfileFacade) 
+                    private userProfileFacade: UserProfileFacade)
     {}
 
 
@@ -116,17 +116,17 @@ export class UserSecurityFacade {
     //                 return of(true);
     //             }),
     //             catchError((error) => this.errorHandling.handleError(error, false)),
-    //             tap((success) => { 
-    //                 if(success) { 
-    //                     this.authState.login(username, password) 
+    //             tap((success) => {
+    //                 if(success) {
+    //                     this.authState.login(username, password)
     //                 }
     //                 this.userProfileFacade.loginProfile(username, this.authState.user$);
     //             })
     //             );
     //         }
-        
+
     // } Can't get this shit to work, so I'm commenting it out for now.
-    
+
 
     login(username: string, password: string)  {
 
@@ -135,12 +135,19 @@ export class UserSecurityFacade {
 
     }
 
-    
-    
+
+
 
     requestSystemAccess(user: UserApplication): Promise<void> {
         this.userProfileFacade.createProfile(user, this.authState.user$);
+        console.log('profile created')
         return this.userAdminFirestore.submitApplication(user, this.authState.user$);
+    }
+
+    approveUser(user: UserApplication): Promise<void> {
+      this.userProfileFacade.createProfile(user, this.authState.user$);
+      console.log('profile created')
+      return this.userAdminFirestore.submitApplication(user, this.authState.user$);
     }
 
 
@@ -165,7 +172,7 @@ export class UserSecurityFacade {
             }),
             catchError((error) => this.errorHandling.handleError(error, false))
         );
-        
+
     }
                                 //--------------------------------------------//
                                 /* * * * * Access Management Methods * * * * */
@@ -206,7 +213,7 @@ export class UserSecurityFacade {
     getAccountAccessList(accountId: string): Promise<string[]> {
         return firstValueFrom(this.accountFirestore.getAccount(accountId).pipe(
             map(account => account ? account.authorizedUsers : [] as string[]),
-            catchError(() => { return this.errorHandling.handleError("Error getting access list", [])}),
+            catchError(() => { return this.errorHandling.handleError("Error getting access list", [] as string[])}),
         ))
       }
 
@@ -224,14 +231,14 @@ export class UserSecurityFacade {
             return false;
         })
     }
-    
+
 
     validatePermissions(permissionType: PermissionType, accountId: string): boolean {
         // Check if user has permission required to perform action
         // log the validation event
         throw new Error("Method not implemented.");
     }
-    
+
 
                                 //----------------------------------------------//
                                 /* * * * * Password Management Methods * * * * */
@@ -239,7 +246,7 @@ export class UserSecurityFacade {
     // // Password Validation & Change
     // validatePasswordComplexity(password: string): ValidationResult;
     validatePasswordComplexity(password: string): Observable<boolean> {
-        
+
         return from(
             of(password.length >= 8
             && /[A-Z]/.test(password)
@@ -248,7 +255,7 @@ export class UserSecurityFacade {
             && /[^A-Za-z0-9]/.test(password))
         );
     }
-    
+
     // validatePasswordHistory(userId: string, newPassword: string): Observable<boolean>;
     validatePasswordHistory(uid: string, password: string): Observable<boolean> {
         return of(true);
@@ -309,7 +316,7 @@ export class UserSecurityFacade {
 // completeAccountRecovery
 // cancelAccountRecovery
 
-  
+
 }
 
 

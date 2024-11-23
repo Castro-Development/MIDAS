@@ -1,0 +1,101 @@
+
+  <mat-toolbar>
+    <!-- <button mat-icon-button>
+      <mat-icon>menu</mat-icon>
+    </button> -->
+
+    <img src="assets/Logo.png" class="logo-img">
+    <button routerLink="/" class="logo-text" (click)="logUserStatus()">MIDAS</button>
+
+
+
+    @if(authState.isLoggedIn$ | async){
+
+    <div class="user-content">
+      <div class="user-menu">
+        <button class="section-button"  routerLink="/messaging">
+          <div class="svg"><journal-entry-svg></journal-entry-svg></div>
+          Notifications / Messages
+        </button>
+
+        <button class="section-button"  routerLink="/admin-dashboard">
+          <admin-svg></admin-svg>
+          Admin Content
+        </button>
+
+        <button class="section-button"  routerLink="/calendar">
+          <calendar-svg></calendar-svg>
+          Calendar
+        </button>
+
+        <button class="section-button"  routerLink="/portal-dashboard">
+          <portal-svg></portal-svg>
+          Accounting
+        </button>
+
+
+
+        <a [matMenuTriggerFor]="profileDropdownMenu" class="flex gap-2 cursor-pointer items-center">
+          <!-- <div class="bg-amber-400 text-white font-bold shadow-md rounded-full w-5 h-5 p-4 flex justify-center items-center">
+            {{userDetail!.username.charAt(0).toUpperCase()}}
+          </div> -->
+
+          <img src="assets/Male Icon.png" class="py-10" style="max-width: 40px; margin:auto">
+          <div class="text-white flex flex-col pr-5">
+            <h1 class="p-0 m-0 font-medium">
+              {{authState.username$ | async}}
+            </h1>
+            <p class="p-0 pt-1 m-0 font-medium text-xs">
+              {{authState.viewRole$ | async}}
+            </p>
+          </div>
+        </a>
+        <mat-menu #profileDropdownMenu="matMenu" class="customize">
+          <!-- <button [routerLink]="['account',userDetail.id]" mat-menu-item> -->
+          <button routerLink="/profile" mat-menu-item class="menu-button">
+            <mat-icon>account_circle</mat-icon>
+            <span>
+              View Profile
+            </span>
+          </button>
+
+          <!-- Logout -->
+          <button (click)="logout()" mat-menu-item>
+            <mat-icon>
+              logout
+            </mat-icon>
+            <span>Logout</span>
+          </button>
+
+          <!-- Change Password -->
+          <button routerLink="/forgot-password" mat-menu-item>
+            <mat-icon>
+              password
+            </mat-icon>
+            <span>
+              Change Password
+            </span>
+          </button>
+        </mat-menu>
+
+
+
+      </div>
+    </div>
+    }@else{
+    <div>
+      <div class="flex gap5 items-center">
+        <a mat-button routerLink="/login">
+          Login
+        </a>
+
+        <a mat-button routerLink="/request-system-access">
+          Register
+        </a>
+
+      </div>
+    </div>
+    }
+
+  </mat-toolbar>
+
