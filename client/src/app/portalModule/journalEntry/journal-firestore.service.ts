@@ -10,7 +10,7 @@ import {
   getDoc
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { ErrorHandlingService } from '../../shared/services/error-handling.service';
+import { ErrorHandlingService } from '../../shared/error-handling/error-handling.service';
 import { JournalEntry } from '../../shared/dataModels/financialModels/account-ledger.model';
 
 @Injectable({

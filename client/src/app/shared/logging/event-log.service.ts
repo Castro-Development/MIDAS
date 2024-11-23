@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { FirestoreLogService } from "./firestoreService/log-firestore.service";
+import { FirestoreLogService } from "./log-firestore.service";
 import { AccountAccessEvent, AccountEventLog, EventMetadata, EventType } from "../dataModels/loggingModels/event-logging.model";
 import { Observable } from "rxjs";
 

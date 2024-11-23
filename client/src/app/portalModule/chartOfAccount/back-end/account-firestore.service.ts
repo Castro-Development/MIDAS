@@ -12,7 +12,7 @@ import {
   query
 } from '@angular/fire/firestore';
 import { Observable, from } from 'rxjs';
-import { ErrorHandlingService } from '../../../shared/services/error-handling.service';
+import { ErrorHandlingService } from '../../../shared/error-handling/error-handling.service';
 import { AccountLedger } from '../../../shared/dataModels/financialModels/account-ledger.model';
 
 @Injectable({

@@ -1,10 +1,10 @@
 import { Injectable, inject } from "@angular/core";
 import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
-import { UserProfileStateService } from "../../states/user-profile-state.service";
-import { SecurityStatus } from "./user-security.facade";
+import { UserProfileStateService } from "./user-profile-state.service";
+import { SecurityStatus } from "../auth/user-security.facade";
 import { User } from "firebase/auth";
 import { Observable, catchError, distinctUntilChanged, filter, from, map, tap } from "rxjs";
-import { ErrorHandlingService } from "../../services/error-handling.service";
+import { ErrorHandlingService } from "../../error-handling/error-handling.service";
 
 
 @Injectable({
@@ -40,7 +40,7 @@ export class UserProfileFacade{
                                 /* * * * * Personal Info Methods * * * * */
                                 //----------------------------------------//
     // // Basic Info
-    createProfile(user: UserApplication, user$: Observable<User | null>) {
+    createProfile(user: UserApplication, user$: Promise<User | null>) {
         return this.userProfileState.createProfile(user, user$);
     }
     // updatePersonalInfo(userId: string, info: PersonalInfoUpdate): Observable<void>;

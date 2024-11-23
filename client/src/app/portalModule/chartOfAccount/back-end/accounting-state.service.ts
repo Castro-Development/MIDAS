@@ -1,9 +1,9 @@
 import { Injectable, inject } from "@angular/core";
 import { BehaviorSubject, combineLatest, map, distinctUntilChanged, shareReplay, Subject, takeUntil, tap, catchError, Observable, of, switchMap, from } from "rxjs";
 import { AccountLedger, AccountFilter, NormalSide } from "../../../shared/dataModels/financialModels/account-ledger.model";
-import { ErrorHandlingService } from "../../../shared/services/error-handling.service";
+import { ErrorHandlingService } from "../../../shared/error-handling/error-handling.service";
 import { AccountFirestoreService } from "./account-firestore.service";
-import { FilteringService } from "../../../shared/services/filter.service";
+import { FilteringService } from "../../../shared/filter/filter.service";
 import { AccountResponseDTO, CreateAccountDTO } from "./chart-of-accounts.facade";
 import { serverTimestamp } from "firebase/firestore";
 import { timeStamp } from "console";

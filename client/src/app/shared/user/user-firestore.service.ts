@@ -1,13 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, CollectionReference, where, doc, getDocs, query, setDoc, onSnapshot, getDoc, DocumentSnapshot } from '@angular/fire/firestore';
-import { Auth, User as FirebaseUser, user } from '@angular/fire/auth'
+import { Auth, User as FirebaseUser, User, user } from '@angular/fire/auth'
 import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
 import { BehaviorSubject, Observable, distinctUntilChanged, firstValueFrom, map, of, switchMap, takeUntil, tap, catchError, throwError } from 'rxjs';
 
-import { UserApplication, UserApplicationWithMetaData, UserModel } from '../../dataModels/userModels/user.model';
-import { AuthStateService } from '../../states/auth-state.service';
-import { SecurityStatus } from '../../facades/userFacades/user-security.facade';
-import { FilteringService } from '../filter.service';
+import { UserApplication, UserApplicationWithMetaData, UserModel } from '../dataModels/userModels/user.model';
+import { AuthStateService } from './auth/auth-state.service';
+import { SecurityStatus } from './auth/user-security.facade';
+import { FilteringService } from '../filter/filter.service';
 
 @Injectable({
   providedIn: 'root'
@@ -128,9 +128,14 @@ export class UserFirestoreService implements OnDestroy{
     )
   }
 
-  createProfile(user: UserApplication): any {
+  createProfile(user: UserModel): any {
     const profileDocRef = doc(collection(this.firestore, 'users'), user.id);
     return setDoc(profileDocRef, user);
+  }
+
+  updateProfile(user: Partial<UserModel>): any {
+    const profileDocRef = doc(collection(this.firestore, 'users'), user.id);
+    return setDoc(profileDocRef, user, {merge: true});
   }
 
   private getUid(username: string): Observable<string> {

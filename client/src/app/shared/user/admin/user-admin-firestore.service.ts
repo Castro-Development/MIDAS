@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
-import { UserApplication } from "../../shared/dataModels/userModels/user.model";
+import { UserApplication } from "../../dataModels/userModels/user.model";
 import { Firestore, doc, docData, setDoc } from "@angular/fire/firestore";
 import { Observable, Subject, catchError, from, map, of, switchMap, tap } from "rxjs";
-import { SecurityStatus } from "../../shared/facades/userFacades/user-security.facade";
+import { SecurityStatus } from "../auth/user-security.facade";
 import { DocumentData, DocumentReference, DocumentSnapshot, addDoc, collection, getDoc, onSnapshot } from "firebase/firestore";
-import { ErrorHandlingService } from "../../shared/services/error-handling.service";
+import { ErrorHandlingService } from "../../error-handling/error-handling.service";
 import { User as FirebaseUser } from "firebase/auth";
 
 
@@ -42,6 +42,19 @@ export class UserAdminFirestoreService {
           });
           return unsubscribe;
       });
+  }
+
+  getAllApplications(): Observable<UserApplication[]> {
+        return new Observable<UserApplication[]>(observer => {
+            const unsubscribe = onSnapshot(collection(this.firestore, 'applications'), (snapshot) => {
+                const applications: UserApplication[] = [];
+                snapshot.docs.map((doc) => {
+                    applications.push(doc.data() as UserApplication);
+                });
+                observer.next(applications);
+            });
+            return unsubscribe;
+        });
   }
 
   updateApplication(userApplication: UserApplication): Promise<void> {

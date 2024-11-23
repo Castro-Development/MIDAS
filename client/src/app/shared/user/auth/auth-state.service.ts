@@ -1,12 +1,12 @@
 import { Injectable, inject } from "@angular/core";
 import { Auth, authState, getAuth, signInWithEmailAndPassword } from "@angular/fire/auth";
 import { BehaviorSubject, map, distinctUntilChanged, catchError, Subject, Observable, of, from, switchMap, tap, filter } from "rxjs";
-import { UserModel } from "../dataModels/userModels/user.model";
-import { ErrorHandlingService } from "../services/error-handling.service";
+import { UserModel } from "../../dataModels/userModels/user.model";
+import { ErrorHandlingService } from "../../error-handling/error-handling.service";
 import { User as FirebaseUser, UserCredential } from 'firebase/auth';
-import { SecurityStatus } from "../facades/userFacades/user-security.facade";
-import { UserRole } from "../dataModels/userModels/userRole.model";
-import { UserProfileFacade } from "../facades/userFacades/user-profile.facade";
+import { SecurityStatus } from "./user-security.facade";
+import { UserRole } from "../../dataModels/userModels/userRole.model";
+import { UserProfileFacade } from "../profile/user-profile.facade";
 
 interface AuthState {
     isLoggedIn: boolean;

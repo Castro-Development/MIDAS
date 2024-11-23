@@ -2,8 +2,8 @@ import { BehaviorSubject, Observable, Subject, catchError, combineLatest, distin
 import { JournalEntry, JournalEntryStatus } from "../../shared/dataModels/financialModels/account-ledger.model";
 import { Injectable } from "@angular/core";
 import { JournalEntryFirestoreService } from "./journal-firestore.service";
-import { ErrorHandlingService } from "../../shared/services/error-handling.service";
-import { FilteringService } from "../../shared/services/filter.service";
+import { ErrorHandlingService } from "../../shared/error-handling/error-handling.service";
+import { FilteringService } from "../../shared/filter/filter.service";
 import { Firestore, collection, getDocs, where } from "firebase/firestore";
 import { query } from "@angular/fire/firestore";
 

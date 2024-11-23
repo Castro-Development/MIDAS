@@ -1,10 +1,10 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { Firestore, getDocs, collection, onSnapshot, QueryConstraint, where } from "firebase/firestore";
 import { BehaviorSubject, Subject, Observable, map, filter, catchError, from, combineLatest, switchMap, tap, finalize } from "rxjs";
-import { ErrorHandlingService } from "../../../shared/services/error-handling.service";
+import { ErrorHandlingService } from "../../../shared/error-handling/error-handling.service";
 import { query } from "@angular/fire/firestore";
 import { AccountLedger, AccountLedgerReference, JournalEntry, LedgerEntry, LedgerFilter, NormalSide } from "../../../shared/dataModels/financialModels/account-ledger.model";
-import { EventLogService } from "../../../shared/services/event-log.service";
+import { EventLogService } from "../../../shared/logging/event-log.service";
 import { EventType } from "../../../shared/dataModels/loggingModels/event-logging.model";
 import { AccountFirestoreService } from "../../chartOfAccount/back-end/account-firestore.service";
 

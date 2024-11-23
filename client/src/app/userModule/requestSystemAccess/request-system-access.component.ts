@@ -4,9 +4,10 @@ import { FormBuilder, FormGroup, FormControl, Validators,  } from '@angular/form
 import { Auth } from '@angular/fire/auth';
 import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { UserRole } from '../../shared/dataModels/userModels/userRole.model';
-import { AuthStateService } from '../../shared/states/auth-state.service';
-import { UserSecurityFacade } from '../../shared/facades/userFacades/user-security.facade';
-import { UserAdminFacade } from '../../adminModule/back-end/user-administration.facade';
+import { AuthStateService } from '../../shared/user/auth/auth-state.service';
+import { UserSecurityFacade } from '../../shared/user/auth/user-security.facade';
+import { UserAdminFacade } from '../../shared/user/admin/user-administration.facade';
+import { ApplicationStatus } from '../../shared/dataModels/userModels/user-filter.model';
 
 
 
@@ -69,7 +70,7 @@ export class RequestSystemAccessComponent {
       password: this.formValue.value.password,
       requestedRole: this.formValue.value.role,
       role: UserRole.Guest,
-      status: 'pending',
+      status: ApplicationStatus.Pending,
       dateRequested: new Date(),
       notificationFilter: {
         'category': 'all',

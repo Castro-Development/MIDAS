@@ -1,17 +1,17 @@
 import { Injectable } from "@angular/core";
 import { UserRole } from "../../dataModels/userModels/userRole.model";
 import { Observable, Subject, catchError, combineLatest, filter, firstValueFrom, from, map, of, switchMap, take, tap } from "rxjs";
-import { AuthStateService } from "../../states/auth-state.service";
-import { ErrorHandlingService } from "../../services/error-handling.service";
+import { AuthStateService } from "./auth-state.service";
+import { ErrorHandlingService } from "../../error-handling/error-handling.service";
 import { Auth, User as FirebaseUser } from "@angular/fire/auth";
 import { doc } from "@angular/fire/firestore";
 import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
 import { AccountFirestoreService } from "../../../portalModule/chartOfAccount/back-end/account-firestore.service";
 import { PermissionType } from "../../dataModels/userModels/permissions.model";
 import { AccountAccessEvent, EventType } from "../../dataModels/loggingModels/event-logging.model";
-import { EventLogService } from "../../services/event-log.service";
-import { UserProfileFacade } from "./user-profile.facade";
-import { UserAdminFirestoreService } from "../../../adminModule/back-end/user-admin-firestore.service";
+import { EventLogService } from "../../logging/event-log.service";
+import { UserProfileFacade } from "../profile/user-profile.facade";
+import { UserAdminFirestoreService } from "../admin/user-admin-firestore.service";
 import { AccountLedger } from "../../dataModels/financialModels/account-ledger.model";
 
 
@@ -53,6 +53,7 @@ export interface PermissionCheckResult {
 
 @Injectable({ providedIn: 'root' })
 export class UserSecurityFacade {
+  
   /* * * * * Access Management Methods * * * * */
   //-------------------------------------------//
 
@@ -135,17 +136,26 @@ export class UserSecurityFacade {
 
     }
 
-
+    isAuthenticated(): Promise<boolean> {
+        return firstValueFrom(this.authState.user$).then((user) =>{
+            if(user){
+                if(user.uid){
+                    return true;
+                }
+            }
+            return false;
+        })
+    }
 
 
     requestSystemAccess(user: UserApplication): Promise<void> {
-        this.userProfileFacade.createProfile(user, this.authState.user$);
+        this.userProfileFacade.createProfile(user, firstValueFrom(this.authState.user$));
         console.log('profile created')
         return this.userAdminFirestore.submitApplication(user, this.authState.user$);
     }
 
     approveUser(user: UserApplication): Promise<void> {
-      this.userProfileFacade.createProfile(user, this.authState.user$);
+      this.userProfileFacade.createProfile(user, firstValueFrom(this.authState.user$));
       console.log('profile created')
       return this.userAdminFirestore.submitApplication(user, this.authState.user$);
     }

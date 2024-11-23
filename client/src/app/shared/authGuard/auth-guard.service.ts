@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, take } from 'rxjs/operators';
 import { UserRole } from '../dataModels/userModels/userRole.model';
-import { AuthStateService } from '../states/auth-state.service';
+import { AuthStateService } from '../user/auth/auth-state.service';
 
 @Injectable({
   providedIn: 'root'

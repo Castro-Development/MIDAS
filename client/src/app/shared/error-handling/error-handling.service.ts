@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FirebaseError } from "firebase/app";
 import { BehaviorSubject, EMPTY, Observable, ObservableInput, delay, filter, mergeMap, of, throwError } from "rxjs";
-import { EventLogService } from "./event-log.service";
+import { EventLogService } from "../logging/event-log.service";
 import { EventType } from "../dataModels/loggingModels/event-logging.model";
 
 interface SystemError {

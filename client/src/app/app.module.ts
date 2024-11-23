@@ -29,7 +29,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { NavbarComponent } from './userModule/navbar/navbar.component';
-import { ErrorHandlingService } from './shared/services/error-handling.service';
+import { ErrorHandlingService } from './shared/error-handling/error-handling.service';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { AdminSVG } from './userModule/navbar/utils/admin.svg';
 import { CalendarSVG } from './userModule/navbar/utils/calendar.svg';
@@ -69,7 +69,6 @@ import { JournalSubmissionCard } from './portalModule/journalEntry/entrySubmissi
 import { JournalSubmissionComponent } from './portalModule/journalEntry/entrySubmissionReview/journal-submission.component';
 import { PortalDashboardComponent } from './portalModule/portalDashboard/portal-dashboard.component';
 import { RouterLink } from '@angular/router';
-import { HelpGlobalModule } from './shared/helpFeature/help-global.module';
 import { ForgotPasswordComponent } from './userModule/forgotPassword/forgot-password.component';
 import { InboxComponent } from './userModule/inbox/inbox.component';
 import { LoginComponent } from './userModule/login/login.component';
@@ -165,7 +164,6 @@ import { MessagingComponent } from './userModule/messaging/messaging.component';
 
     //User Module
     CommonModule,
-    HelpGlobalModule,
     RouterLink,
 
 ],

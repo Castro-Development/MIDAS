@@ -9,8 +9,8 @@ import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserModel } from '../../shared/dataModels/userModels/user.model';
 import { Auth, getAuth } from '@angular/fire/auth';
-import { AuthStateService } from '../../shared/states/auth-state.service';
-import { UserProfileFacade } from '../../shared/facades/userFacades/user-profile.facade';
+import { AuthStateService } from '../../shared/user/auth/auth-state.service';
+import { UserProfileFacade } from '../../shared/user/profile/user-profile.facade';
 
 @Component({
   selector: 'app-user-profile',
