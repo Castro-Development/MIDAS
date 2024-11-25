@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Firestore, CollectionReference, where, doc, getDocs, query, setDoc, onSnapshot, getDoc, DocumentSnapshot } from '@angular/fire/firestore';
 import { Auth, User as FirebaseUser, User, user } from '@angular/fire/auth'
-import { DocumentData, DocumentReference, QuerySnapshot, collection } from 'firebase/firestore';
+import { DocumentData, DocumentReference, QuerySnapshot, Timestamp, collection } from 'firebase/firestore';
 import { BehaviorSubject, Observable, distinctUntilChanged, firstValueFrom, map, of, switchMap, takeUntil, tap, catchError, throwError } from 'rxjs';
 
 import { UserApplication, UserApplicationWithMetaData, UserModel } from '../dataModels/userModels/user.model';
@@ -87,7 +87,11 @@ export class UserFirestoreService implements OnDestroy{
     return new Observable<UserApplicationWithMetaData[]>((observer) => {
       const appDocRef = collection(this.firestore,  'applications');
       const unsubscribe = onSnapshot(appDocRef, (snapshot) => {
-        const users = snapshot.docs.map(doc => doc.data() as UserApplicationWithMetaData);
+        const users = snapshot.docs.map(doc => {
+          let tmpUser = doc.data() as UserApplication;
+          if(tmpUser.dateApproved) tmpUser.dateApproved = (tmpUser.dateApproved as unknown as Timestamp).toDate();
+          if(tmpUser.dateRequested) tmpUser.dateRequested = (tmpUser.dateRequested as unknown as Timestamp).toDate();
+          return tmpUser as UserApplicationWithMetaData});
         observer.next(users);
       });
       return () => unsubscribe();
