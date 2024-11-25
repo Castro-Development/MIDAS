@@ -11,6 +11,7 @@
         class="mat-icon">arrow_back</mat-icon> Return to User Applications</button>
     <!-- <button class="button create-user">Create New User</button> -->
   </div>
+
   <div class="form-container">
     <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="space-y-6">
       <!-- Header Section -->
@@ -228,8 +229,11 @@
         <button type="button" (click)="createForm()" class="slate-button">
           Reset
         </button>
+        <button type="submit" [disabled]="!canSubmit()" class="reject clickable button">
+          Reject Application Decision
+        </button>
         <button type="submit" [disabled]="!canSubmit()" class="gold-button">
-          Submit Application Decision
+          Accept Application Decision
         </button>
       </div>
     </form>

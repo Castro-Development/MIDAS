@@ -23,7 +23,7 @@
 }
 
 
-.gold-button, .slate-button{
+.gold-button, .slate-button, .reject{
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
   padding-left: 1.25rem;
@@ -67,7 +67,11 @@
   background-color: var(--button-slate-hover);
 }
 
-
+.reject{
+  background-color: var(--auth-error-text);
+  color: white;
+  font-weight: 700;
+}
 
 .section-header-global {
   //margin-bottom: 2rem;

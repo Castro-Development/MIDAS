@@ -156,7 +156,7 @@
     <!-- View Message List -->
     <form class="notification-display view-display">
       <div class="display-buttons">
-          <div class="row-item">
+          <div class="row-item send">
             <mat-icon></mat-icon>Search : <input />
           </div>
           <mat-icon class="clickable">keyboard_return</mat-icon>
@@ -164,30 +164,21 @@
       </div>
 
 
-
-      <div class="display-headers">
-        <div class="row-item view">
-          <mat-icon>email</mat-icon><span>[Admin] Segun Olowofoyeku</span><span>Hello this is an urgent message...</span> <span>11/21/24 10:55pm</span> <span>(unread)</span> <mat-icon>delete_forever</mat-icon>
+      <div class="scrollable">
+        <div class="display-headers" *ngFor="let item of [].constructor(20); let i = index">
+          <div class="row-item view">
+            <mat-icon class="clickable">email</mat-icon><span class="view-sender">[Admin] Segun Olowofoyeku</span><span class="view-preview">Hello this is an urgent message with alot of text and stuff so this is written to run off the div</span> <span class="view-date">11/21/24 10:55pm</span> <span class="view-status">(unread)</span> <mat-icon class="view-delete clickable">delete_forever</mat-icon>
+          </div>
         </div>
+
+        <div class="display-headers">
+          <div class="row-item view">
+            <mat-icon class="clickable">email</mat-icon><span class="view-sender">[Admin] Segun Olowofoyeku</span><span class="view-preview">Hello this is an urgent message with alot of text and stuff so this is written to run off the div</span> <span class="view-date">11/21/24 10:55pm</span> <span class="view-status">(read)</span> <mat-icon class="view-delete clickable">delete_forever</mat-icon>
+          </div>
+        </div>
+
       </div>
 
-      <div class="display-headers">
-        <div class="row-item view">
-          <mat-icon>email</mat-icon>Mail 1 :
-        </div>
-      </div>
-
-      <div class="display-headers">
-        <div class="row-item view">
-          <mat-icon>email</mat-icon>Mail 1 :
-        </div>
-      </div>
-
-      <div class="display-headers">
-        <div class="row-item view">
-          <mat-icon>email</mat-icon>Mail 1 :
-        </div>
-      </div>
 
 
     </form>

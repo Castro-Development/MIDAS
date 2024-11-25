@@ -6,6 +6,14 @@ import { getAuth } from 'firebase/auth';
 import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } from '../../shared/dataModels/financialModels/account-ledger.model';
 import { AuthStateService } from '../../shared/user/auth/auth-state.service';
 import { User } from "firebase/auth";
+import { UserAdminFacade } from '../../shared/user/admin/user-administration.facade';
+import { ApprovalDetails } from '../../shared/dataModels/userModels/user.model';
+import { RejectionDetails } from '../../shared/dataModels/userModels/user.model';
+import { UserRole } from '../../shared/dataModels/userModels/userRole.model';
+import { UserSecurityFacade } from '../../shared/user/auth/user-security.facade';
+import { firstValueFrom } from 'rxjs';
+import { UserFirestoreService } from '../../shared/user/user-firestore.service';
+import { UserProfileStateService } from '../../shared/user/profile/user-profile-state.service';
 
 @Component({
   selector: 'app-admin-app-form',
@@ -15,15 +23,27 @@ import { User } from "firebase/auth";
 export class AdminAppFormComponent implements OnInit{
 
   user!: UserApplicationWithMetaData;
+  userAdminFacade = inject(UserAdminFacade);
+  authState = inject(AuthStateService);
+  userProfileState = inject(UserProfileStateService);
+
+  approveDetails!: ApprovalDetails;
+  rejectDetails!: RejectionDetails;
+
+
   @Output() formSubmit = new EventEmitter<any>();
   applicationForm!: FormGroup;
-  authState = inject(AuthStateService);
-  reviewer!: User;
-  reviewer2!: UserModel;
-  reviewer3!:string;
+
+  userFirestoreService = inject(UserFirestoreService);
+  //admin = inject(UserSecurityFacade);
+  admin = this.userProfileState.activeProfile$;
+  // reviewer!: User;
+  // reviewer2!: UserModel;
+  // reviewer3!:string;
 
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder){
+
 
   }
 
@@ -49,7 +69,7 @@ export class AdminAppFormComponent implements OnInit{
       reason: ['', Validators.required],
       //reviewedBy: [this.user.reviewedBy, Validators.required],
       chosenRole: ['', Validators.required],
-      reviewedBy: [this.reviewer3, Validators.required],
+      reviewedBy: ['', Validators.required],
 
     });
 
@@ -62,14 +82,18 @@ export class AdminAppFormComponent implements OnInit{
   }
 
   ngOnInit() {
-    //this.reviewer = this.authState.user$;
-    this.authState.username$.subscribe(s => {
-      if(s != null){
-        //this.reviewer = s;
-        //this.reviewer2 = s;
-        this.reviewer3 = s;
-      }
-    })
+
+
+    // firstValueFrom(this.authState.user$).then((user)=>{
+    //   if(user != null){
+    //     return user.uid;
+    //   }
+    //   else return
+    // }).then( (userId) => {
+    //       return firstValueFrom(this.userFirestoreService.getUserObservable(userId))
+    // })
+
+
 
     this.route.queryParams.subscribe(params => {
       if (params['data']) {
@@ -120,6 +144,17 @@ export class AdminAppFormComponent implements OnInit{
     //   console.log(journalEntry);
     //   this.formSubmit.emit(journalEntry);
     // }
+
+  }
+
+  accept(applicationId: string, role: UserRole, reason: string){
+    this.approveDetails.reviewerId  = "";
+    this.approveDetails.notes  = "";
+    this.approveDetails.assignedRole  = role;
+
+    this.userAdminFacade.approveApplication(applicationId, this.approveDetails);
+
+
   }
 
 
