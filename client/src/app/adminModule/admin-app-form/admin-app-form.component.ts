@@ -49,6 +49,7 @@ export class AdminAppFormComponent implements OnInit{
 
 
   public createForm() {
+    firstValueFrom(this.admin).then((admin) => {
     this.applicationForm = this.fb.group({
 
 
@@ -69,10 +70,10 @@ export class AdminAppFormComponent implements OnInit{
       reason: ['', Validators.required],
       //reviewedBy: [this.user.reviewedBy, Validators.required],
       chosenRole: ['', Validators.required],
-      reviewedBy: ['', Validators.required],
+      reviewedBy: [admin.username, Validators.required],
 
     });
-
+  });
   }
 
   canSubmit(): boolean {
