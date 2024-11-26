@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { 
-  Firestore, 
-  collection, 
-  doc, 
-  onSnapshot, 
-  setDoc, 
-  updateDoc, 
+import {
+  Firestore,
+  collection,
+  doc,
+  onSnapshot,
+  setDoc,
+  updateDoc,
   serverTimestamp,
   deleteDoc
 } from '@angular/fire/firestore';
@@ -18,7 +18,7 @@ import { Notification } from '../dataModels/messageModel/message.model';
 })
 export class NotificationFirestoreService {
   private readonly COLLECTION_NAME = 'notifications';
-  
+
   constructor(
     private firestore: Firestore,
     private errorHandlingService: ErrorHandlingService
@@ -27,9 +27,9 @@ export class NotificationFirestoreService {
   getUserNotifications(userId: string): Observable<Notification[]> {
     return new Observable(subscriber => {
       const userNotificationsRef = collection(
-        this.firestore, 
-        this.COLLECTION_NAME, 
-        userId, 
+        this.firestore,
+        this.COLLECTION_NAME,
+        userId,
         'userNotifications'
       );
 
@@ -52,16 +52,18 @@ export class NotificationFirestoreService {
     });
   }
 
+
+
   async createNotification(
-    userId: string, 
-    notificationId: string, 
+    userId: string,
+    notificationId: string,
     notification: Notification
   ): Promise<void> {
     try {
       const notificationRef = doc(
-        this.firestore, 
-        this.COLLECTION_NAME, 
-        userId, 
+        this.firestore,
+        this.COLLECTION_NAME,
+        userId,
         'userNotifications',
         notificationId
       );
@@ -77,8 +79,8 @@ export class NotificationFirestoreService {
   }
 
   async updateNotification(
-    userId: string, 
-    notificationId: string, 
+    userId: string,
+    notificationId: string,
     changes: Partial<Notification>
   ): Promise<void> {
     try {

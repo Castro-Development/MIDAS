@@ -1,5 +1,5 @@
 *{
-  input, textarea, select{
+  input, textarea, select, option{
     margin: 0;
     padding: 0;
 
@@ -12,9 +12,10 @@
     border: none;
     border-color: transparent;
     box-shadow: none;
+    color: var(--form-black);
 
   }
-  input{
+  input, select, option{
     margin-left: 5px;
   }
   textarea{
@@ -33,6 +34,15 @@
   ::placeholder {
     color: var(--form-black);
     opacity: 0.75; /* Firefox */
+  }
+  option{
+    background-color: var(--form-black);
+    font-weight: 700;
+    border-radius: 0;
+    border-width: 2px;
+    color: white;
+    //border-color: var(--header-color);
+    box-shadow: 2px 2px 5px var(--main-black-shadow);
   }
 
 
@@ -289,6 +299,12 @@
         background-color: var(--button-slate);
       }
 
+    }
+    .dropdown{
+      // margin-left: -30;
+      position: absolute;
+      right: 30px;
+      z-index: 0;
     }
 
 

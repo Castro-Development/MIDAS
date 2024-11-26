@@ -18,7 +18,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
               </mat-option>
             </mat-select>
           </mat-form-field>
-  
+
           <mat-form-field class="w-full">
             <mat-label>Search</mat-label>
             <input matInput [(ngModel)]="data.searchTerm" placeholder="Search accounts...">
@@ -29,7 +29,8 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
         <button mat-button (click)="clearFilters()">Clear</button>
         <button mat-button [mat-dialog-close]="data">Apply</button>
       </mat-dialog-actions> -->
-    `
+    `,
+    styleUrl: './chart-of-accounts.scss'
   })
   export class FilterDialogComponent {
     constructor(
@@ -39,7 +40,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
         categories: string[];
       }
     ) {}
-  
+
     clearFilters() {
       this.data.categoryFilter = '';
       this.data.searchTerm = '';

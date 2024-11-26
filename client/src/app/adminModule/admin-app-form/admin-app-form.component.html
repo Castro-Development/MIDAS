@@ -1,4 +1,6 @@
-<!-- {{user.username}} -->
+<!-- {{user.username}}
+{{currentAdmin.username}}
+{{currentAdmin.id}} -->
 
 
 <div class="main-container">
@@ -13,7 +15,7 @@
   </div>
 
   <div class="form-container">
-    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <form [formGroup]="applicationForm" class="space-y-6">
       <!-- Header Section -->
       <!-- <div class="text-xl font-bold text-white mb-6">
         Create Journal Entry
@@ -194,6 +196,26 @@
             A Reviewer is Required
           </div>
         </div>
+
+        <div class="grid-item-3-span">
+          <label for="chosenRole" class="form-label">
+            Granted Role
+          </label>
+          <select id="chosenRole" formControlName="chosenRole" class="form-input"
+            placeholder="Application Reviewer">
+            <!-- <option *ngFor="let role of roles" value="{{role}}">{{role}}</option> -->
+            <option value="0">Guest</option>
+            <option value="1">Accountant</option>
+            <option value="2">Manager</option>
+            <option value="3">Administrator</option>
+
+
+          </select>
+          <div *ngIf="applicationForm.get('chosenRole')?.touched &&
+                    applicationForm.get('chosenRole')?.invalid" class="invalid-container">
+            A Reviewer is Required
+          </div>
+        </div>
       </div>
 
 
@@ -212,27 +234,16 @@
         </div>
       </div>
 
-      <!-- Transactions Section -->
-
-      <!-- Validation Messages -->
-      <div class="space-y-2">
-        <div *ngIf="true && applicationForm.touched" class="violation-message">
-          Debits and credits must be equal
-        </div>
-        <div *ngIf="true && applicationForm.touched" class="violation-message">
-          Each transaction must have either a debit or credit amount, not both
-        </div>
-      </div>
 
       <!-- Submit Button -->
       <div class="flex justify-end space-x-4">
         <button type="button" (click)="createForm()" class="slate-button">
           Reset
         </button>
-        <button type="submit" [disabled]="!canSubmit()" class="reject clickable button">
+        <button type="submit" (click)="onReject()" class="reject clickable button">
           Reject Application Decision
         </button>
-        <button type="submit" [disabled]="!canSubmit()" class="gold-button">
+        <button type="submit" (click)="onAccept()" class="gold-button">
           Accept Application Decision
         </button>
       </div>

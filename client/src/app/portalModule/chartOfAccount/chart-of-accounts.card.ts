@@ -5,7 +5,7 @@ import { AccountLedger } from "../../shared/dataModels/financialModels/account-l
 @Component({
   selector: 'chart-of-accounts-card',
   template: `
-  <div class="overflow-x-auto">
+  <div class="">
     <!-- Loading State -->
     <div *ngIf="!accounts" class="p-8 text-center">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -18,30 +18,30 @@ import { AccountLedger } from "../../shared/dataModels/financialModels/account-l
     </div>
 
     <!-- Accounts Table -->
-    <table *ngIf="accounts?.length" class="w-full border-collapse">
+    <table *ngIf="accounts?.length" class=".main-container">
       <thead>
-        <tr class="bg-gray-50 border-b border-gray-200">
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Account #</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subcategory</th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
-          <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Normal Side</th>
-          <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-          <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        <tr class="">
+          <th class="">Account #</th>
+          <th class="">Name</th>
+          <th class="">Category</th>
+          <th class="">Subcategory</th>
+          <th class="">Balance</th>
+          <th class="">Normal Side</th>
+          <th class="">Status</th>
+          <th class="">Actions</th>
         </tr>
       </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
+      <tbody class="">
         <tr *ngFor="let account of accounts"
-            class="hover:bg-gray-50 transition-colors duration-200">
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{account.accountNumber}}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{account.accountName}}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{account.category}}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{account.subcategory}}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
+            class="">
+          <td class="">{{account.accountNumber}}</td>
+          <td class="">{{account.accountName}}</td>
+          <td class="">{{account.category}}</td>
+          <td class="">{{account.subcategory}}</td>
+          <td class="">
             {{account.currentBalance | currency}}
           </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">
+          <td class="">
             {{account.normalSide}}
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-center">
@@ -51,15 +51,15 @@ import { AccountLedger } from "../../shared/dataModels/financialModels/account-l
               {{account.isActive ? 'Active' : 'Inactive'}}
             </span>
           </td>
-          <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
+          <td class="">
             <button
               (click)="handleEditAccount(account)"
-              class="text-blue-600 hover:text-blue-900 mx-2 transition-colors duration-200">
+              class="">
               <span class="material-icons text-sm">edit</span>
             </button>
             <button
               (click)="handleViewHistory(account)"
-              class="text-green-600 hover:text-green-900 mx-2 transition-colors duration-200">
+              class="">
               <span class="material-icons text-sm">history</span>
             </button>
           </td>
@@ -67,7 +67,8 @@ import { AccountLedger } from "../../shared/dataModels/financialModels/account-l
       </tbody>
     </table>
   </div>
-  `
+  `,
+    styleUrl: './chart-of-accounts.scss',
 })
 export class ChartOfAccountsCard implements OnInit {
     @Input() accounts: AccountLedger[] | null = [];

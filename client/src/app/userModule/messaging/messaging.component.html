@@ -12,51 +12,79 @@
 
     <div class="notification-menu">
 
-      <div class="menu-item">
-        <mat-icon></mat-icon>Notifications <div class="floating-icon">1</div>
+      <div class="menu-item" (click)="showMessageList = true">
+        <mat-icon>report_problem</mat-icon>Notifications <div class="floating-icon">1</div>
       </div>
 
-      <div class="menu-item">
-        <mat-icon></mat-icon>Received Messages <div class="floating-icon">1</div>
+      <div class="menu-item" (click)="showMessageList = true">
+        <mat-icon>mail</mat-icon>Received Messages <div class="floating-icon">1</div>
       </div>
 
-      <div class="menu-item">
-        <mat-icon></mat-icon>Sent Messages <div class="floating-icon">1</div>
+      <div class="menu-item"  (click)="showMessageList = true">
+        <mat-icon>outgoing_mail</mat-icon>Sent Messages <div class="floating-icon">1</div>
       </div>
 
-      <div class="menu-item">
-        <mat-icon></mat-icon>Compose Message <div class="floating-icon">1</div>
+      <div class="menu-item"  (click)="showMessageSend = true">
+        <mat-icon>send</mat-icon>Compose Message <div class="floating-icon">1</div>
       </div>
 
     </div>
 
-    <!-- Read Messages -->
-    <div class="notification-display">
+     <!-- View Message List -->
+     <form class="notification-display view-display" *ngIf="showMessageList">
       <div class="display-buttons">
-          <div class="row-item">
-            <mat-icon></mat-icon>Title :
+          <div class="row-item send">
+            <mat-icon>manage_search</mat-icon>Search : <input />
           </div>
           <mat-icon class="clickable">keyboard_return</mat-icon>
-          <mat-icon class="clickable">close</mat-icon>
+          <mat-icon class="clickable" (click)="showMessageList = !showMessageList">close</mat-icon>
+      </div>
+
+
+      <div class="scrollable">
+        <!-- <div class="display-headers" *ngFor="let item of [].constructor(20); let i = index"> -->
+          <div class="display-headers" *ngFor="let message of userNotifications$ | async; let i = index">
+          <div class="row-item view">
+            <mat-icon class="clickable" (click)="showMessageView = true">email</mat-icon><span class="view-sender">[Admin] Segun Olowofoyeku</span><span class="view-preview">Hello this is an urgent message with alot of text and stuff so this is written to run off the div</span> <span class="view-date">11/21/24 10:55pm</span> <span class="view-status">(unread)</span> <mat-icon class="view-delete clickable">delete_forever</mat-icon>
+          </div>
+        </div>
+
+        <div class="display-headers">
+          <div class="row-item view">
+            <mat-icon class="clickable" (click)="showMessageView = true">email</mat-icon><span class="view-sender">[Admin] Segun Olowofoyeku</span><span class="view-preview">Hello this is an urgent message with alot of text and stuff so this is written to run off the div</span> <span class="view-date">11/21/24 10:55pm</span> <span class="view-status">(read)</span> <mat-icon class="view-delete clickable">delete_forever</mat-icon>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+    <!-- Read Messages -->
+    <div class="notification-display"  *ngIf="showMessageView">
+      <div class="display-buttons">
+          <div class="row-item">
+            <mat-icon>article</mat-icon>Title :
+          </div>
+          <mat-icon class="clickable">keyboard_return</mat-icon>
+          <mat-icon class="clickable" (click)="showMessageView = !showMessageView">close</mat-icon>
       </div>
 
       <div class="display-headers">
         <div class="row-item">
-          <mat-icon></mat-icon>Category:
+          <mat-icon>topic</mat-icon>Category:
         </div>
         <div class="row-item">
-          <mat-icon></mat-icon> Date Sent :
+          <mat-icon>date_range</mat-icon> Date Sent :
         </div>
       </div>
 
       <div class="display-headers">
         <div class="row-item">
-          <mat-icon></mat-icon>Sender :
+          <mat-icon>record_voice_over</mat-icon>Sender :
         </div>
       </div>
       <div class="display-headers">
         <div class="row-item">
-          <mat-icon></mat-icon>Recipient(s):
+          <mat-icon>contact_mail</mat-icon>Recipient(s):
         </div>
       </div>
 
@@ -101,22 +129,27 @@
 
     <!-- Send messages -->
 
-    <form class="notification-display" hidden>
+    <form class="notification-display" [formGroup]="messageForm" *ngIf="showMessageSend">
       <div class="display-buttons">
           <div class="row-item send">
-            <mat-icon></mat-icon>Title : <input />
+            <mat-icon>article</mat-icon>Title : <input type="text" formControlName="title"/>
           </div>
           <mat-icon class="clickable">keyboard_return</mat-icon>
-          <mat-icon class="clickable">close</mat-icon>
+          <mat-icon class="clickable" (click)="showMessageSend = !showMessageSend">close</mat-icon>
       </div>
 
       <div class="display-headers">
         <div class="row-item send">
-          <mat-icon></mat-icon>Category : <input />
+          <mat-icon>topic</mat-icon>Category :
+          <select formControlName="type">
+            <option value="Notification">Notification</option>
+            <option value="UserMessage">Message</option>
+          </select>
+          <mat-icon class="dropdown">arrow_drop_down</mat-icon>
         </div>
-        <div class="row-item send">
-          <mat-icon></mat-icon> Date Sent : <input />
-        </div>
+        <!-- <div class="row-item send">
+          <mat-icon></mat-icon> Date Sent : <input type="text" formControlName="date"/>
+        </div> -->
       </div>
 
       <div class="display-headers">
@@ -124,13 +157,13 @@
           <mat-icon></mat-icon>Sender : <input>
         </div> -->
         <div class="row-item send">
-          <mat-icon></mat-icon>Recipient(s): <input />
+          <mat-icon>contact_mail</mat-icon>Recipient(s): <input type="text" formControlName="recipientUid" placeholder="Enter recipients User ID"/>
         </div>
       </div>
 
 
       <div class="display-headers content-send">
-        <textarea placeholder="Enter your message"></textarea>
+        <textarea formControlName="message" placeholder="Message:"></textarea>
       </div>
 
 
@@ -138,56 +171,17 @@
 
       <div class="display-buttons">
 
-        <div class="delete">
+        <button type="reset" class="delete" (click)="createForm()">
           <mat-icon>backspace</mat-icon> clear?
-        </div>
+        </button>
 
-        <div class="reply">
+        <button type="submit" class="reply" (click)="sendMessage()">
           <mat-icon>send</mat-icon> Send?
-        </div>
+        </button>
 
       </div>
 
     </form>
-
-
-
-
-    <!-- View Message List -->
-    <form class="notification-display view-display">
-      <div class="display-buttons">
-          <div class="row-item send">
-            <mat-icon></mat-icon>Search : <input />
-          </div>
-          <mat-icon class="clickable">keyboard_return</mat-icon>
-          <mat-icon class="clickable">close</mat-icon>
-      </div>
-
-
-      <div class="scrollable">
-        <div class="display-headers" *ngFor="let item of [].constructor(20); let i = index">
-          <div class="row-item view">
-            <mat-icon class="clickable">email</mat-icon><span class="view-sender">[Admin] Segun Olowofoyeku</span><span class="view-preview">Hello this is an urgent message with alot of text and stuff so this is written to run off the div</span> <span class="view-date">11/21/24 10:55pm</span> <span class="view-status">(unread)</span> <mat-icon class="view-delete clickable">delete_forever</mat-icon>
-          </div>
-        </div>
-
-        <div class="display-headers">
-          <div class="row-item view">
-            <mat-icon class="clickable">email</mat-icon><span class="view-sender">[Admin] Segun Olowofoyeku</span><span class="view-preview">Hello this is an urgent message with alot of text and stuff so this is written to run off the div</span> <span class="view-date">11/21/24 10:55pm</span> <span class="view-status">(read)</span> <mat-icon class="view-delete clickable">delete_forever</mat-icon>
-          </div>
-        </div>
-
-      </div>
-
-
-
-    </form>
-
-
-
-
-
-
 
 
   </div>

@@ -89,8 +89,8 @@ export class UserFirestoreService implements OnDestroy{
       const unsubscribe = onSnapshot(appDocRef, (snapshot) => {
         const users = snapshot.docs.map(doc => {
           let tmpUser = doc.data() as UserApplication;
-          if(tmpUser.dateApproved) tmpUser.dateApproved = (tmpUser.dateApproved as unknown as Timestamp).toDate();
-          if(tmpUser.dateRequested) tmpUser.dateRequested = (tmpUser.dateRequested as unknown as Timestamp).toDate();
+          // if(tmpUser.dateApproved) tmpUser.dateApproved = (tmpUser.dateApproved as unknown as Timestamp).toDate();
+          // if(tmpUser.dateRequested) tmpUser.dateRequested = (tmpUser.dateRequested as unknown as Timestamp).toDate();
           return tmpUser as UserApplicationWithMetaData});
         observer.next(users);
       });

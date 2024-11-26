@@ -13,7 +13,7 @@ import { Router } from "@angular/router";
                 (chosenJournalEntry)="selectEntry($event)"
             ></journal-review-card>
         </ng-container>
-        
+
         <ng-template #entryDetail>
             <journal-detail-card
                 [journalEntry]="selectedEntry"
@@ -21,7 +21,8 @@ import { Router } from "@angular/router";
                 (denied)="handleDenial($event)"
             ></journal-detail-card>
         </ng-template>
-    `
+    `,
+    styleUrl: './journal-entry-review.scss',
 })
 export class JournalEntryReviewComponent implements OnDestroy {
     private journalFacade = inject(JournalEntryFacade);

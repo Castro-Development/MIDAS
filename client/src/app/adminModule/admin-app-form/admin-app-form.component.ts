@@ -22,58 +22,54 @@ import { UserProfileStateService } from '../../shared/user/profile/user-profile-
 })
 export class AdminAppFormComponent implements OnInit{
 
-  user!: UserApplicationWithMetaData;
+  user!: UserApplication;
+  currentAdmin!: UserModel;
   userAdminFacade = inject(UserAdminFacade);
-  authState = inject(AuthStateService);
   userProfileState = inject(UserProfileStateService);
+
+  fb = inject(FormBuilder);
+  applicationForm!: FormGroup;
+  route = inject(ActivatedRoute);
 
   approveDetails!: ApprovalDetails;
   rejectDetails!: RejectionDetails;
 
-
   @Output() formSubmit = new EventEmitter<any>();
-  applicationForm!: FormGroup;
-
-  userFirestoreService = inject(UserFirestoreService);
-  //admin = inject(UserSecurityFacade);
-  admin = this.userProfileState.activeProfile$;
-  // reviewer!: User;
-  // reviewer2!: UserModel;
-  // reviewer3!:string;
 
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder){
+
+  constructor(){
 
 
   }
 
 
   public createForm() {
-    firstValueFrom(this.admin).then((admin) => {
-    this.applicationForm = this.fb.group({
-
-
-      userId: [this.user.id, Validators.required],
-      username: [this.user.username, Validators.required],
-      firstname: [this.user.firstname, Validators.required],
-      lastname: [this.user.lastname, Validators.required],
-      phone: [this.user.phone, Validators.required],
-      street: [this.user.street, Validators.required],
-      zip: [this.user.zip, Validators.required],
-      state: [this.user.state, Validators.required],
-      password: [this.user.password, Validators.required],
-      role: [this.user.requestedRole, Validators.required],
-      dateRequested: [this.user.dateRequested, Validators.required],
-      status: ['', Validators.required],
-      dateUpdated: [new Date().toISOString().split('T')[0], Validators.required],
-      //dateApproved: [new Date().toISOString().split('T')[0], Validators.required],
-      reason: ['', Validators.required],
-      //reviewedBy: [this.user.reviewedBy, Validators.required],
-      chosenRole: ['', Validators.required],
-      reviewedBy: [admin.username, Validators.required],
-
+    this.userProfileState.activeProfile$.subscribe((admin) => {
+      this.currentAdmin = admin;
+      this.applicationForm = this.fb.group({
+        userId: [this.user.id, Validators.required],
+        username: [this.user.username, Validators.required],
+        firstname: [this.user.firstname, Validators.required],
+        lastname: [this.user.lastname, Validators.required],
+        phone: [this.user.phone, Validators.required],
+        street: [this.user.street, Validators.required],
+        zip: [this.user.zip, Validators.required],
+        state: [this.user.state, Validators.required],
+        password: [this.user.password, Validators.required],
+        role: [this.user.requestedRole, Validators.required],
+        dateRequested: [this.user.dateRequested, Validators.required],
+        status: ['', Validators.required],
+        dateUpdated: [new Date().toISOString().split('T')[0], Validators.required],
+        //dateApproved: [new Date().toISOString().split('T')[0], Validators.required],
+        reason: ['', Validators.required],
+        //reviewedBy: [this.user.reviewedBy, Validators.required],
+        chosenRole: [0, Validators.required],
+        reviewedBy: [this.currentAdmin.username, Validators.required],
+      });
     });
-  });
+
+
   }
 
   canSubmit(): boolean {
@@ -84,79 +80,59 @@ export class AdminAppFormComponent implements OnInit{
 
   ngOnInit() {
 
-
-    // firstValueFrom(this.authState.user$).then((user)=>{
-    //   if(user != null){
-    //     return user.uid;
-    //   }
-    //   else return
-    // }).then( (userId) => {
-    //       return firstValueFrom(this.userFirestoreService.getUserObservable(userId))
-    // })
-
-
-
     this.route.queryParams.subscribe(params => {
       if (params['data']) {
         this.user = JSON.parse(params['data']);
       }
     });
+
     this.createForm();
   }
 
-  onSubmit() {
-    // if (this.applicationForm.valid) {
-    //   const formValue = this.journalEntryForm.value as JournalEntryFormValue;
-
-    //   const accountsFromTransactions = formValue.transactions.map((transaction: JournalTransaction) => transaction.accountId);
-
-    //   // Prepare the journal entry object
-    //   const journalEntry = {
-    //     id: '',
-    //     postReference: '',
-    //     updatedBy: '',
-    //     totalDebits: this.calculateTotalDebits(),
-    //     totalCredits: this.calculateTotalCredits(),
-    //     isBalanced: true,
-    //     status: JournalEntryStatus.DRAFT,
-    //     createdAt: new Date(),
-    //     updatedAt: new Date(),
-    //     date: new Date(formValue.date),
-    //     description: formValue.description,
-    //     version: 1,
-    //     versionHistory: [],
-    //     createdBy: getAuth().currentUser?.uid || '',
-    //     // Fixed: using formValue.transactions instead of transaction
-    //     accounts: accountsFromTransactions,
-    //     transactions: formValue.transactions.map((transaction: JournalTransaction) => ({
-    //       id: crypto.randomUUID(), // Add unique ID for each transaction
-    //       journalEntryId: '', // This will be set when the entry is saved
-    //       accountId: transaction.accountId,
-    //       description: transaction.description,
-    //       debitAmount: Number(transaction.debitAmount) || 0,
-    //       creditAmount: Number(transaction.creditAmount) || 0,
-    //       createdAt: new Date(),
-    //       createdBy: getAuth().currentUser?.uid || '',
-    //       updatedAt: new Date(),
-    //       updatedBy: getAuth().currentUser?.uid || ''
-    //     }))
-    //   } as JournalEntry;
-
-    //   console.log(journalEntry);
-    //   this.formSubmit.emit(journalEntry);
-    // }
-
+  onAccept() {
+    //console.log(this.applicationForm.value.reason);
+    this.accept(this.user.id, this.applicationForm.value.chosenRole, this.applicationForm.value.reason);
+    //this.securityFacade.requestSystemAccess(this.user);
+    this.applicationForm.reset();
+    console.log("On Accept compiled");
   }
+
+  onReject() {
+
+    this.reject(this.user.id, this.applicationForm.value.reason);
+    this.applicationForm.reset();
+    console.log("On reject compiled");
+  }
+
+
 
   accept(applicationId: string, role: UserRole, reason: string){
-    this.approveDetails.reviewerId  = "";
-    this.approveDetails.notes  = "";
-    this.approveDetails.assignedRole  = role;
 
+    this.approveDetails = {
+      reviewerId: this.currentAdmin.id,
+      notes: reason,
+      assignedRole: role,
+    }
+    console.log(this.approveDetails.reviewerId);
     this.userAdminFacade.approveApplication(applicationId, this.approveDetails);
+  }
+
+  reject(applicationId: string, reason: string){
+
+    this.rejectDetails = {
+      reviewerId: this.currentAdmin.id,
+      notes: reason,
+      reason: reason,
+    }
+    console.log(this.rejectDetails.reviewerId);
+    this.userAdminFacade.rejectApplication(applicationId, this.rejectDetails);
+  }
+
+  newSubmit(){
+
+
 
 
   }
-
 
 }

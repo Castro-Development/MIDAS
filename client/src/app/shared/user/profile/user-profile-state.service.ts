@@ -20,6 +20,7 @@ import { UserAdminFirestoreService } from "../admin/user-admin-firestore.service
     private readonly destroy$ = new Subject<void>();
 
     readonly userProfile$ = this.userProfileSubject.asObservable();
+    tempUser!: UserModel;
 
     constructor(
         private firestoreService: UserFirestoreService,
@@ -31,6 +32,7 @@ import { UserAdminFirestoreService } from "../admin/user-admin-firestore.service
 
     // Don't forget to add in your class:
 
+
     readonly activeRole$ = this.userProfileSubject.pipe(
       map(profile => profile.role),
       distinctUntilChanged()
@@ -40,6 +42,13 @@ import { UserAdminFirestoreService } from "../admin/user-admin-firestore.service
       map(profile => profile as UserModel ),
       distinctUntilChanged()
     );
+
+    currentUser(): UserModel{
+      this.activeProfile$.subscribe((user) => {
+        this.tempUser = user;
+      });
+      return this.tempUser;
+    }
 
     createProfile(user: UserApplication, userAuth$: Promise<FirebaseUser | null>) {
         // associate UserApplication data with the UserAuth's uid

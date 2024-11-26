@@ -10,41 +10,46 @@ import { ChartOfAccountsFacade } from './back-end/chart-of-accounts.facade';
 @Component({
   selector: 'app-chart-of-accounts',
   template: `
-    <div class="min-h-screen bg-gray-50 p-6">
-      <div class="max-w-7xl mx-auto">
+    <div class="main-container">
+
         <!-- Header Section -->
-        <div class="flex justify-between items-center mb-6">
-          <h1 class="text-2xl font-semibold text-gray-900">Chart of Accounts</h1>
+        <div class="title-header">
+          <h2 class="section-header-global">Chart of Accounts</h2>
+
+        </div>
+        <div class="header">
+          <button class="button return" routerLink="/portal-dashboard"><mat-icon class="mat-icon">arrow_back</mat-icon> Return to Accounting Dashboard</button>
           <div class="flex gap-4"> <!-- Added container for buttons -->
             <button
               (click)="manageFiscalPeriod()"
-              class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700
-                     transition-colors duration-200 flex items-center gap-2"
+              class="gold-button"
             >
-              <span class="material-icons text-sm">date_range</span>
+              <span class="material-icons mr-2">date_range</span>
               Fiscal Period
             </button>
             <button
               (click)="createNewAccount()"
-              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700
-                     transition-colors duration-200 flex items-center gap-2"
+              class="slate-button"
             >
-              <span class="material-icons text-sm">add</span>
+              <span class="material-icons mr-2">add</span>
               Create New Account
             </button>
           </div>
         </div>
 
+
+
         <!-- Main Content -->
-        <div class="bg-white rounded-lg shadow">
+        <div class="">
           <chart-of-accounts-card
             [accounts]="accounts$ | async"
             (selectedAccount)="selectedAccount($event)"
           />
         </div>
-      </div>
+
     </div>
-  `
+  `,
+    styleUrl: './chart-of-accounts.scss',
 })
 export class ChartOfAccountsComponent {
 
