@@ -74,14 +74,14 @@ export class ChartOfAccountsComponent {
   selectedAccount(account: AccountLedger) {
     // this.accountSelected.emit(account);
     this.accountFacade.selectAccount(account.accountNumber);
-    this.router.navigate(['/portal/account-ledger', account.accountNumber]);
+    this.router.navigate(['/account-ledger', account.accountNumber]);
   }
 
   manageFiscalPeriod() {
-    this.router.navigate(['/portal/fiscal-period']);
+    this.router.navigate(['/fiscal-period']);
   }
 
   createNewAccount() {
-    this.router.navigate(['/portal/general-ledger-functions/add-account']);
+    this.router.navigate(['/add-account']);
   }
 }

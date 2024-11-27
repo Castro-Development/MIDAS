@@ -21,6 +21,7 @@ import { NotificationFilter } from '../../shared/notification/notification-state
   templateUrl: './admin-app-form.component.html',
   styleUrl: './admin-app-form.component.scss'
 })
+
 export class AdminAppFormComponent implements OnInit{
 
   user!: UserApplication;
