@@ -8,6 +8,7 @@ import { ApprovalDetails, RejectionDetails, UserApplication } from "../../dataMo
 import { ApplicationStatus } from "../../dataModels/userModels/user-filter.model";
 import { NotificationFacade } from "../../notification/notification.facade";
 import { UserProfileFacade } from "../profile/user-profile.facade";
+import { UserRole } from "../../dataModels/userModels/userRole.model";
 
 
 
@@ -42,46 +43,49 @@ export class UserAdminFacade {
   /**
    * Gets single application details
    */
-  getApplicationDetails(applicationId: string): Observable<UserApplication | null> {
+  getApplicationDetails(applicationId: string): Observable<UserApplication | undefined> {
     return this.userAdminService.getApplication(applicationId).pipe(
-      tap(application => this.selectedApplicationSubject.next(application)),
-      catchError(error => this.errorHandling.handleError('getApplicationDetails', null))
+      tap(application => {
+        if(application) this.selectedApplicationSubject.next(application)
+        else throw new Error('Application not found');
+      }),
+      catchError(error => this.errorHandling.handleError('getApplicationDetails', undefined))
     );
   }
 
   /**
    * Processes application approval
    */
-  approveApplication(applicationId: string, approvalDetails: ApprovalDetails): Observable<void> {
-    return this.userAdminService.getApplication(applicationId).pipe(
-      switchMap(application => {
+  approveApplication(userApp: UserApplication, approvalDetails: ApprovalDetails): Promise<void> {
+    
+        
         const updatedApplication: UserApplication = {
-          ...application,
+          ...userApp,
           status: ApplicationStatus.Approved,
           dateApproved: new Date(),
           reviewedBy: approvalDetails.reviewerId,
-          notes: approvalDetails.notes
+          notes: approvalDetails.notes,
         };
 
         // Generate username if not already set
         if (!updatedApplication.username) {
           return this.generateUsername(
-            application.firstname, 
-            application.lastname,
+            userApp.firstname, 
+            userApp.lastname,
             new Date()
-          ).then(() => {
-            this.userProfileFacade.createProfile(updatedApplication, firstValueFrom(this.authState.user$));
+          ).then((username) => {
+            this.userProfileFacade.createProfile({
+              ...updatedApplication,
+              username: username
+            }as UserApplication);
           })
+        }else{
+          this.userProfileFacade.createProfile(updatedApplication);
+          return this.userAdminService.updateApplication(updatedApplication);
         }
 
-        return this.userAdminService.updateApplication(updatedApplication);
-      }),
-      tap(() => {
-        // Send notification
-        this.notification.sendApprovalNotification(applicationId);
-      }),
-      catchError(error => this.errorHandling.handleError('approveApplication', void 0))
-    );
+      
+      
   }
 
   /**
@@ -90,12 +94,14 @@ export class UserAdminFacade {
   rejectApplication(applicationId: string, rejectionDetails: RejectionDetails): Observable<void> {
     return this.userAdminService.getApplication(applicationId).pipe(
       switchMap(application => {
+        if(application === undefined) throw new Error('Application not found');
         const updatedApplication: UserApplication = {
           ...application,
           status: ApplicationStatus.Rejected,
           datesDenied: application.datesDenied ? [...application.datesDenied, new Date()] : [new Date()],
           reviewedBy: rejectionDetails.reviewerId,
-          notes: rejectionDetails.notes
+          notes: rejectionDetails.notes,
+          requestedRole: UserRole.Guest
         };
 
         return this.userAdminService.updateApplication(updatedApplication);
@@ -114,7 +120,7 @@ export class UserAdminFacade {
   updateApplicationNotes(applicationId: string, notes: string): Observable<void> {
     return this.userAdminService.getApplication(applicationId).pipe(
       switchMap(application => {
-        const updatedApplication = { ...application, notes };
+        const updatedApplication = { ...application, notes } as UserApplication;
         return this.userAdminService.updateApplication(updatedApplication);
       }),
       catchError(error => this.errorHandling.handleError('updateApplicationNotes', void 0))

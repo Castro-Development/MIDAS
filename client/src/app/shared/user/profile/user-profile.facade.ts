@@ -40,8 +40,8 @@ export class UserProfileFacade{
                                 /* * * * * Personal Info Methods * * * * */
                                 //----------------------------------------//
     // // Basic Info
-    createProfile(user: UserApplication, user$: Promise<User | null>) {
-        return this.userProfileState.createProfile(user, user$);
+    createProfile(user: UserApplication) {
+        return this.userProfileState.createProfile(user);
     }
     // updatePersonalInfo(userId: string, info: PersonalInfoUpdate): Observable<void>;
     // getPersonalInfo(userId: string): Observable<PersonalInfo>;

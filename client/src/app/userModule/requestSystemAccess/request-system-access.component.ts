@@ -77,15 +77,18 @@ export class RequestSystemAccessComponent {
         'priority': 'all',
         'type': 'all'
       },
+    }).then(() => {
+      alert('Your application has been submitted. You will receive an email when your account has been approved. Your username is: ' + username);
+      this.router.navigate(['login']);
     });
 
   });
 
-  alert("User has been successfully added!")
-  let ref = document.getElementById('cancel');
-  ref?.click();
-  this.formValue.reset();
-  this.router.navigate(['login']);
+  // alert("User has been successfully added!")
+  // let ref = document.getElementById('cancel');
+  // ref?.click();
+  // this.formValue.reset();
+  // this.router.navigate(['login']);
 
 
 

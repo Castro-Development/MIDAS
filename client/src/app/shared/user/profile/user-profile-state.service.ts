@@ -50,12 +50,8 @@ import { UserAdminFirestoreService } from "../admin/user-admin-firestore.service
       return this.tempUser;
     }
 
-    createProfile(user: UserApplication, userAuth$: Promise<FirebaseUser | null>) {
-        // associate UserApplication data with the UserAuth's uid
-        return userAuth$.then((userAuth) =>{
-            user.id = userAuth?.uid || '';
-            return this.firestoreService.createProfile(user);
-        });
+    createProfile(user: UserApplication): Promise<void> {
+        return this.firestoreService.createProfile(user);
     }
 
     saveProfileState(username: string, user$: Observable<FirebaseUser | null>) {

@@ -94,7 +94,6 @@ export class AdminAppFormComponent implements OnInit{
   }
 
   onAccept() {
-    //console.log(this.applicationForm.value.reason);
     this.accept(this.user.id, this.applicationForm.value.chosenRole, this.applicationForm.value.reason);
     //this.securityFacade.requestSystemAccess(this.user);
     this.applicationForm.reset();
@@ -118,7 +117,7 @@ export class AdminAppFormComponent implements OnInit{
       assignedRole: role,
     }
     console.log(this.approveDetails.reviewerId);
-    this.userAdminFacade.approveApplication(applicationId, this.approveDetails);
+    this.userAdminFacade.approveApplication(this.user, this.approveDetails);
   }
 
   reject(applicationId: string, reason: string){

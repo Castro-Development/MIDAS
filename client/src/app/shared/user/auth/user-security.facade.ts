@@ -3,7 +3,7 @@ import { UserRole } from "../../dataModels/userModels/userRole.model";
 import { Observable, Subject, catchError, combineLatest, filter, firstValueFrom, from, map, of, switchMap, take, tap } from "rxjs";
 import { AuthStateService } from "./auth-state.service";
 import { ErrorHandlingService } from "../../error-handling/error-handling.service";
-import { Auth, User as FirebaseUser } from "@angular/fire/auth";
+import { Auth, User as FirebaseUser, getAuth } from "@angular/fire/auth";
 import { doc } from "@angular/fire/firestore";
 import { UserApplication, UserModel } from "../../dataModels/userModels/user.model";
 import { AccountFirestoreService } from "../../../portalModule/chartOfAccount/back-end/account-firestore.service";
@@ -13,6 +13,7 @@ import { EventLogService } from "../../logging/event-log.service";
 import { UserProfileFacade } from "../profile/user-profile.facade";
 import { UserAdminFirestoreService } from "../admin/user-admin-firestore.service";
 import { AccountLedger } from "../../dataModels/financialModels/account-ledger.model";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 
 
@@ -130,8 +131,9 @@ export class UserSecurityFacade {
 
 
     login(username: string, password: string)  {
-
-        this.userProfileFacade.loginProfile(this.authState.login(username, password))
+        this.authState.login(username, password).then((uid) => {
+            this.userProfileFacade.loginProfile(uid);
+        })
 
 
     }
@@ -149,17 +151,21 @@ export class UserSecurityFacade {
 
 
     requestSystemAccess(user: UserApplication): Promise<void> {
-        this.userProfileFacade.createProfile(user, firstValueFrom(this.authState.user$));
-        console.log('profile created')
-        return this.userAdminFirestore.submitApplication(user, this.authState.user$);
+        const userUid = this.createUserAuth(user.username, user.password)
+        console.log('userAuth created, userUid: ', userUid);
+        return userUid.then((uid) => {
+            console.log('userAuth created, userUid: ', uid);
+            return this.userAdminFirestore.submitApplication(user, uid);
+        })
     }
 
-    approveUser(user: UserApplication): Promise<void> {
-      this.userProfileFacade.createProfile(user, firstValueFrom(this.authState.user$));
-      console.log('profile created')
-      return this.userAdminFirestore.submitApplication(user, this.authState.user$);
-    }
+    private createUserAuth(username: string, password: string): Promise<string>{
+        return createUserWithEmailAndPassword(getAuth(), username + '@midas-app.com', password).then((userCredential) => {
+            return userCredential.user.uid;
+        }
 
+        )
+    }
 
     // private getUserSecurityStatus(uid: string): Observable<SecurityStatus> {
     //     console.log("Getting user security status");

@@ -46,7 +46,7 @@ interface AuthState {
     initAuthState(){
         authState(this.auth).subscribe((user: FirebaseUser) => {
             
-            if (user) {
+            if (user.uid) {
               this.userProfileFacade.loginProfile(user.uid);
               user.getIdToken().then( token => {
                 this.authStateSubject.next({
@@ -116,44 +116,23 @@ interface AuthState {
     );
       
 
-    login(username: string, password: string): string{
+    login(username: string, password: string): Promise<string>{
       console.log('login auth-state.service.ts');
       let uid: string = '';
-      from(signInWithEmailAndPassword(this.auth, username + '@midas-app.com', password)).subscribe({
-        next: (userCredential) => {
-          uid = userCredential.user.uid;
-          this.authStateSubject.next({
-            isLoggedIn: true,
-            token: '',
-            lastActivity: new Date(),
-            failedAttempts: 0,
-            user: userCredential.user
-          });
-          console.log('authState initialized successfully');
-        },
-        error: (error) => {
-          return this.errorHandlingService.handleError(error, '');
-        }
-      })
-
-      return uid;
-      
-      // .pipe(
-      //   tap(userCredential => {
-      //     this.authStateSubject.next({
-      //       isLoggedIn: true,
-      //       token: '',
-      //       lastActivity: new Date(),
-      //       failedAttempts: 0,
-      //       user: userCredential.user
-      //     });
-      //     console.log('authState initialized successfully');
-      //   }),
-      //   map(userCredential => userCredential.user.uid),
-      //   catchError(error => {
-      //     return this.errorHandlingService.handleError(error, '');
-      //   })
-      // );
+      return signInWithEmailAndPassword(this.auth, username + '@midas-app.com', password)
+        .then((userCredential: UserCredential) => {
+          userCredential.user.getIdToken().then((token) => {
+            this.authStateSubject.next({
+              isLoggedIn: true,
+              token: token,
+              lastActivity: new Date(),
+              failedAttempts: 0,
+              user: userCredential.user
+            });
+          })
+        console.log('authState initialized successfully');
+        return userCredential.user.uid;
+        });
     }
 
       logout() {

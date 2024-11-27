@@ -54,7 +54,17 @@ export class UserFirestoreService implements OnDestroy{
             observer.next(data);
           } else {
             console.log(`No document found for uid: ${uid}`);
-            observer.error(new Error(`User document does not exist for uid: ${uid}`));
+            this.getApplication(uid).pipe(
+              tap((application) => {
+                console.log('Application found:', application);
+                observer.next(application);
+              }),
+              catchError((error) => {
+                console.error('Error getting application:', error);
+                observer.error(error);
+                return of(null);
+              })
+            )
           }
         },
         (error) => {
@@ -70,6 +80,24 @@ export class UserFirestoreService implements OnDestroy{
       };
     });
 }
+
+  getApplication(uid: string): Observable<UserApplication> {
+    console.log('Getting application with uid:', uid);
+    const appDocRef = doc(this.firestore, 'applications', uid);
+    return new Observable<UserApplication>(observer => {
+      console.log('Setting up snapshot listener for:', uid);
+        const unsubscribe = onSnapshot(appDocRef, (docSnapshot: DocumentSnapshot) => {
+            if(docSnapshot.exists()) {
+              console.log('Document Snapshot:', docSnapshot);
+              console.log('Document data:', docSnapshot.data());
+              observer.next(docSnapshot.data() as UserApplication);
+            } else {
+                throw new Error('Application does not exist');
+            }
+        });
+        return unsubscribe;
+    });
+  }
 
 
   getAllUsers(): Observable<UserModel[]> {
@@ -132,8 +160,9 @@ export class UserFirestoreService implements OnDestroy{
     )
   }
 
-  createProfile(user: UserModel): any {
+  createProfile(user: UserModel): Promise<void> {
     const profileDocRef = doc(collection(this.firestore, 'users'), user.id);
+    this.mapUidToUsername(user.username, user.id);
     return setDoc(profileDocRef, user);
   }
 
@@ -152,6 +181,11 @@ export class UserFirestoreService implements OnDestroy{
         })
     });
     return uidSubject.asObservable();
+  }
+
+  private mapUidToUsername(username: string, uid: string): Promise<void> {
+    const usernameMapDocRef = doc(collection(this.firestore, 'usernameMap'), username);
+    return setDoc(usernameMapDocRef, {uid: uid});
   }
 
 

@@ -1,11 +1,10 @@
 import { Injectable } from "@angular/core";
 import { UserApplication } from "../../dataModels/userModels/user.model";
-import { Firestore, doc, docData, setDoc } from "@angular/fire/firestore";
 import { Observable, Subject, catchError, from, map, of, switchMap, tap } from "rxjs";
 import { SecurityStatus } from "../auth/user-security.facade";
-import { DocumentData, DocumentReference, DocumentSnapshot, addDoc, collection, getDoc, onSnapshot } from "firebase/firestore";
 import { ErrorHandlingService } from "../../error-handling/error-handling.service";
 import { User as FirebaseUser } from "firebase/auth";
+import { DocumentSnapshot, Firestore, addDoc, collection, doc, getDoc, onSnapshot, setDoc } from "@angular/fire/firestore";
 
 
 @Injectable({
@@ -20,22 +19,26 @@ export class UserAdminFirestoreService {
   ) {}
 
   // Submit a new user application
-  submitApplication(userApplication: UserApplication, userAuth: Observable<FirebaseUser | null> ): Promise<void> {
-    const appCollectionRef = collection(this.firestore, 'applications');
-    return addDoc(appCollectionRef, userApplication).then((docRef) => {
-        this.mapUserToUid(userApplication.username, docRef.id);
-        userApplication.id = docRef.id;
+  submitApplication(userApplication: UserApplication, uid: string ): Promise<void> {
+    const appDocRef = doc(this.firestore, 'applications', uid);
+    return setDoc(appDocRef, userApplication).then((docRef) => {
+        this.mapUserToUid(userApplication.username, uid);
+        userApplication.id = uid;
         this.updateApplication(userApplication);
         return void 0;
     });
 }
 
   getApplication(uid: string): Observable<UserApplication> {
+      console.log('Getting application with uid:', uid);
       const appDocRef = doc(this.firestore, 'applications', uid);
       return new Observable<UserApplication>(observer => {
+        console.log('Setting up snapshot listener for:', uid);
           const unsubscribe = onSnapshot(appDocRef, (docSnapshot: DocumentSnapshot) => {
               if(docSnapshot.exists()) {
-                  observer.next(docSnapshot.data() as UserApplication);
+                console.log('Document Snapshot:', docSnapshot);
+                console.log('Document data:', docSnapshot.data());
+                observer.next(docSnapshot.data() as UserApplication);
               } else {
                   throw new Error('Application does not exist');
               }
@@ -43,6 +46,9 @@ export class UserAdminFirestoreService {
           return unsubscribe;
       });
   }
+
+
+
 
   getAllApplications(): Observable<UserApplication[]> {
         return new Observable<UserApplication[]>(observer => {
