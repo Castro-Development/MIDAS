@@ -18,6 +18,7 @@ export interface UserModel{
   assignedAccounts?: string[];
   role: UserRole;
   notificationFilter: NotificationFilter;
+  lastPWUpdate?: Date;
 }
 
 export interface UserApplication extends UserModel{
@@ -31,7 +32,7 @@ export interface UserApplication extends UserModel{
 
 export interface UserApplicationWithMetaData extends UserApplication{
   submittedOn: Date;
-  
+
 }
 
 export interface ApprovalDetails {

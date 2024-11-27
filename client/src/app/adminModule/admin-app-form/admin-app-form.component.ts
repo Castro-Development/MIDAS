@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserApplicationWithMetaData, UserApplication, UserModel } from '../../shared/dataModels/userModels/user.model';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { getAuth } from 'firebase/auth';
@@ -14,6 +14,7 @@ import { UserSecurityFacade } from '../../shared/user/auth/user-security.facade'
 import { firstValueFrom } from 'rxjs';
 import { UserFirestoreService } from '../../shared/user/user-firestore.service';
 import { UserProfileStateService } from '../../shared/user/profile/user-profile-state.service';
+import { NotificationFilter } from '../../shared/notification/notification-state.service';
 
 @Component({
   selector: 'app-admin-app-form',
@@ -26,6 +27,8 @@ export class AdminAppFormComponent implements OnInit{
   currentAdmin!: UserModel;
   userAdminFacade = inject(UserAdminFacade);
   userProfileState = inject(UserProfileStateService);
+  userFirestore = inject(UserFirestoreService);
+  router = inject(Router);
 
   fb = inject(FormBuilder);
   applicationForm!: FormGroup;
@@ -128,10 +131,44 @@ export class AdminAppFormComponent implements OnInit{
     this.userAdminFacade.rejectApplication(applicationId, this.rejectDetails);
   }
 
-  newSubmit(){
+  createUser(){
+    const tempN: NotificationFilter ={
+      type: 'all',
+      priority: 'all',
+      category: 'all'
+    }
 
+    const temp: UserModel ={
+      //id: this.user.id,
+      // username: this.user.username,
+      // firstname: this.user.firstname,
+      // lastname: this.user.lastname,
+      // phone: this.user.phone,
+      // street: this.user.street,
+      // zip: this.user.zip,
+      // state: this.user.state,
+      // password: this.user.password,
+      id: this.user.id,
+      username: this.user.username,
+      firstname: this.user.firstname,
+      lastname: this.user.lastname,
+      phone: this.user.phone,
+      street: this.user.street,
+      zip: this.user.zip,
+      state: this.user.state,
+      password: this.user.password,
+      role: this.applicationForm.value.chosenRole,
+      notificationFilter: tempN,
+      numDenied: 0,
+      dateApproved:new Date,
+      lastPWUpdate: new Date,
+    }
 
-
+    this.userFirestore.createProfile(temp);
+    console.log(temp);
+    alert("User Creation Successful!");
+    this.applicationForm.reset();
+    this.router.navigate(['/admin-user-applications']);
 
   }
 

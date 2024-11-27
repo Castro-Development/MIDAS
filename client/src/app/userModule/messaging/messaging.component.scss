@@ -133,8 +133,10 @@
         height: 1.5rem;
         width: 1.5rem;
         border-radius: 50%;
-        background-color: var(--auth-error-text);
+        background-color: var(--button-gold);
+        color: var(--main-black);
         font-size: .8rem;
+        font-weight: 800;
         z-index: 2;
         padding: 2px;
       }
