@@ -24,7 +24,7 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
             <th class="">Total Debits</th>
             <th class="">Total Credits</th>
             <th class="">Status</th>
-            <th class="">Actions</th>
+            <th class="">Review Entry</th>
           </tr>
         </thead>
         <tbody class="">

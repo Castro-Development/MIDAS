@@ -5,124 +5,122 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
 @Component({
     selector: 'journal-detail-card',
     template: `
-      <div class="p-6 max-w-4xl mx-auto bg-white rounded-lg shadow-lg">
+      <div class="review-container">
         <!-- Header -->
-        <div class="mb-6 border-b pb-4">
-          <h2 class="text-2xl font-bold text-gray-900">Journal Entry Details</h2>
-          <p class="text-sm text-gray-500">Created: {{convertTimestamp(journalEntry?.createdAt) | date:'medium'}}</p>
+        <div class="title-container">
+          <h2 class="title">Journal Entry Details</h2>
+          <p class="date">Created: {{convertTimestamp(journalEntry?.createdAt) | date:'medium'}}</p>
         </div>
-  
+
         <!-- Entry Details -->
-        <div class="space-y-6">
+        <div class="entry-details">
           <!-- Basic Info -->
-          <div class="grid grid-cols-2 gap-4">
+          <div class="basic-info">
             <div>
-              <label class="text-sm font-medium text-gray-700">Entry ID</label>
-              <p class="mt-1 text-gray-900">{{journalEntry?.id}}</p>
+              <label class="info-label">Entry ID</label>
+              <p class="entry-desc">{{journalEntry?.id}}</p>
             </div>
             <div>
-              <label class="text-sm font-medium text-gray-700">Status</label>
+              <label class="info-label">Status</label>
               <p class="mt-1">
-                <span [ngClass]="journalEntry?.isBalanced ? 
-                  'bg-green-100 text-green-800' : 
-                  'bg-red-100 text-red-800'"
-                  class="px-3 py-1 rounded-full text-xs">
+                <span [ngClass]="journalEntry?.isBalanced ?
+                  'balanced' :
+                  'unbalanced'"
+                  class="journal-entry">
                   {{journalEntry?.isBalanced ? 'Balanced' : 'Unbalanced'}}
                 </span>
               </p>
             </div>
           </div>
-  
+
           <!-- Description -->
           <div>
-            <label class="text-sm font-medium text-gray-700">Description</label>
-            <p class="mt-1 text-gray-900">{{journalEntry?.description}}</p>
+            <label class="info-label">Description</label>
+            <p class="entry-desc">{{journalEntry?.description}}</p>
           </div>
-  
+
           <!-- Transactions Table -->
           <div>
-            <h3 class="text-lg font-medium text-gray-900 mb-3">Transactions</h3>
-            <table class="min-w-full divide-y divide-gray-200">
+            <h3 class="transaction-header">Transactions</h3>
+            <table class="min-w-full table-split">
               <thead>
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Debit</th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Credit</th>
+                  <th class="account-label">Account</th>
+                  <th class="account-label">Description</th>
+                  <th class="debit-label">Debit</th>
+                  <th class="debit-label">Credit</th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-gray-200">
+              <tbody class="table-split">
                 <tr *ngFor="let transaction of journalEntry?.transactions">
-                  <td class="px-6 py-4 text-sm text-gray-900">{{transaction.accountId}}</td>
-                  <td class="px-6 py-4 text-sm text-gray-500">{{transaction.description}}</td>
-                  <td class="px-6 py-4 text-sm text-gray-900 text-right">
+                  <td class="transaction-info">{{transaction.accountId}}</td>
+                  <td class="px-6 py-4 date">{{transaction.description}}</td>
+                  <td class="transaction-info text-right">
                     {{transaction.debitAmount | currency}}
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-900 text-right">
+                  <td class="transaction-info text-right">
                     {{transaction.creditAmount | currency}}
                   </td>
                 </tr>
               </tbody>
-              <tfoot class="bg-gray-50">
+              <tfoot class="totals-highlight">
                 <tr>
-                  <td colspan="2" class="px-6 py-4 text-sm font-medium text-gray-900 text-right">Totals:</td>
-                  <td class="px-6 py-4 text-sm font-medium text-gray-900 text-right">
+                  <td colspan="2" class="totals">Totals:</td>
+                  <td class="totals">
                     {{journalEntry?.totalDebits | currency}}
                   </td>
-                  <td class="px-6 py-4 text-sm font-medium text-gray-900 text-right">
+                  <td class="totals">
                     {{journalEntry?.totalCredits | currency}}
                   </td>
                 </tr>
               </tfoot>
             </table>
           </div>
-  
+
           <!-- Approval Actions -->
-          <div class="mt-8 flex justify-end space-x-4">
-            <button 
+          <div class="approval">
+            <button
               (click)="denyEntry()"
-              class="px-4 py-2 border border-red-300 text-red-700 rounded-md hover:bg-red-50"
+              class="approve"
             >
               Deny Entry
             </button>
-            <button 
+            <button
               (click)="approveEntry()"
               [disabled]="!journalEntry?.isBalanced"
-              class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 
-                     disabled:bg-gray-300 disabled:cursor-not-allowed"
+              class="deny"
             >
               Approve Entry
             </button>
           </div>
         </div>
-  
+
         <!-- Denial Dialog -->
-        <div *ngIf="showDenialDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-            <h3 class="text-lg font-medium text-gray-900 mb-4">Deny Journal Entry</h3>
+        <div *ngIf="showDenialDialog" class="denial">
+          <div class="denial-content">
+            <h3 class="deny-title">Deny Journal Entry</h3>
             <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 mb-2">
+              <label class="reason-label">
                 Reason for Denial
               </label>
               <textarea
                 [(ngModel)]="denialReason"
                 rows="4"
-                class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                class="reason-input"
                 placeholder="Please provide a reason for denying this entry..."
               ></textarea>
             </div>
-            <div class="flex justify-end space-x-4">
+            <div class="reason-button-container">
               <button
                 (click)="showDenialDialog = false"
-                class="px-4 py-2 border text-gray-700 rounded-md hover:bg-gray-50"
+                class="cancel-button"
               >
                 Cancel
               </button>
               <button
                 (click)="confirmDenial()"
                 [disabled]="!denialReason"
-                class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 
-                       disabled:bg-gray-300 disabled:cursor-not-allowed"
+                class="confirm-button"
               >
                 Confirm Denial
               </button>
@@ -130,30 +128,31 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
           </div>
         </div>
       </div>
-    `
+    `,
+    styleUrl: './journal-submission.component.scss',
   })
   export class JournalSubmissionCard {
     @Input() journalEntry: JournalEntry | null = null;
     @Output() approved = new EventEmitter<void>();
     @Output() denied = new EventEmitter<string>();
-  
+
     showDenialDialog = false;
     denialReason = '';
-  
+
     convertTimestamp(timestamp: any): Date {
       return timestamp?.toDate?.() || timestamp;
     }
-  
+
     approveEntry(): void {
       if (this.journalEntry?.isBalanced) {
         this.approved.emit();
       }
     }
-  
+
     denyEntry(): void {
       this.showDenialDialog = true;
     }
-  
+
     confirmDenial(): void {
       if (this.denialReason) {
         this.denied.emit(this.denialReason);

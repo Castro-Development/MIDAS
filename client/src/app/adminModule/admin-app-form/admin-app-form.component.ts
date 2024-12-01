@@ -98,6 +98,9 @@ export class AdminAppFormComponent implements OnInit{
     //this.securityFacade.requestSystemAccess(this.user);
     this.applicationForm.reset();
     console.log("On Accept compiled");
+    alert(this.user.username +" has been accepted! Navigating back to applications");
+    this.router.navigate(['/admin-user-applications']);
+
   }
 
   onReject() {
@@ -105,6 +108,8 @@ export class AdminAppFormComponent implements OnInit{
     this.reject(this.user.id, this.applicationForm.value.reason);
     this.applicationForm.reset();
     console.log("On reject compiled");
+    alert(this.user.username +" has been rejected. Navigating back to applications");
+    this.router.navigate(['/admin-user-applications']);
   }
 
 

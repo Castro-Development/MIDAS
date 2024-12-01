@@ -4,6 +4,7 @@ export interface Message {
     read: boolean;
     recipientUid: string;
     id: string;
+
 }
 
 export interface UserMessage extends Message {
@@ -14,6 +15,7 @@ export interface Notification extends Message {
     title: string;
     type: string;
     recipientUid: string;
+    senderUid?:  string;
 }
 
 export interface UserNotification extends Notification {

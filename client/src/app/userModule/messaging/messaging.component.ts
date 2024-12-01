@@ -16,12 +16,19 @@ export class MessagingComponent implements OnInit{
 
   userProfileState = inject(UserProfileStateService);
   notificationFacade = inject(NotificationFacade);
+  notifications = inject(NotificationFirestoreService);
 
   currentUser!: UserModel;
-  notifications = inject(NotificationFirestoreService);
-  userNotifications$!: Observable<Notification[]>
 
-  message!: UserNotification;
+  currentMessages$!: Observable<Notification[]> // Holds the current message, swap to update message div.
+  filteredMessages$!: Observable<Notification[]>
+
+  userNotifications$!: Observable<Notification[]>
+  userMessages$!: Observable<Notification[]>
+  userSentMessages$!: Observable<Notification[]>
+
+  message!: Notification;
+  //viewedMessage!:Notification; // For sending Messages
 
   fb = inject(FormBuilder);
   messageForm!: FormGroup;
@@ -61,6 +68,22 @@ export class MessagingComponent implements OnInit{
 
   clear(){
     this.messageForm.reset();
+  }
+
+  showNotifications(){
+    this.currentMessages$ = this.userNotifications$;
+  }
+
+  showMessages(){
+    this.currentMessages$ = this.userMessages$;
+  }
+
+  showSent(){
+    this.currentMessages$ = this.userSentMessages$;
+  }
+
+  viewMessage(message: Notification){
+    this.message = message;
   }
 
 

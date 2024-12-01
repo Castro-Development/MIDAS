@@ -32,7 +32,7 @@ export class UserAdminFacade {
    */
   getApplications(status?: ApplicationStatus): Observable<UserApplication[] | null> {
     return this.userAdminService.getAllApplications().pipe(
-      map(applications => status 
+      map(applications => status
         ? applications.filter(app => app.status === status)
         : applications
       ),
@@ -57,12 +57,13 @@ export class UserAdminFacade {
    * Processes application approval
    */
   approveApplication(userApp: UserApplication, approvalDetails: ApprovalDetails): Promise<void> {
-    
-        
+
+
         const updatedApplication: UserApplication = {
           ...userApp,
           status: ApplicationStatus.Approved,
           dateApproved: new Date(),
+          lastPWUpdate: new Date(),
           reviewedBy: approvalDetails.reviewerId,
           notes: approvalDetails.notes,
         };
@@ -70,7 +71,7 @@ export class UserAdminFacade {
         // Generate username if not already set
         if (!updatedApplication.username) {
           return this.generateUsername(
-            userApp.firstname, 
+            userApp.firstname,
             userApp.lastname,
             new Date()
           ).then((username) => {
@@ -84,8 +85,8 @@ export class UserAdminFacade {
           return this.userAdminService.updateApplication(updatedApplication);
         }
 
-      
-      
+
+
   }
 
   /**
@@ -127,7 +128,7 @@ export class UserAdminFacade {
     );
   }
 
-  
+
 
   /**
    * Generates unique username based on first initial, last name, and date

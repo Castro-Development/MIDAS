@@ -17,6 +17,7 @@ export class AdminUserApplicationsComponent {
   userService = inject(UserFirestoreService);
   users$ = this.userService.getAllApplications();
   userCount$ = this.users$.pipe(map(users => users.length));
+  numb: number = 10;
 
   constructor(){}
 
