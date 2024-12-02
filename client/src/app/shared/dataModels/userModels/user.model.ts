@@ -1,4 +1,4 @@
-import { NotificationFilter } from "../../notification/notification-state.service";
+import { NotificationFilter } from "../messageModel/message.model";
 import { ApplicationStatus } from "./user-filter.model";
 import { UserRole } from "./userRole.model";
 

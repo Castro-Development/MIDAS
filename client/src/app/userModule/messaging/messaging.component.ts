@@ -1,11 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { UserProfileStateService } from '../../shared/user/profile/user-profile-state.service';
 import { UserModel } from '../../shared/dataModels/userModels/user.model';
-import { firstValueFrom, Observable, map, pipe } from 'rxjs';
-import { NotificationFirestoreService } from '../../shared/notification/notification-firestore.service';
-import { Notification, UserNotification } from '../../shared/dataModels/messageModel/message.model';
+import { firstValueFrom, Observable, map, pipe, combineLatest, BehaviorSubject } from 'rxjs';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { NotificationFacade } from '../../shared/notification/notification.facade';
+import { NotificationStateService } from '../../shared/notification/notification-state.service';
+import { Message, MessageCategory, MessagePriority, MessageStatus } from '../../shared/dataModels/messageModel/message.model';
 
 @Component({
   selector: 'app-messaging',
@@ -14,21 +14,40 @@ import { NotificationFacade } from '../../shared/notification/notification.facad
 })
 export class MessagingComponent implements OnInit{
 
-  userProfileState = inject(UserProfileStateService);
   notificationFacade = inject(NotificationFacade);
-  notifications = inject(NotificationFirestoreService);
+  notificationState = inject(NotificationStateService);
+  userProfileState = inject(UserProfileStateService);
 
   currentUser!: UserModel;
 
-  currentMessages$!: Observable<Notification[]> // Holds the current message, swap to update message div.
-  filteredMessages$!: Observable<Notification[]>
+  selectedCategorySubject = new BehaviorSubject<MessageCategory | null>(null);
+  selectedCategory$ = this.selectedCategorySubject.asObservable();
 
-  userNotifications$!: Observable<Notification[]>
-  userMessages$!: Observable<Notification[]>
+  currentMessages$ = this.notificationState.notifications$;
+  unreadCount$ = this.notificationState.unreadCount$;
+  filteredMessages$ = this.notificationState.filteredNotifications$;
+
+  userEmails$ = this.currentMessages$.pipe(
+    map((notifications) => notifications.filter((notification) => notification.category === MessageCategory.USER_MESSAGE))
+  )
+  userAlerts$ = this.currentMessages$.pipe(
+    map((notifications) => notifications.filter((notification) => notification.category === MessageCategory.SYSTEM_ALERT))
+  )
   userSentMessages$!: Observable<Notification[]>
 
-  message!: Notification;
-  //viewedMessage!:Notification; // For sending Messages
+  
+
+  messageByCategory = combineLatest([
+    this.currentMessages$,
+    this.selectedCategory$
+  ]).pipe(
+    map(([notifications, category]) => 
+      category ? notifications.filter(n => n.category === category) : notifications
+    )
+  );
+
+  selectedMessage = this.notificationState.selectedMessage$;
+  
 
   fb = inject(FormBuilder);
   messageForm!: FormGroup;
@@ -39,13 +58,33 @@ export class MessagingComponent implements OnInit{
   showMessageSend = false;
 
 
+  selectedMessageTitle = this.selectedMessage.pipe(
+    map((message) => message?.subject)
+  )
+  selectedMessageType = this.selectedMessage.pipe(
+    map((message) => message?.category.toString())
+  )
+  selectedMessageTime = this.selectedMessage.pipe(
+    map((message) => message?.createdAt)
+  )
+  selectedMessageSenderUid = this.selectedMessage.pipe(
+    map((message) => message?.sender)
+  )
+  selectedMessageRecipientUid = this.selectedMessage.pipe(
+    map((message) => message?.recipients)
+  )
+  selectedMessageContent = this.selectedMessage.pipe(
+    map((message) => message?.content)
+  )
+
+
+
   constructor(){
 
 
   }
 
   ngOnInit(): void {
-    this.userNotifications$ = this.notifications.getUserNotifications(this.currentUser.id);
     this.createForm();
   }
 
@@ -62,29 +101,50 @@ export class MessagingComponent implements OnInit{
   }
 
   sendMessage(){
-    this.notificationFacade.sendUserNotification(this.messageForm.value.recipientUid, this.messageForm.value.title, this.messageForm.value.type, this.messageForm.value.message,);
+    
+    this.notificationFacade.sendUserMessage(this.messageForm.value.recipientUid, {
+      id: '',
+      category: MessageCategory.USER_MESSAGE,
+      priority: MessagePriority.MEDIUM,
+      status: MessageStatus.UNREAD,
+      sender: this.currentUser.id,
+      recipients: [this.messageForm.value.recipientUid],
+      subject: this.messageForm.value.title,
+      content: this.messageForm.value.message,
+      } as Message);
     //this.notifications.createNotification(this.currentUser.id, notificationId, this.message)
+  }
+
+  deleteMessage(messageId: string){
+    this.notificationState.deleteNotification(messageId);
   }
 
   clear(){
     this.messageForm.reset();
   }
 
-  showNotifications(){
-    this.currentMessages$ = this.userNotifications$;
+  showEmails(){
+    this.selectedCategorySubject.next(MessageCategory.USER_MESSAGE);
   }
 
-  showMessages(){
-    this.currentMessages$ = this.userMessages$;
+  showAlerts(){
+    this.selectedCategorySubject.next(MessageCategory.SYSTEM_ALERT);
   }
 
-  showSent(){
-    this.currentMessages$ = this.userSentMessages$;
+  showWorkflow(){
+    this.selectedCategorySubject.next(MessageCategory.WORKFLOW);
   }
 
-  viewMessage(message: Notification){
-    this.message = message;
+  showAll(){
+    this.selectedCategorySubject.next(null);
   }
+
+  selectMessage(messageId: string){
+    this.notificationState.selectMessage(messageId);
+    this.showMessageList = false;
+    this.showMessageView = true;
+  }
+
 
 
 

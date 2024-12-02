@@ -9,6 +9,8 @@ import { ApplicationStatus } from "../../dataModels/userModels/user-filter.model
 import { NotificationFacade } from "../../notification/notification.facade";
 import { UserProfileFacade } from "../profile/user-profile.facade";
 import { UserRole } from "../../dataModels/userModels/userRole.model";
+import { Message, WorkflowType } from "../../dataModels/messageModel/message.model";
+import { Timestamp } from "@angular/fire/firestore";
 
 
 
@@ -109,7 +111,11 @@ export class UserAdminFacade {
       }),
       tap(() => {
         // Send notification
-        this.notification.sendApplicationRejectionNotification(applicationId, rejectionDetails.reason);
+        this.notification.sendWorkflowNotification(applicationId, {
+          subject: 'Application Rejected',
+          content: `Your application has been rejected. Please contact the administrator for more information`,
+          recipients: [applicationId]
+        } as Message, WorkflowType.USER_REJECTION);
       }),
       catchError(error => this.errorHandling.handleError('rejectApplication', void 0))
     );

@@ -7,31 +7,97 @@ import {
   setDoc,
   updateDoc,
   serverTimestamp,
-  deleteDoc
+  deleteDoc,
+  addDoc
 } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { ErrorHandlingService } from '../error-handling/error-handling.service';
-import { Notification } from '../dataModels/messageModel/message.model';
+import { Message } from '../dataModels/messageModel/message.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationFirestoreService {
   private readonly COLLECTION_NAME = 'notifications';
+  
 
   constructor(
     private firestore: Firestore,
     private errorHandlingService: ErrorHandlingService
   ) {}
+  
 
-  getUserNotifications(userId: string): Observable<Notification[]> {
+  getUserNotifications(userId: Observable<string>): Observable<Message[]> {
+    return userId.pipe(
+      switchMap(userId => this.getUserNotificationsByUserId(userId))
+    )
+  }
+
+  getSystemAlerts(): Observable<Message[]> {
     return new Observable(subscriber => {
+      const systemAlertsRef = collection(
+        this.firestore,
+        this.COLLECTION_NAME,
+        'all'
+      );
+
+      const unsubscribe = onSnapshot(
+        systemAlertsRef,
+        (snapshot) => {
+          const alerts = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          } as Message));
+          subscriber.next(alerts);
+        },
+        error => {
+          this.errorHandlingService.handleError('Failed to get system alerts', error);
+          subscriber.error(error);
+        }
+      );
+
+      return () => unsubscribe();
+    })
+  }
+
+  getAdminMessages(): Observable<Message[]> {
+    return new Observable(subscriber => {
+      const adminMessagesRef = collection(
+        this.firestore,
+        this.COLLECTION_NAME,
+        'admin'
+      );
+
+      const unsubscribe = onSnapshot(
+        adminMessagesRef,
+        (snapshot) => {
+          const messages = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          } as Message));
+          subscriber.next(messages);
+        },
+        error => {
+          this.errorHandlingService.handleError('Failed to get admin messages', error);
+          subscriber.error(error);
+        }
+      );
+
+      return () => unsubscribe();
+    });
+  }
+
+  private getUserNotificationsByUserId(userId: string): Observable<Message[]> {
+    return new Observable(subscriber => {
+      if(userId === null || userId.length < 3) {throw new Error('No user ID provided');}
       const userNotificationsRef = collection(
         this.firestore,
         this.COLLECTION_NAME,
         userId,
         'userNotifications'
       );
+      console.log('userNotificationsRef', userNotificationsRef);
+      console.log('Getting User\'s Notifications');
 
       const unsubscribe = onSnapshot(
         userNotificationsRef,
@@ -39,7 +105,8 @@ export class NotificationFirestoreService {
           const notifications = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
-          } as Notification));
+          } as Message));
+          console.log(notifications);
           subscriber.next(notifications);
         },
         error => {
@@ -56,19 +123,18 @@ export class NotificationFirestoreService {
 
   async createNotification(
     userId: string,
-    notificationId: string,
-    notification: Notification
+    notification: Message
   ): Promise<void> {
     try {
-      const notificationRef = doc(
+      console.log(userId, notification);
+      const notificationRef = collection(
         this.firestore,
         this.COLLECTION_NAME,
         userId,
-        'userNotifications',
-        notificationId
+        'userNotifications'
       );
 
-      await setDoc(notificationRef, {
+      await addDoc(notificationRef, {
         ...notification,
         createdAt: serverTimestamp()
       });
@@ -81,14 +147,13 @@ export class NotificationFirestoreService {
   async updateNotification(
     userId: string,
     notificationId: string,
-    changes: Partial<Notification>
+    changes: Partial<Message>
   ): Promise<void> {
     try {
       const notificationRef = doc(
         this.firestore,
         this.COLLECTION_NAME,
         userId,
-        'userNotifications',
         notificationId
       );
 

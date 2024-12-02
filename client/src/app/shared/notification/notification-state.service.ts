@@ -1,46 +1,62 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { type } from "os";
-import { BehaviorSubject, map, distinctUntilChanged, combineLatest, shareReplay, Subject, takeUntil, catchError, tap } from "rxjs";
+import { BehaviorSubject, map, distinctUntilChanged, combineLatest, shareReplay, Subject, takeUntil, catchError, tap, Observable, switchMap } from "rxjs";
 import { FilteringService } from "../filter/filter.service";
 import { ErrorHandlingService } from "../error-handling/error-handling.service";
 import { NotificationFirestoreService } from "./notification-firestore.service";
-import { Notification } from "../dataModels/messageModel/message.model";
+import { Message, MessageCategory } from "../dataModels/messageModel/message.model";
+import { UserProfileStateService } from "../user/profile/user-profile-state.service";
 
-export interface NotificationFilter {
-    type: 'all' | 'EMAIL' | 'ALERT' | 'SYSTEM';
-    priority: 'all' | 'low' | 'medium' | 'high';
-    category: 'all' | 'system' | 'approval' | 'alert';
-}
 
 
 
   
   @Injectable({ providedIn: 'root' })
   export class NotificationStateService {
-    private notificationsSubject = new BehaviorSubject<Notification[]>([]);
-    private filterSubject = new Subject<NotificationFilter>();
-    private readonly notifications$ = this.notificationsSubject.asObservable();
+    
+    private notificationService = inject(NotificationFirestoreService);
+    private userProfileState = inject(UserProfileStateService);
+
+    private filterSubject = new Subject<typeof MessageCategory>();
+
+    private userId$ = this.userProfileState.userProfile$.pipe(
+      map((user) => user.id),
+    )
 
     private destroySubject = new Subject<void>();
     private readonly destroy$ = this.destroySubject.asObservable();
+    
 
 
     constructor(
-      private notificationService: NotificationFirestoreService,
       private filterService: FilteringService,
-      private errorHandlingService: ErrorHandlingService
+      private errorHandlingService: ErrorHandlingService,
 
       ) {
     }
+
+
+    selectedMessageIdSubject = new BehaviorSubject<string | null>(null);
+    private selectedMessageId$ = this.selectedMessageIdSubject.asObservable();
+    selectedMessage$ = this.selectedMessageId$.pipe(
+      takeUntil(this.destroy$),
+      switchMap((id) => this.notificationService.getUserNotifications(this.userId$).pipe(
+        map((notifications) => notifications.find((notification) => notification.id === id))
+      ))
+    )
+    selectMessage(message: string) {
+      this.selectedMessageIdSubject.next(message);
+    }
   
+    readonly notifications$ = this.notificationService.getUserNotifications(this.userId$)
   
     readonly unreadCount$ = this.notifications$.pipe(
-      map(notifications => notifications.filter(notification => !notification.read).length),
-      distinctUntilChanged()
-    );
+      map((notifications) => notifications.length)
+    )
+
 
     readonly filteredNotifications$ = combineLatest([this.notifications$, this.filterSubject]).pipe(
-      map(([journalEntries, filter]) => this.filterService.filter(journalEntries, filter, [
+      map(([notifications, filter]) => this.filterService.filter(notifications, filter, [
         'type',
         'priority',
         'category',
@@ -48,8 +64,15 @@ export interface NotificationFilter {
       distinctUntilChanged(),
     );
 
-    updateFilters(filter: NotificationFilter) {
+    updateFilters(filter: typeof MessageCategory) {
       this.filterSubject.next(filter);
+    }
+
+    deleteNotification(messageId: string) {
+      this.userId$.pipe(
+        takeUntil(this.destroy$),
+        switchMap((userId) => this.notificationService.deleteNotification(userId, messageId))
+      )
     }
     
   }

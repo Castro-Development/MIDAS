@@ -12,16 +12,20 @@
 
     <div class="notification-menu">
 
-      <div class="menu-item" (click)="showMessageList = true; showNotifications()">
-        <mat-icon>report_problem</mat-icon>Notifications <div class="floating-icon">1</div>
+      <div class="menu-item" (click)="showMessageList = true; showAll()">
+        <mat-icon>report_problem</mat-icon>All <div class="floating-icon">1</div>
       </div>
 
-      <div class="menu-item" (click)="showMessageList = true; showMessages()">
+      <div class="menu-item" (click)="showMessageList = true; showEmails()">
+        <mat-icon>report_problem</mat-icon>Emails <div class="floating-icon">1</div>
+      </div>
+
+      <div class="menu-item" (click)="showMessageList = true; showAlerts()">
         <mat-icon>mail</mat-icon>Received Messages <div class="floating-icon">1</div>
       </div>
 
-      <div class="menu-item"  (click)="showMessageList = true; showSent()">
-        <mat-icon>outgoing_mail</mat-icon>Sent Messages <div class="floating-icon">1</div>
+      <div class="menu-item"  (click)="showMessageList = true; showWorkflow()">
+        <mat-icon>outgoing_mail</mat-icon>Workflow Messages <div class="floating-icon">1</div>
       </div>
 
       <div class="menu-item"  (click)="showMessageSend = true">
@@ -43,10 +47,35 @@
 
       <div class="scrollable">
         <!-- <div class="display-headers" *ngFor="let item of [].constructor(20); let i = index"> -->
-          <div class="display-headers" *ngFor="let message of currentMessages$ | async; let i = index">
-          <div class="row-item view">
-            <mat-icon class="clickable" (click)="viewMessage(message); showMessageView = true">email</mat-icon><span class="view-sender">[Admin] Segun Olowofoyeku</span><span class="view-preview">Hello this is an urgent message with alot of text and stuff so this is written to run off the div</span> <span class="view-date">11/21/24 10:55pm</span> <span class="view-status">(unread)</span> <mat-icon class="view-delete clickable">delete_forever</mat-icon>
-          </div>
+          <div class="display-headers" *ngFor="let message of messageByCategory | async; let i = index">
+            <div class="row-item view">
+              <mat-icon class="clickable" (click)="selectMessage(message.id)">
+                {{message.status === 'UNREAD' ? 'mark_email_unread' : 'email'}}
+              </mat-icon>
+              
+              <span class="view-sender">
+                {{message.category === 'SYSTEM_ALERT' ? '[System]' : ''}}
+                {{message.sender}}
+              </span>
+              
+              <span class="view-preview">{{message.content | slice:0:100}}...</span>
+              
+              <span class="view-date">{{message.createdAt | date:'short'}}</span>
+              
+              <span class="view-status" 
+                    [class.unread]="message.status === 'UNREAD'">
+                ({{message.status.toLowerCase()}})
+              </span>
+         
+              <span class="view-priority" [ngClass]="message.priority.toLowerCase()">
+                {{message.priority}}
+              </span>
+              
+              <mat-icon class="view-delete clickable" 
+                        (click)="deleteMessage(message.id)">
+                delete_forever
+              </mat-icon>
+            </div>
         </div>
 
         <div class="display-headers">
@@ -62,7 +91,7 @@
     <div class="notification-display"  *ngIf="showMessageView">
       <div class="display-buttons">
           <div class="row-item">
-            <mat-icon>article</mat-icon>Title : {{message.title}}
+            <mat-icon>article</mat-icon>Title : {{selectedMessageTitle}}
           </div>
           <mat-icon class="clickable">keyboard_return</mat-icon>
           <mat-icon class="clickable" (click)="showMessageView = !showMessageView">close</mat-icon>
@@ -70,28 +99,28 @@
 
       <div class="display-headers">
         <div class="row-item">
-          <mat-icon>topic</mat-icon>Category: {{message.type}}
+          <mat-icon>topic</mat-icon>Category: {{selectedMessageType}}
         </div>
         <div class="row-item">
-          <mat-icon>date_range</mat-icon> Date Sent : {{message.timestamp}}
+          <mat-icon>date_range</mat-icon> Date Sent : {{selectedMessageTime}}
         </div>
       </div>
 
       <div class="display-headers">
         <div class="row-item">
-          <mat-icon>record_voice_over</mat-icon>Sender : {{message.senderUid}}
+          <mat-icon>record_voice_over</mat-icon>Sender : {{selectedMessageSenderUid}}
         </div>
       </div>
       <div class="display-headers">
         <div class="row-item">
-          <mat-icon>contact_mail</mat-icon>Recipient(s): {{message.recipientUid}}
+          <mat-icon>contact_mail</mat-icon>Recipient(s): {{selectedMessageRecipientUid}}
         </div>
       </div>
 
 
       <div class="display-headers content">
 
-        {{message.message}}
+        {{selectedMessageContent}}
 
           <!-- Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa, quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt, explicabo. Nemo enim ipsam voluptatem, quia voluptas sit, aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos, qui ratione voluptatem sequi nesciunt, neque porro quisquam est, qui dolorem ipsum, quia dolor sit amet consectetur adipisci[ng] velit, sed quia non numquam [do] eius modi tempora inci[di]dunt, ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum[d] exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? [D]Quis autem vel eum i[r]ure reprehenderit, qui in ea voluptate velit esse, quam nihil molestiae consequatur, vel illum, qui dolorem eum fugiat, quo voluptas nulla pariatur?<br><br>
 

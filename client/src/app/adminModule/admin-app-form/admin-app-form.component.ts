@@ -14,7 +14,8 @@ import { UserSecurityFacade } from '../../shared/user/auth/user-security.facade'
 import { firstValueFrom } from 'rxjs';
 import { UserFirestoreService } from '../../shared/user/user-firestore.service';
 import { UserProfileStateService } from '../../shared/user/profile/user-profile-state.service';
-import { NotificationFilter } from '../../shared/notification/notification-state.service';
+import { NotificationFilter } from '../../shared/dataModels/messageModel/message.model';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-admin-app-form',
@@ -165,8 +166,8 @@ export class AdminAppFormComponent implements OnInit{
       role: this.applicationForm.value.chosenRole,
       notificationFilter: tempN,
       numDenied: 0,
-      dateApproved:new Date,
-      lastPWUpdate: new Date,
+      dateApproved: new Date(),
+      lastPWUpdate: new Date(),
     }
 
     this.userFirestore.createProfile(temp);

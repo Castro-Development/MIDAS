@@ -2,67 +2,130 @@ import { Injectable, inject } from "@angular/core";
 import { NotificationFirestoreService } from "./notification-firestore.service";
 import { NotificationStateService } from "./notification-state.service";
 import { Timestamp } from "firebase/firestore";
-import { Notification } from "../dataModels/messageModel/message.model";
-import { UserNotification } from "../dataModels/messageModel/message.model";
 import { UserProfileStateService } from "../user/profile/user-profile-state.service";
 import { firstValueFrom, Observable, map, pipe } from 'rxjs';
 import { UserModel } from "../dataModels/userModels/user.model";
+import { Message, MessageAction, MessageCategory, MessagePriority, MessageStatus, WorkflowType } from "../dataModels/messageModel/message.model";
 
 
 @Injectable({ providedIn: 'root' })
 export class NotificationFacade {
+  
 
     notificationService = inject(NotificationFirestoreService);
     notificationState = inject(NotificationStateService);
     userProfileState = inject(UserProfileStateService);
-    //user = this.userProfileState.activeProfile$;
-    currentUser!:UserModel;
 
     constructor() {
-      this.userProfileState.activeProfile$.subscribe((user) => {
-        this.currentUser = user;
-      });
     }
 
-    sendApprovalNotification(applicationId: string){
-        const notificationId = applicationId + Math.random() * 1000;
-        this.notificationService.createNotification(applicationId, notificationId, {
-            title: 'Application Approved',
-            message: `Your application with ID: ${applicationId} has been approved.`,
-            timestamp: new Date(),
-            type: 'approval',
-            recipientUid: applicationId,
-            read: false,
-            id: notificationId,
-        } as Notification);
+    
 
+
+    /*
+    * Send Password Expiration Warning
+    * @param user: UserModel
+    */
+    sendPasswordExpiryNotification(user: UserModel){
+      this.notificationService.createNotification(user.id, {
+        id: '',
+        category: MessageCategory.SYSTEM_ALERT,
+        priority: MessagePriority.URGENT,
+        status: MessageStatus.UNREAD,
+        sender: 'SYSTEM',
+        recipients: [user.id],
+        subject: 'Password Expiration Warning',
+        content: 'Your password will expire in 3 days. Please update your password.',
+        metadata: {
+          category: MessageCategory.SYSTEM_ALERT,
+          requiresEmail: true
+        },
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as Message)
     }
 
-    sendApplicationRejectionNotification(applicationId: string, reason: string) {
-        const notificationId = applicationId + Math.random() * 1000;
-        this.notificationService.createNotification(applicationId, notificationId, {
-            title: 'Application Rejected',
-            message: `Your application with ID: ${applicationId} has been rejected. Reason: ${reason}`,
-            timestamp: new Date(),
-            type: 'rejection',
-            recipientUid: applicationId,
-            read: false,
-            id: notificationId,
-        } as Notification);
+    /*
+    * Send System-wide Alert
+    * @param message: Message
+    */
+    sendSystemAlert(message: Message){
+      this.notificationService.createNotification('all', {
+        id: '',
+        category: MessageCategory.SYSTEM_ALERT,
+        priority: MessagePriority.URGENT,
+        status: MessageStatus.UNREAD,
+        sender: 'SYSTEM',
+        recipients: ['all'],
+        subject: message.subject,
+        content: message.content,
+        metadata: {
+          category: MessageCategory.SYSTEM_ALERT,
+          requiresEmail: true
+        },
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as Message)
+      
     }
 
-    sendUserNotification(recipientId: string, title: string, type: string, message: string) {
-      this.userProfileState
-      const notificationId = recipientId + Math.random() * 1000;
-      this.notificationService.createNotification(recipientId, notificationId, {
-          title: title,
-          message: message,
-          timestamp: new Date(),
-          type: type,
-          recipientUid: recipientId,
-          read: false,
-          id: notificationId,
-          senderUid: this.currentUser.id,
-      } as UserNotification);
-  }
+    /*
+    * Send User a Message
+    * @param user: UserModel
+    * @param message: Message
+    */
+    sendUserMessage(userId: string, message: Message){
+      this.notificationService.createNotification(userId, {
+        id: '',
+        category: MessageCategory.USER_MESSAGE,
+        priority: MessagePriority.MEDIUM,
+        status: MessageStatus.UNREAD,
+        sender: 'SYSTEM',
+        recipients: [userId],
+        subject: message.subject,
+        content: message.content,
+        metadata: {
+          category: MessageCategory.USER_MESSAGE,
+          requiresEmail: true
+        },
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as Message)
+    }
+
+    /*
+    * Send Workflow Notification
+    * @param recipient: UserModel
+    * @param message: Message
+    * @param workflowType: WorkflowType
+    */
+    sendWorkflowNotification(recipientId: string, message: Message, workflowType: WorkflowType){
+      this.notificationService.createNotification(recipientId, {
+        id: '',
+        category: MessageCategory.WORKFLOW,
+        priority: MessagePriority.MEDIUM,
+        status: MessageStatus.UNREAD,
+        sender: 'SYSTEM',
+        recipients: [recipientId],
+        subject: message.subject,
+        content: message.content,
+        metadata: {
+          category: MessageCategory.WORKFLOW,
+          sourceEntity: {
+            type: workflowType,
+            id: message.id
+          },
+          requiresEmail: true,
+          action: message.metadata.action
+        },
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as Message)
+    }
+
+
+  
+
+
+  
 }
