@@ -34,15 +34,15 @@ import { Observable, map, of } from "rxjs";
           <div class="grid grid-cols-3 gap-4">
             <div>
               <p class="text-sm text-gray-600">Opening Balance</p>
-              <p class="text-lg font-semibold">{{openingBalance | currency}}</p>
+              <p class="text-lg font-semibold">{{openingBalance | async | currency}}</p>
             </div>
             <div>
               <p class="text-sm text-gray-600">Current Balance</p>
-              <p class="text-lg font-semibold">{{currentBalance | currency}}</p>
+              <p class="text-lg font-semibold">{{currentBalance | async | currency}}</p>
             </div>
             <div>
               <p class="text-sm text-gray-600">Pending Transactions</p>
-              <p class="text-lg font-semibold text-blue-600">{{pendingCount}}</p>
+              <p class="text-lg font-semibold text-blue-600">{{pendingCount | async}}</p>
             </div>
           </div>
         </mat-card-content>
@@ -124,6 +124,7 @@ import { Observable, map, of } from "rxjs";
 })
 export class AccountLedgerCard implements OnInit {
     @Input() ledgerEntries: Observable<LedgerEntry[] | undefined> = of(undefined);
+    @Input() accountLedger: Observable<AccountLedger> = of({} as AccountLedger);
     @Output() selectedAccount = new EventEmitter<AccountLedger>();
     @Output() editAccount = new EventEmitter<AccountLedger>();
     @Output() viewHistory = new EventEmitter<AccountLedger>();
@@ -132,9 +133,15 @@ export class AccountLedgerCard implements OnInit {
     displayedColumns: string[] = ['date', 'description', 'debit', 'credit', 'balance', 'postReference', 'documents'];
     dataSource!: MatTableDataSource<LedgerEntry>;
 
-    openingBalance = 10000;
-    currentBalance = 15250;
-    pendingCount = 2;
+    openingBalance = this.accountLedger.pipe(
+      map(ledger => ledger.openingBalance ? ledger.openingBalance : 0)
+    );
+    currentBalance = this.accountLedger.pipe(
+      map(ledger => ledger.currentBalance ? ledger.currentBalance : 0)
+    );
+    pendingCount = this.accountLedger.pipe(
+      map(ledger => ledger.entriesReference?.filter((entry) => entry.pending === true).length)
+    )
 
   constructor() {
     this.ledgerEntries.pipe(

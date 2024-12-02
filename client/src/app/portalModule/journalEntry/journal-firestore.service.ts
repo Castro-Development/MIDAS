@@ -12,6 +12,7 @@ import {
 import { Observable } from 'rxjs';
 import { ErrorHandlingService } from '../../shared/error-handling/error-handling.service';
 import { JournalEntry } from '../../shared/dataModels/financialModels/account-ledger.model';
+import { addDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +55,7 @@ export class JournalEntryFirestoreService {
             id: doc.id,
             ...doc.data()
           } as JournalEntry));
+          console.log(entries);
           subscriber.next(entries);
         },
         error => {
@@ -68,12 +70,9 @@ export class JournalEntryFirestoreService {
 
   async createEntry(entry: JournalEntry): Promise<void> {
     try {
-      const entryRef = doc(
-        collection(this.firestore, this.COLLECTION_NAME), 
-        entry.postReference // Using postRef as the document ID
-      );
+      const entryRef = collection(this.firestore, this.COLLECTION_NAME)
 
-      await setDoc(entryRef, {
+      await addDoc(entryRef, {
         ...entry,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
@@ -84,11 +83,12 @@ export class JournalEntryFirestoreService {
     }
   }
 
-  async updateEntry(postRef: string, changes: Partial<JournalEntry>): Promise<void> {
+  async updateEntry(id: string, changes: Partial<JournalEntry>): Promise<void> {
+    console.log('updating entry', id, changes);
     try {
       const entryRef = doc(
         collection(this.firestore, this.COLLECTION_NAME), 
-        postRef
+        id
       );
 
       await updateDoc(entryRef, {

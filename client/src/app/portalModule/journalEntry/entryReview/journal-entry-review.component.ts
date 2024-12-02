@@ -17,7 +17,7 @@ import { Router } from "@angular/router";
         <ng-template #entryDetail>
             <journal-detail-card
                 [journalEntry]="selectedEntry"
-                (approved)="handleApproval()"
+                (approved)="handleApproval($event)"
                 (denied)="handleDenial($event)"
             ></journal-detail-card>
         </ng-template>
@@ -37,13 +37,12 @@ export class JournalEntryReviewComponent implements OnDestroy {
         this.selectedEntry = entry;
     }
 
-    handleApproval(): void {
-        if (this.selectedEntry) {
-            this.journalFacade.approveEntry(this.selectedEntry.id)
-                .subscribe(() => {
-                    this.selectedEntry = null;
-                    // Optionally refresh the entries list
-                });
+    handleApproval(journalEntry: JournalEntry): void {
+        if (journalEntry !== null) {
+            console.log('Approving entry', journalEntry);
+            this.journalFacade.approveEntry(journalEntry);
+        }else {
+            console.log('No entry to approve');
         }
     }
 

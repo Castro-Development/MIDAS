@@ -239,7 +239,7 @@ export class UserSecurityFacade {
 
     validateAccess(user: UserModel, accountId: string): Promise<boolean> {
         return this.getAccountAccessList(accountId).then(users => {
-            if(users.includes(user.id)) {
+            if(users !== null && users !== undefined && users.includes(user.id)) {
                 return true;
             }else if(user.role === UserRole.Administrator) {
                 return true;

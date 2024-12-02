@@ -12,6 +12,8 @@ import { PermissionType } from "../../../shared/dataModels/userModels/permission
 import { AccountAccessEvent, AccountEventLog, EventLog, EventLogFilter, EventMetadata, EventType }  from "../../../shared/dataModels/loggingModels/event-logging.model";
 
 import { JournalEntryStateService } from "../../journalEntry/journal-entry-state.service";
+import { UserProfileStateService } from "../../../shared/user/profile/user-profile-state.service";
+import { Timestamp } from "firebase/firestore";
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +22,7 @@ export class AccountLedgerFacade {
     constructor(
         private accountLedgerState: AccountLedgerStateService,
         private journalEntryState: JournalEntryStateService,
-        private approvalState: ApprovalStateService,
+        private userProfileState: UserProfileStateService,
         private eventLogService: EventLogService,
         private errorHandling: ErrorHandlingService,
         private securityFacade: UserSecurityFacade, // For permission checking
@@ -33,7 +35,7 @@ export class AccountLedgerFacade {
 // interface AccountLedgerFacade {
 //   // AL-001: View Account Ledger Details
 getAccountLedger(accountId: string): Observable<AccountLedger> {
-    return this.authState.userProfile$.pipe(
+    return this.userProfileState.userProfile$.pipe(
       switchMap(user => {
         if (!user || !this.canAccessAccount(user, accountId)) {
           return throwError(() => new Error('Unauthorized access'));
@@ -47,8 +49,16 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
         ]).pipe(
           map(([ledger, journalEntries]) => {
             // Convert journal entries to ledger entries for this account
+            journalEntries.forEach(journalEntry => {
+              console.log(journalEntry.date);
+              console.log(typeof journalEntry.date);
+            })
             const ledgerEntries = journalEntries
-              .sort((a, b) => a.date.getTime() - b.date.getTime())
+              .map(entry => ({
+                ...entry,
+                date: entry.date instanceof Date ? entry.date.getTime() : new Date(entry.date).getTime()
+              }))
+              .sort((a, b) => a.date - b.date)
               .map(journalEntry => {
                 // Find the transaction for this account
                 const transaction = journalEntry.transactions.find(
@@ -62,7 +72,7 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
 
                 return {
                   journalEntryId: journalEntry.id,
-                  date: journalEntry.date,
+                  date: new Date(journalEntry.date),
                   description: journalEntry.description,
                   postReference: journalEntry.postReference,
                   debitAmount: transaction.debitAmount,
@@ -93,24 +103,31 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
               currentBalance: runningBalance // Update current balance from calculations
             } as AccountLedger;
           }),
-          tap(() => this.eventLogService.logAccountAccess({
+          tap(() => {
+            console.log(user);
+            this.eventLogService.logAccountAccess({
             accountId,
             userId: user.id,
             dateAccessed: new Date(),
             authorized: true
-          } as AccountAccessEvent)),
-          catchError(error => this.errorHandling.handleError(
-            'getAccountLedger',
-            {} as AccountLedger,
-          )),
+          } as AccountAccessEvent)}),
+          catchError(error => {
+            console.log(error);
+            return this.errorHandling.handleError(
+              'getAccountLedger',
+              {} as AccountLedger,
+            )}
+          ),
         );
       })
     );
   }
 
   getAccountEntries(accountId: string, filter?: LedgerFilter): Observable<LedgerEntry[]> {
+    console.log('getAccountEntries');
     return this.journalEntryState.getJournalEntriesForAccount(accountId).pipe(
         switchMap((journalEntries: JournalEntry[]) => {
+          console.log('journalEntries', journalEntries);
             const entries = journalEntries.map((journalEntry: JournalEntry) => {
                 const transaction = journalEntry.transactions.find(t => t.accountId === accountId);
                 if (!transaction) {

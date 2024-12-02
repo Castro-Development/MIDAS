@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, combineLatest, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, firstValueFrom, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap, finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../shared/error-handling/error-handling.service'
-import { JournalEntry, LedgerEntry, NormalSide } from '../../shared/dataModels/financialModels/account-ledger.model';
+import { JournalEntry, JournalEntryStatus, LedgerEntry, NormalSide } from '../../shared/dataModels/financialModels/account-ledger.model';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { QueryConstraint, orderBy, query, where } from 'firebase/firestore';
 import { EventLogService } from '../../shared/logging/event-log.service';
@@ -11,20 +11,12 @@ import { AuthStateService } from '../../shared/user/auth/auth-state.service';
 import { AccountFirestoreService } from '../chartOfAccount/back-end/account-firestore.service'
 import { JournalEntryStateService } from './journal-entry-state.service';
 import { Router } from '@angular/router';
+import { JournalEntryFirestoreService } from './journal-firestore.service';
+import { UserProfileStateService } from '../../shared/user/profile/user-profile-state.service';
 
-interface JournalTransaction {
-  accountId: string;
-  description?: string;
-  debitAmount: number;
-  creditAmount: number;
-}
 
-enum JournalEntryStatus {
-  DRAFT = 'DRAFT',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED'
-}
+
+
 
 @Injectable({
   providedIn: 'root'
@@ -45,9 +37,10 @@ export class JournalEntryFacade {
   constructor(
     private errorHandling: ErrorHandlingService,
     private eventLog: EventLogService,
-    private authState: AuthStateService,
+    private userProfileState: UserProfileStateService,
     private accountService: AccountFirestoreService,
     private journalState: JournalEntryStateService,
+    private journalService: JournalEntryFirestoreService,
     private router: Router
   ) { }
 
@@ -119,34 +112,27 @@ export class JournalEntryFacade {
   /**
    * Approve a journal entry
    */
-  approveEntry(entryId: string) {
+  approveEntry(entry: JournalEntry) {
     this.loadingSubject.next(true);
 
-    const currentUserId = this.authState.getUid$;
-
-    return this.getJournalEntry(entryId).pipe(
-      switchMap(entry => {
-        if (!entry) {
-          return throwError(() => new Error('Journal entry not found'));
-        }
-
-        const updatedEntry = {
-          ...entry,
-          status: JournalEntryStatus.APPROVED,
-          approvedBy: currentUserId,
-          approvedAt: new Date()
-        };
-
-        return this.saveJournalEntry(updatedEntry).pipe(
-          map(() => this.postToAccounts(updatedEntry))
-        );
-      }),
-      tap(() => {
-        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_APPROVED, { entryId, approvedBy: currentUserId });
-      }),
-      // catchError(this.errorHandling.handleError('approveEntry')),
-      finalize(() => this.loadingSubject.next(false))
-    );
+    firstValueFrom(this.userProfileState.userProfile$).then(user => {
+      console.log('Current user ID:', user.id);
+      const updatedEntry = {
+        ...entry,
+        status: JournalEntryStatus.APPROVED,
+        approvedBy: user.id,
+        approvedAt: new Date()
+      }
+      console.log('Updated entry:', updatedEntry);
+      
+      this.journalService.updateEntry(updatedEntry.id, updatedEntry).then(() => {
+        this.eventLog.logEvent(EventType.JOURNAL_ENTRY_APPROVED, { entryId: entry.id });
+        this.loadingSubject.next(false);
+      }).then(() => {
+        this.postToAccounts(updatedEntry);
+      })
+    })
+    
   }
 
   /**
@@ -233,10 +219,13 @@ export class JournalEntryFacade {
   }
 
   private postToAccounts(entry: JournalEntry) {
+    console.log('Posting to accounts:', entry);
     entry.transactions.forEach(transaction => {
+      console.log('Posting transaction:', transaction);
       const accountId = transaction.accountId;
       this.accountService.getAccount(accountId).pipe(
         switchMap(account => {
+          console.log(account);
           if (!account) {
             return throwError(() => new Error(`Account not found: ${accountId}`));
           }
@@ -286,41 +275,42 @@ export class JournalEntryFacade {
     startDate?: Date;
     endDate?: Date;
   }): Observable<JournalEntry[]> {
-    // Get reference to Firestore
-    const journalCollection = collection(this.firestore, 'journalEntries');
+    // // Get reference to Firestore
+    // const journalCollection = collection(this.firestore, 'journalEntries');
 
-    // Start building query constraints
-    const constraints: QueryConstraint[] = [];
+    // // Start building query constraints
+    // const constraints: QueryConstraint[] = [];
 
-    // Add filters if they exist
-    if (filters) {
-      if (filters.status) {
-        constraints.push(where('status', '==', filters.status));
-      }
+    // // Add filters if they exist
+    // if (filters) {
+    //   if (filters.status) {
+    //     constraints.push(where('status', '==', filters.status));
+    //   }
 
-      if (filters.startDate) {
-        constraints.push(where('date', '>=', filters.startDate));
-      }
+    //   if (filters.startDate) {
+    //     constraints.push(where('date', '>=', filters.startDate));
+    //   }
 
-      if (filters.endDate) {
-        constraints.push(where('date', '<=', filters.endDate));
-      }
-    }
+    //   if (filters.endDate) {
+    //     constraints.push(where('date', '<=', filters.endDate));
+    //   }
+    // }
 
-    // Add default ordering
-    constraints.push(orderBy('date', 'desc'));
+    // // Add default ordering
+    // constraints.push(orderBy('date', 'desc'));
 
-    // Create the query
-    const journalQuery = query(journalCollection, ...constraints);
+    // // Create the query
+    // const journalQuery = query(journalCollection, ...constraints);
 
-    // Return the query result as an observable
-    return collectionData(journalQuery).pipe(
-      map(entries => entries as JournalEntry[]),
-      catchError(error => {
-        console.error('Error fetching journal entries:', error);
-        return of([]);
-      })
-    );
+    // // Return the query result as an observable
+    // return collectionData(journalQuery).pipe(
+    //   map(entries => entries as JournalEntry[]),
+    //   catchError(error => {
+    //     console.error('Error fetching journal entries:', error);
+    //     return of([]);
+    //   })
+    // );
+    return this.journalService.getAllEntries();
   }
 
 

@@ -77,6 +77,7 @@ export  enum JournalEntryStatus {
     journalEntryId: string;
     date: Date;
     postReference: string;
+    pending: boolean;
   }
   
   export interface AccountLedger {

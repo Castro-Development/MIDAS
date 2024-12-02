@@ -133,7 +133,7 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
   })
   export class JournalSubmissionCard {
     @Input() journalEntry: JournalEntry | null = null;
-    @Output() approved = new EventEmitter<void>();
+    @Output() approved = new EventEmitter<JournalEntry>();
     @Output() denied = new EventEmitter<string>();
 
     showDenialDialog = false;
@@ -145,7 +145,7 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
 
     approveEntry(): void {
       if (this.journalEntry?.isBalanced) {
-        this.approved.emit();
+        this.approved.emit(this.journalEntry);
       }
     }
 

@@ -7,7 +7,7 @@ import { AccountLedgerFacade } from "./back-end/account-ledger.facade";
 @Component({
     selector: 'app-account-ledger',
     template: `
-    <account-ledger-card [ledgerEntries]="ledgerEntries$" />
+    <account-ledger-card [ledgerEntries]="ledgerEntries$" [accountLedger]="accountLedger$" />
     `,
 })
 export class AccountLedgerComponent implements OnInit {
@@ -15,7 +15,9 @@ export class AccountLedgerComponent implements OnInit {
     accountNumberSubject = new BehaviorSubject<string>('');
     destroySubject = new Subject<void>();
     accountNumber$ = this.accountNumberSubject.asObservable();
-
+    accountLedger$ = this.accountNumber$.pipe(
+      switchMap(accountNumber => this.accountLedgerFacade.getAccountLedger(accountNumber))
+    )
 
 
     ledgerEntries$ = this.accountNumber$.pipe(
