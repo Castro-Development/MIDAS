@@ -24,6 +24,8 @@ export class MessagingComponent implements OnInit{
   selectedCategory$ = this.selectedCategorySubject.asObservable();
 
   currentMessages$ = this.notificationState.notifications$;
+  messageList!: Message[]
+
   unreadCount$ = this.notificationState.unreadCount$;
   filteredMessages$ = this.notificationState.filteredNotifications$;
 
@@ -35,19 +37,20 @@ export class MessagingComponent implements OnInit{
   )
   userSentMessages$!: Observable<Notification[]>
 
-  
+
 
   messageByCategory = combineLatest([
     this.currentMessages$,
     this.selectedCategory$
   ]).pipe(
-    map(([notifications, category]) => 
+    map(([notifications, category]) =>
       category ? notifications.filter(n => n.category === category) : notifications
     )
   );
 
   selectedMessage = this.notificationState.selectedMessage$;
-  
+  currentMessage!: Message;
+
 
   fb = inject(FormBuilder);
   messageForm!: FormGroup;
@@ -86,6 +89,9 @@ export class MessagingComponent implements OnInit{
 
   ngOnInit(): void {
     this.createForm();
+    this.messageByCategory.subscribe((messages) =>{
+      this.messageList = messages;
+    });
   }
 
   createForm(){
@@ -101,7 +107,7 @@ export class MessagingComponent implements OnInit{
   }
 
   sendMessage(){
-    
+
     this.notificationFacade.sendUserMessage(this.messageForm.value.recipientUid, {
       id: '',
       category: MessageCategory.USER_MESSAGE,
@@ -143,6 +149,22 @@ export class MessagingComponent implements OnInit{
     this.notificationState.selectMessage(messageId);
     this.showMessageList = false;
     this.showMessageView = true;
+    this.selectedMessage.subscribe({next: (message) => {
+      if(message != undefined){
+        this.currentMessage = message;
+      }
+
+    },
+    error: (err) => {
+      console.error('Error fetching articles:', err);
+    }
+
+    });
+  }
+
+  messageReturn(){
+    this.showMessageList = true;
+    this.showMessageView = false;
   }
 
 

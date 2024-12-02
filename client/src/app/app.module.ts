@@ -77,6 +77,7 @@ import { RequestSystemAccessComponent } from './userModule/requestSystemAccess/r
 import { AppPhoneInputComponent } from './userModule/requestSystemAccess/utils/app-phone-input.component';
 import { SplashScreenComponent } from './userModule/splash-screen-component/splash-screen-component.component';
 import { MessagingComponent } from './userModule/messaging/messaging.component';
+import { NotificationBubble } from './userModule/splash-screen-component/utils/notification-bubble.svg';
 
 
 
@@ -122,6 +123,8 @@ import { MessagingComponent } from './userModule/messaging/messaging.component';
     AppPhoneInputComponent,
     MessagingComponent,
 
+
+
   ],
   imports: [
     BrowserModule,
@@ -165,6 +168,8 @@ import { MessagingComponent } from './userModule/messaging/messaging.component';
     //User Module
     CommonModule,
     RouterLink,
+
+    NotificationBubble,
 
 ],
   providers: [

@@ -1,10 +1,10 @@
-<div class="flex items-center flex-col pt-56 h-[90vh]  text-white" style="background-color:#242525">
+<!-- <div class="flex items-center flex-col pt-56 h-[90vh]  text-white" style="background-color:#242525">
   <div class="h-screen">
     <img src="../../../assets/Logo.png" style="max-height: 300px; margin:auto" class="justify-center">
-    <!-- <h1 class="text-4xl text-center font-bold my-10">Welcome to
+    <h1 class="text-4xl text-center font-bold my-10">Welcome to
 
       <span class="text-7xl text-amber-400">M.I.D.A.S</span>
-    </h1> -->
+    </h1>
 
     <div class="flex flex-col items-center gap-3
      justify-center">
@@ -33,4 +33,105 @@
     </div>
 
   </div>
-</div>
+</div> -->
+
+
+
+<link rel="stylesheet" href="splash-screen-component.component.scss">
+@if(authState.isLoggedIn$ | async){
+  <div class="header">
+    <span class="header-text">Home Dashboard:</span>
+    <span class=" mr-5">You are logged in as</span> <span class="font-bold bg-amber-500 rounded-md p-2 text-white">
+      {{authState.username$ | async}}
+    </span>
+  </div>
+  <div class="flexbox">
+    <div class="ratio-area">
+      <div class="box-heading">Ratios</div>
+      <hr class="box-heading">
+      <div class="ratio-row">
+        <div> Current Ratio:</div>
+        <div class="spacer"></div>
+        <div> X:X </div>
+        <!-- Calc for current == current assets/current liabilities -->
+      </div>
+      <div class="ratio-row">
+        <div> Acid-Test Ratio:</div>
+        <div class="spacer"></div>
+        <div> X:X </div>
+        <!-- Cash + short term investments + accounts receivable (NET)/ Current Liabilities-->
+      </div>
+      <div class="ratio-row">
+        <div> Accounts Receivable Turnover:</div>
+        <div class="spacer"></div>
+        <div> X:X </div>
+        <!-- Net Credit sales/average net accounts receivable  -->
+      </div>
+      <div class="ratio-row">
+        <div> Inventory Turnover:</div>
+        <div class="spacer"></div>
+        <div> X:X </div>
+        <!-- Cost of goods sold/average inventory -->
+      </div>
+      <div class="ratio-row">
+        <div> Profit Margin:</div>
+        <div class="spacer"></div>
+        <div> X:X </div>
+        <!-- Net income/net sales -->
+      </div>
+    </div>
+    <!-- <div>
+      <img src="../../../assets/Logo.png" id="center-image">
+    </div> -->
+    <div class="notification-area">
+      <!-- Gotta make this hidden if there aren't any notifications -->
+      <!--Use firestore to get a count of records that are unapproved, then display "Ledgers need approval"-->
+      <div class="box-heading">Notifications</div>
+      <hr class="box-heading">
+      <div class="notification-row">
+        <div>
+          <notif-svg></notif-svg>
+        </div>
+        <div>
+          <a class="button-entry-review" routerLink="/journal-entry-review">
+            Journals need review!
+          </a>
+        </div>
+      </div>
+      <div class="notification-row">
+        <div>
+          <notif-svg></notif-svg>
+        </div>
+        <div>
+          <a class ="button-entry-review" routerLink="/admin-user-applications">
+          Users Requesting Access!
+          </a>
+        </div>
+      </div>
+      <!-- I want to put notifications here with a blinking SVG -- will likely need Damien's help -->
+      <!-- Here we use the Firebase shit to iterate through the ledgers and determine if thing need to be messed with-->
+    </div>
+
+
+  </div>
+}
+@else {
+  <div class="flex items-center flex-col pt-56 h-[90vh]  text-white" style="background-color:#242525">
+    <div class="h-screen">
+      <img src="../../../assets/Logo.png" style="max-height: 300px; margin:auto" class="justify-center" alt="MIDAS">
+      <div class="flex flex-col items-center gap-3 justify-center">
+        <h1 class="text-2xl">You are not currently logged in</h1>
+        <a routerLink="/login">
+          <button class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-md" style="min-width: 120px;">
+            Login
+          </button>
+        </a>
+        <a routerLink="/request-system-access">
+          <button class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-4 rounded-md" style="min-width: 120px;">
+            Register
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+}
