@@ -38,8 +38,9 @@ a {
   padding: 5px 10px 5px 2px;
   margin-right: 20px;
   border-radius: 4px;
-  overflow: hidden;
+  //overflow: hidden;
   height: 60px;
+  position: relative;
 }
 .section-button:hover{
   background-color: #141413;
@@ -61,3 +62,23 @@ a {
   //margin-bottom: auto;
 }
 
+.floating-icon{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: -8px;
+  top: 30%;
+  margin: -10px -10px 0 0;
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 50%;
+  background-color: var(--auth-error-text);
+  color: white;
+  font-size: .8rem;
+  font-weight: 800;
+  z-index: 2;
+  padding: 2px;
+  //border: 1px solid white;
+  //box-shadow: 2px 2px 3px white;
+}

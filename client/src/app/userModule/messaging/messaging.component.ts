@@ -114,7 +114,8 @@ export class MessagingComponent implements OnInit{
       priority: MessagePriority.MEDIUM,
       status: MessageStatus.UNREAD,
       sender: this.currentUser.id,
-      recipients: [this.messageForm.value.recipientUid],
+      //recipients: [this.messageForm.value.recipientUid],
+      recipients: [this.currentUser.id],
       subject: this.messageForm.value.title,
       content: this.messageForm.value.message,
       } as Message);

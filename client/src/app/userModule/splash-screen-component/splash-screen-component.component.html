@@ -41,7 +41,7 @@
 @if(authState.isLoggedIn$ | async){
   <div class="header">
     <span class="header-text">Home Dashboard:</span>
-    <span class=" mr-5">You are logged in as</span> <span class="font-bold bg-amber-500 rounded-md p-2 text-white">
+    <span class=" mr-5 font-bold">You are logged in as</span> <span class="font-bold bg-amber-500 rounded-md p-2 text-white">
       {{authState.username$ | async}}
     </span>
   </div>
@@ -52,19 +52,19 @@
       <div class="ratio-row">
         <div> Current Ratio:</div>
         <div class="spacer"></div>
-        <div> X:X </div>
+        <div class="good"> X:X </div>
         <!-- Calc for current == current assets/current liabilities -->
       </div>
       <div class="ratio-row">
         <div> Acid-Test Ratio:</div>
         <div class="spacer"></div>
-        <div> X:X </div>
+        <div class="borderline"> X:X </div>
         <!-- Cash + short term investments + accounts receivable (NET)/ Current Liabilities-->
       </div>
       <div class="ratio-row">
         <div> Accounts Receivable Turnover:</div>
         <div class="spacer"></div>
-        <div> X:X </div>
+        <div class="bad"> X:X </div>
         <!-- Net Credit sales/average net accounts receivable  -->
       </div>
       <div class="ratio-row">

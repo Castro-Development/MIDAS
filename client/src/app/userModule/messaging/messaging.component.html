@@ -94,7 +94,7 @@
             <mat-icon>article</mat-icon>Title : {{currentMessage.subject}}
           </div>
           <mat-icon class="clickable" (click)="messageReturn()">keyboard_return</mat-icon>
-          <mat-icon class="clickable" (click)="showMessageView = !showMessageView">close</mat-icon>
+          <!-- <mat-icon class="clickable" (click)="showMessageView = !showMessageView">close</mat-icon> -->
       </div>
 
       <div class="display-headers">
@@ -145,7 +145,7 @@
           <mat-icon>delete</mat-icon> Delete?
         </div>
 
-        <div class="reply">
+        <div class="reply clickable" (click)="showMessageSend = true">
           <mat-icon>reply</mat-icon> Reply?
         </div>
 
@@ -165,7 +165,7 @@
           <div class="row-item send">
             <mat-icon>article</mat-icon>Title : <input type="text" formControlName="title"/>
           </div>
-          <mat-icon class="clickable">keyboard_return</mat-icon>
+          <!-- <mat-icon class="clickable">keyboard_return</mat-icon> -->
           <mat-icon class="clickable" (click)="showMessageSend = !showMessageSend">close</mat-icon>
       </div>
 

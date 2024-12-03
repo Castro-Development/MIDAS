@@ -91,15 +91,7 @@ circle{
 
 .ratio {
   color:var(--span);
-  .good{
-      background-color: lime;
-  }
-  .borderline{
-      background-color: yellow;
-  }
-  .bad{
-      background-color: red;
-  }
+
 }
 
 hr{
@@ -131,4 +123,17 @@ hr{
   max-height: 300px;
   justify-self: center;
   align-self: center;
+}
+
+.good{
+  font-weight: 700;
+  color: lime;
+}
+.borderline{
+  font-weight: 700;
+  color: yellow;
+}
+.bad{
+  font-weight: 700;
+  color: red;
 }
