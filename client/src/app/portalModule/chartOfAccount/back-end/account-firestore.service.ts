@@ -28,12 +28,14 @@ export class AccountFirestoreService {
 
   // Core single-document operations
   getAccount(accountId: string): Observable<AccountLedger | null> {
+    console.log('getAccount');
     return new Observable(subscriber => {
       const unsubscribe = onSnapshot(
         doc(collection(this.firestore, this.COLLECTION_NAME), accountId),
         (docSnapshot) => {
           if (docSnapshot.exists()) {
             subscriber.next({ documentId: docSnapshot.id, ...docSnapshot.data() } as AccountLedger);
+            console.log('docSnapshot', docSnapshot.data());
           } else {
             subscriber.next(null);
           }
