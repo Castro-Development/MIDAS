@@ -1,46 +1,57 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { BehaviorSubject, Subject, distinct, switchMap, takeUntil } from "rxjs";
+import { BehaviorSubject, Subject, takeUntil } from "rxjs";
 import { AccountLedgerFacade } from "./back-end/account-ledger.facade";
-
+import { AccountLedger } from "../../shared/dataModels/financialModels/account-ledger.model";
 
 @Component({
     selector: 'app-account-ledger',
     template: `
-    <account-ledger-card [ledgerEntries]="ledgerEntries$" [accountLedger]="accountLedger$" />
+    <ng-container *ngIf="loading">
+      <div class="flex items-center justify-center min-h-screen">
+        <mat-spinner diameter="48"></mat-spinner>
+        <span class="ml-4 text-gray-600">Loading account ledger...</span>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!loading && accountLedger">
+      <account-ledger-card [accountLedger]="accountLedger" />
+    </ng-container>
     `,
 })
 export class AccountLedgerComponent implements OnInit {
+    private route = inject(ActivatedRoute);
+    private destroySubject = new Subject<void>();
+    
+    loading = true;
+    accountLedger: AccountLedger | null = null;
 
-    accountNumberSubject = new BehaviorSubject<string>('');
-    destroySubject = new Subject<void>();
-    accountNumber$ = this.accountNumberSubject.asObservable();
-    accountLedger$ = this.accountNumber$.pipe(
-      switchMap(accountNumber => this.accountLedgerFacade.getAccountLedger(accountNumber))
-    )
-
-
-    ledgerEntries$ = this.accountNumber$.pipe(
-      switchMap(accountNumber => this.accountLedgerFacade.getAccountEntries(accountNumber))
-    )
-
-    constructor(
-      private route: ActivatedRoute,
-      private accountLedgerFacade: AccountLedgerFacade
-    ) {}
-
-
+    constructor(private accountLedgerFacade: AccountLedgerFacade) {}
 
     ngOnInit() {
-      // Get the account number from the route parameters
-      this.route.params.pipe(
-        switchMap(params => {
+      this.route.params
+        .pipe(takeUntil(this.destroySubject))
+        .subscribe(params => {
           const accountNumber = params['accountNumber'];
-          return this.accountLedgerFacade.getAccountLedger(accountNumber);
-        })
-      ).subscribe(ledger => {
-        // Handle the ledger data
-        console.log(ledger);
-      });
+          this.loading = true;
+          
+          this.accountLedgerFacade.getAccountLedger(accountNumber)
+            .pipe(takeUntil(this.destroySubject))
+            .subscribe({
+              next: (ledger) => {
+                this.accountLedger = ledger;
+                this.loading = false;
+              },
+              error: (error) => {
+                console.error('Failed to load account ledger:', error);
+                this.loading = false;
+              }
+            });
+        });
     }
-  }
+
+    ngOnDestroy() {
+      this.destroySubject.next();
+      this.destroySubject.complete();
+    }
+}

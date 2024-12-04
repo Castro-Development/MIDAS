@@ -28,16 +28,19 @@ export class AccountFirestoreService {
 
   // Core single-document operations
   getAccount(accountId: string): Observable<AccountLedger | null> {
-    console.log('getAccount');
+    console.log('getAccount', accountId);
     return new Observable(subscriber => {
+      const docRef = doc(collection(this.firestore, this.COLLECTION_NAME), accountId);
+      console.log('Document reference:', docRef); // And this
       const unsubscribe = onSnapshot(
         doc(collection(this.firestore, this.COLLECTION_NAME), accountId),
         (docSnapshot) => {
           if (docSnapshot.exists()) {
-            subscriber.next({ documentId: docSnapshot.id, ...docSnapshot.data() } as AccountLedger);
             console.log('docSnapshot', docSnapshot.data());
+            subscriber.next({ documentId: docSnapshot.id, ...docSnapshot.data() } as AccountLedger);
           } else {
             subscriber.next(null);
+            console.log('No such document!');
           }
         },
         error => {
