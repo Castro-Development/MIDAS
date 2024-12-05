@@ -29,7 +29,7 @@ export class JournalEntryReviewComponent implements OnDestroy {
     private router = inject(Router);
 
 
-    journalEntries$ = this.journalFacade.loadEntries()
+    journalEntries$ = this.journalFacade.loadEntries();
     // .pipe(
     //     map(entries => entries.filter(entry => entry.status !== JournalEntryStatus.APPROVED))
     // );
