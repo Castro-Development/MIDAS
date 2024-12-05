@@ -46,6 +46,7 @@ import { UserProfileStateService } from "../user/profile/user-profile-state.serv
     )
     selectMessage(message: string) {
       this.selectedMessageIdSubject.next(message);
+      this.notificationService.markAsRead(this.userId$, message);
     }
   
     readonly notifications$ = this.notificationService.getUserNotifications(this.userId$)
