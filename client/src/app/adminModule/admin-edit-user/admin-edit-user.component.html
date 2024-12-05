@@ -26,10 +26,10 @@
             <label for="userId" class="form-label">
               User Id (Read Only)
             </label>
-            <input id="userId" type="text" formControlName="userId" class="form-input" placeholder="Enter User ID"
+            <input id="id" type="text" formControlName="id" class="form-input" placeholder="Enter User ID"
               readonly>
-            <div *ngIf="applicationForm.get('userId')?.touched &&
-                        applicationForm.get('userId')?.invalid" class="invalid-container">
+            <div *ngIf="applicationForm.get('id')?.touched &&
+                        applicationForm.get('id')?.invalid" class="invalid-container">
               User ID is required
             </div>
           </div>
@@ -195,14 +195,14 @@
       <!-- Transactions Section -->
 
       <!-- Validation Messages -->
-      <div class="space-y-2">
+      <!-- <div class="space-y-2">
         <div *ngIf="true && applicationForm.touched" class="violation-message">
           Debits and credits must be equal
         </div>
         <div *ngIf="true && applicationForm.touched" class="violation-message">
           Each transaction must have either a debit or credit amount, not both
         </div>
-      </div>
+      </div> -->
 
       <!-- Submit Button -->
       <div class="flex justify-end space-x-4">

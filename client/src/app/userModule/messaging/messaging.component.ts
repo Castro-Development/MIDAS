@@ -146,12 +146,12 @@ export class MessagingComponent implements OnInit{
     this.selectedCategorySubject.next(null);
   }
 
-  selectMessage(messageId: string){
+  selectMessage(messageId: string) {
     this.notificationState.selectMessage(messageId);
     this.showMessageList = false;
     this.showMessageView = true;
     this.selectedMessage.subscribe({next: (message) => {
-      if(message != undefined){
+      if(message != undefined) {
         this.currentMessage = message;
       }
 

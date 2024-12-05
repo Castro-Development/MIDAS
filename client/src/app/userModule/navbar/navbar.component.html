@@ -13,26 +13,65 @@
 
     <div class="user-content">
       <div class="user-menu">
-        <button class="section-button"  routerLink="/messaging">
+        <button class="section-button"  routerLink="/messaging" matTooltip="View your notifications" *ngIf="isAdmin$">
           <div class="floating-icon">1</div>
           <div class="svg"><journal-entry-svg></journal-entry-svg></div>
           Notifications / Messages
         </button>
 
-        <button class="section-button"  routerLink="/admin-dashboard">
+        <button [matMenuTriggerFor]="admin" class="section-button" matTooltip="Admin User Controls" *ngIf="isAdmin$">
           <admin-svg></admin-svg>
-          Admin Content
+          Admin Content <mat-icon>expand_more</mat-icon>
         </button>
 
-        <button class="section-button"  routerLink="/calendar">
+        <mat-menu #admin="matMenu" class="customize">
+          <button routerLink="/admin-dashboard" mat-menu-item>
+            <span>Admin Dashboard</span>
+          </button>
+
+
+          <button routerLink="/admin-users-chart" mat-menu-item>
+            <span>User Chart</span>
+          </button>
+
+          <button routerLink="/admin-expired-passwords-report" mat-menu-item>
+            <span>Expired password report</span>
+          </button>
+
+          <button routerLink="/admin-user-applications" mat-menu-item>
+            <span>User Applications</span>
+          </button>
+        </mat-menu>
+
+
+        <button class="section-button"  routerLink="/calendar"  matTooltip="Search our account calendar">
           <calendar-svg></calendar-svg>
           Calendar
         </button>
 
-        <button class="section-button"  routerLink="/portal-dashboard">
+        <button [matMenuTriggerFor]="accounting" class="section-button" matTooltip="Admin accounting controls" *ngIf="isAdmin$">
           <portal-svg></portal-svg>
-          Accounting
+          Accounting <mat-icon>expand_more</mat-icon>
         </button>
+
+        <mat-menu #accounting="matMenu" class="customize">
+          <button routerLink="/portal-dashboard" mat-menu-item>
+            <span>Portal Dashboard</span>
+          </button>
+
+
+          <button routerLink="/chart-of-accounts" mat-menu-item>
+            <span>Chart Of Accounts</span>
+          </button>
+
+          <button routerLink="/journal-entry-review" mat-menu-item>
+            <span>Journal Review</span>
+          </button>
+
+          <button routerLink="/journal-entry-form" mat-menu-item>
+            <span>Journal Entry Form</span>
+          </button>
+        </mat-menu>
 
 
 
@@ -44,7 +83,7 @@
           <img src="assets/Male Icon.png" class="py-10" style="max-width: 40px; margin:auto">
           <div class="text-white flex flex-col pr-5">
             <h1 class="p-0 m-0 font-medium">
-              {{authState.username$ | async}}
+              {{authState.username$ | async}} <mat-icon>expand_more</mat-icon>
             </h1>
             <p class="p-0 pt-1 m-0 font-medium text-xs">
               {{authState.viewRole$ | async}}
