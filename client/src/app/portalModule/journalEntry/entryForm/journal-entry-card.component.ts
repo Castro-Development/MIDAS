@@ -330,6 +330,7 @@ export class JournalEntryFormCard {
         createdBy: getAuth().currentUser?.uid || '',
         // Fixed: using formValue.transactions instead of transaction
         accounts: accountsFromTransactions,
+        documents: [],
         transactions: formValue.transactions.map((transaction: JournalTransaction) => ({
           id: crypto.randomUUID(), // Add unique ID for each transaction
           journalEntryId: '', // This will be set when the entry is saved

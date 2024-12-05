@@ -95,7 +95,7 @@ export  enum JournalEntryStatus {
     totalCredits?: number;
     
     // All entries affecting this account
-    entriesReference?: AccountLedgerReference[];
+    transaction?: LedgerEntry[];
     
     // For ordering in statements
     order?: string;
@@ -177,6 +177,7 @@ export  enum JournalEntryStatus {
     // Double-entry transactions
     transactions: JournalTransaction[];
     accounts: string[];
+    documents: DocumentReference[];
     
     // Balancing
     totalDebits: number;
@@ -266,6 +267,7 @@ export  enum JournalEntryStatus {
     // For audit trail
     postedAt?: Date;
     postedBy?: string;
+    hasDocuments: boolean;
   }
   
   

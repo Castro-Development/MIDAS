@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, combineLatest, firstValueFrom, of, throwError } from 'rxjs';
 import { catchError, map, switchMap, tap, finalize } from 'rxjs/operators';
 import { ErrorHandlingService } from '../../shared/error-handling/error-handling.service'
-import { JournalEntry, JournalEntryStatus, LedgerEntry, NormalSide } from '../../shared/dataModels/financialModels/account-ledger.model';
+import { JournalEntry, JournalEntryStatus, JournalTransaction, LedgerEntry, NormalSide } from '../../shared/dataModels/financialModels/account-ledger.model';
 import { Firestore, collection, collectionData } from '@angular/fire/firestore';
 import { QueryConstraint, orderBy, query, where } from 'firebase/firestore';
 import { EventLogService } from '../../shared/logging/event-log.service';
@@ -187,7 +187,8 @@ export class JournalEntryFacade {
           debitAmount: entry.transactions.find(t => t.accountId === accountNumber)?.debitAmount || 0,
           creditAmount: entry.transactions.find(t => t.accountId === accountNumber)?.creditAmount || 0,
           runningBalance: 0,
-          journalEntryId: entry.id
+          journalEntryId: entry.id,
+          hasDocuments: entry.documents?.length > 0
         };
       }))
     );
@@ -218,20 +219,30 @@ export class JournalEntryFacade {
     return of(true);
   }
 
+  transactionToLedgerEntry(transaction: JournalTransaction): LedgerEntry {
+    return {
+      date: new Date(),
+      description: transaction.description || '',
+      debitAmount: transaction.debitAmount,
+      creditAmount: transaction.creditAmount,
+      journalEntryId: transaction.journalEntryId
+    } as LedgerEntry;
+  }
+
   private postToAccounts(entry: JournalEntry) {
     console.log('Posting to accounts:', entry);
     entry.transactions.forEach(transaction => {
       console.log('Posting transaction:', transaction);
       const accountId = transaction.accountId;
-      this.accountService.getAccount(accountId).pipe(
-        switchMap(account => {
-          console.log(account);
+      firstValueFrom(this.accountService.getAccount(accountId)).then((account) => {
+        console.log(account);
           if (!account) {
-            return throwError(() => new Error(`Account not found: ${accountId}`));
+            throw new Error('Account not found');
           }
 
           const updatedDebitAccount = {
             ...account,
+            transaction: account.transaction ? [...account.transaction, this.transactionToLedgerEntry(transaction)] : [this.transactionToLedgerEntry(transaction)],
             totalDebits: account.totalDebits ? account.totalDebits + transaction.debitAmount : transaction.debitAmount,
             totalCredits: account.totalCredits ? account.totalCredits + transaction.creditAmount : transaction.creditAmount,
             currentBalance: account.currentBalance ? account.currentBalance + transaction.debitAmount - transaction.creditAmount : transaction.debitAmount - transaction.creditAmount
@@ -239,21 +250,25 @@ export class JournalEntryFacade {
 
           const updatedCreditAccount = {
             ...account,
+            transaction: account.transaction ? [...account.transaction, this.transactionToLedgerEntry(transaction)] : [this.transactionToLedgerEntry(transaction)],
             totalDebits: account.totalDebits ? account.totalDebits + transaction.debitAmount : transaction.debitAmount,
             totalCredits: account.totalCredits ? account.totalCredits + transaction.creditAmount : transaction.creditAmount,
             currentBalance: account.currentBalance ? account.currentBalance + transaction.creditAmount - transaction.debitAmount : transaction.creditAmount - transaction.debitAmount
           };
 
           if (account.normalSide === NormalSide.CREDIT) {
+            console.log('Updating credit account:', updatedCreditAccount);
             return this.accountService.updateAccount(accountId, updatedCreditAccount);
+          }else {
+            console.log('Updating debit account:', updatedDebitAccount);
+            return this.accountService.updateAccount(accountId, updatedDebitAccount);
           }
-
-          return this.accountService.updateAccount(accountId, updatedDebitAccount);
+        });
+          
         })
-      );
-    });
+      }
 
-  }
+  
 
   getAccounts() {
     return this.accountService.getAllAccounts();

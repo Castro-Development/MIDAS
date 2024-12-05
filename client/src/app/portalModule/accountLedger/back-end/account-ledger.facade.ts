@@ -41,68 +41,8 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
           return throwError(() => new Error('Unauthorized access'));
         }
         // Get both the account details and its journal entries
-        return combineLatest([
-          // Get account details
-          this.accountLedgerState.getAccountLedger(accountId),
-          // Get journal entries that affect this account
-          this.journalEntryState.getJournalEntriesForAccount(accountId)
-        ]).pipe(
-          map(([ledger, journalEntries]) => {
-            // Convert journal entries to ledger entries for this account
-            journalEntries.forEach(journalEntry => {
-              console.log(journalEntry.date);
-              console.log(typeof journalEntry.date);
-            })
-            const ledgerEntries = journalEntries
-              .map(entry => ({
-                ...entry,
-                date: entry.date instanceof Date ? entry.date.getTime() : new Date(entry.date).getTime()
-              }))
-              .sort((a, b) => a.date - b.date)
-              .map(journalEntry => {
-                // Find the transaction for this account
-                const transaction = journalEntry.transactions.find(
-                  t => t.accountId === accountId
-                );
-
-                if (!transaction) {
-                  console.warn(`No transaction found for account ${accountId} in journal entry ${journalEntry.id}`);
-                  return null;
-                }
-
-                return {
-                  journalEntryId: journalEntry.id,
-                  date: new Date(journalEntry.date),
-                  description: journalEntry.description,
-                  postReference: journalEntry.postReference,
-                  debitAmount: transaction.debitAmount,
-                  creditAmount: transaction.creditAmount,
-                  runningBalance: 0, // Will be calculated next
-                  status: journalEntry.status,
-                  createdBy: journalEntry.createdBy,
-                  createdAt: journalEntry.createdAt,
-                  postedAt: journalEntry.postedAt,
-                  postedBy: journalEntry.postedBy,
-                } as LedgerEntry;
-              })
-              .filter((entry): entry is LedgerEntry => entry !== null);
-
-            // Calculate running balances
-            let runningBalance = 0;
-            ledgerEntries.forEach(entry => {
-              runningBalance += (entry.debitAmount - entry.creditAmount);
-              entry.runningBalance = runningBalance;
-            });
-
-            // Return enhanced ledger with entries
-            return {
-              ...ledger,
-              lastReconciled: ledger.lastReconciled,
-              needsReconciliation: this.checkReconciliationNeeded(ledger),
-              entries: ledgerEntries,
-              currentBalance: runningBalance // Update current balance from calculations
-            } as AccountLedger;
-          }),
+        return this.accountLedgerState.getAccountLedger(accountId).pipe(
+          
           tap(() => {
             console.log(user);
             this.eventLogService.logAccountAccess({
@@ -146,7 +86,8 @@ getAccountLedger(accountId: string): Observable<AccountLedger> {
                     createdBy: journalEntry.createdBy,
                     createdAt: journalEntry.createdAt,
                     postedAt: journalEntry.postedAt,
-                    postedBy: journalEntry.postedBy
+                    postedBy: journalEntry.postedBy,
+                    hasDocuments: journalEntry.documents.length > 0,
                 } as LedgerEntry;
             }).filter((entry): entry is LedgerEntry => entry !== null);
             return of(entries);  // Wrap the array in an Observable

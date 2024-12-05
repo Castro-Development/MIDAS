@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormField, MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { map } from 'rxjs/operators';
 import {MatTooltipModule} from '@angular/material/tooltip';
 
@@ -139,6 +140,7 @@ import { NotificationBubble } from './userModule/splash-screen-component/utils/n
     MatInputModule,
     CommonModule,
     ReactiveFormsModule,
+    MatProgressSpinnerModule,
     MatSnackBarModule,
     MatButtonModule,
     MatToolbarModule,
