@@ -1,11 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { UserProfileStateService } from '../../shared/user/profile/user-profile-state.service';
 import { UserModel } from '../../shared/dataModels/userModels/user.model';
-import { firstValueFrom, Observable, map, pipe, combineLatest, BehaviorSubject } from 'rxjs';
+import { firstValueFrom, Observable, map, pipe, combineLatest, BehaviorSubject, first } from 'rxjs';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { NotificationFacade } from '../../shared/notification/notification.facade';
 import { NotificationStateService } from '../../shared/notification/notification-state.service';
 import { Message, MessageCategory, MessagePriority, MessageStatus } from '../../shared/dataModels/messageModel/message.model';
+import { UserFirestoreService } from '../../shared/user/user-firestore.service';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-messaging',
@@ -14,11 +16,15 @@ import { Message, MessageCategory, MessagePriority, MessageStatus } from '../../
 })
 export class MessagingComponent implements OnInit{
 
+
   notificationFacade = inject(NotificationFacade);
   notificationState = inject(NotificationStateService);
   userProfileState = inject(UserProfileStateService);
+  userService = inject(UserFirestoreService);
 
   currentUser!: UserModel;
+
+  allUsers$ = this.userService.getAllUsers();
 
   selectedCategorySubject = new BehaviorSubject<MessageCategory | null>(null);
   selectedCategory$ = this.selectedCategorySubject.asObservable();
@@ -143,6 +149,7 @@ export class MessagingComponent implements OnInit{
   }
 
   showAll(){
+    firstValueFrom(this.allUsers$).then((users) => {console.log(users)});
     this.selectedCategorySubject.next(null);
   }
 
@@ -168,7 +175,16 @@ export class MessagingComponent implements OnInit{
     this.showMessageView = false;
   }
 
+  convertTimestamp(timestamp: Date | Timestamp): Date {
+    if (timestamp instanceof Date) return timestamp;
+    return timestamp.toDate();
+  }
 
+  lengthOfMessageList(arg0: Message[]): number {
+    if(arg0 === undefined) return 0;
+    
+    return arg0.length;
+  }
 
 
 }

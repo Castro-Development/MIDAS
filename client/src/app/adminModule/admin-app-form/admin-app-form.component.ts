@@ -128,12 +128,15 @@ export class AdminAppFormComponent implements OnInit{
   }
 
   onAccept() {
-    this.accept(this.user.id, this.applicationForm.value.chosenRole, this.applicationForm.value.reason);
+    this.accept(this.user.id, this.applicationForm.value.chosenRole, this.applicationForm.value.reason).then(() => {
+
+      console.log("On Accept compiled");
+      alert(this.user.username +" has been accepted! Navigating back to applications");
+      this.router.navigate(['/admin-user-applications']);
+    });
     //this.securityFacade.requestSystemAccess(this.user);
 
-    console.log("On Accept compiled");
-    alert(this.user.username +" has been accepted! Navigating back to applications");
-    this.router.navigate(['/admin-user-applications']);
+    
 
   }
 
@@ -150,7 +153,7 @@ export class AdminAppFormComponent implements OnInit{
 
 
 
-  private accept(applicationId: string, role: UserRole, reason: string){
+  private accept(applicationId: string, role: UserRole, reason: string): Promise<void>{
 
     this.approveDetails = {
       reviewerId: this.currentAdmin.id,
@@ -160,7 +163,7 @@ export class AdminAppFormComponent implements OnInit{
     //this.user.role = this.applicationForm.value.
 
     console.log(this.approveDetails.reviewerId);
-    this.userAdminFacade.approveApplication(this.user, this.approveDetails);
+    return this.userAdminFacade.approveApplication(this.user, this.approveDetails);
   }
 
   private reject(applicationId: string, reason: string){
