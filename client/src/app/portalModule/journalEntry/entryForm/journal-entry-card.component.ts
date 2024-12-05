@@ -3,6 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { getAuth } from 'firebase/auth';
 import { AccountLedger, JournalEntry, JournalEntryStatus, JournalTransaction } from '../../../shared/dataModels/financialModels/account-ledger.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'journal-entry-form-card',
@@ -228,7 +229,7 @@ export class JournalEntryFormCard {
 
 
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router) {
     this.createForm();
   }
 
@@ -348,6 +349,8 @@ export class JournalEntryFormCard {
       console.log(journalEntry);
       this.formSubmit.emit(journalEntry);
     }
+    alert('Journal Entry Approved');
+    this.router.navigate(['/portal-dashboard']);
   }
 }
 
