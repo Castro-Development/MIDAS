@@ -136,7 +136,7 @@ export class AdminAppFormComponent implements OnInit{
     });
     //this.securityFacade.requestSystemAccess(this.user);
 
-    
+
 
   }
 
@@ -183,7 +183,7 @@ export class AdminAppFormComponent implements OnInit{
     this.userAdminFirestoreService.updateApplication(this.user);
     alert(this.user.username +" has been updated. Navigating back to applications");
     //this.applicationForm.reset();
-    this.router.navigate(['/admin-user-applications']);
+    //this.router.navigate(['/admin-user-applications']);
   }
 
   createUser(){
