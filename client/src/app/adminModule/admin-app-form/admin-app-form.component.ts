@@ -100,7 +100,7 @@ export class AdminAppFormComponent implements OnInit{
     this.applicationForm.reset();
     console.log("On Accept compiled");
     alert(this.user.username +" has been accepted! Navigating back to applications");
-    this.router.navigate(['/admin-user-applications']);
+    // this.router.navigate(['/admin-user-applications']);
 
   }
 
@@ -115,7 +115,7 @@ export class AdminAppFormComponent implements OnInit{
 
 
 
-  accept(applicationId: string, role: UserRole, reason: string){
+  private accept(applicationId: string, role: UserRole, reason: string){
 
     this.approveDetails = {
       reviewerId: this.currentAdmin.id,
@@ -126,7 +126,7 @@ export class AdminAppFormComponent implements OnInit{
     this.userAdminFacade.approveApplication(this.user, this.approveDetails);
   }
 
-  reject(applicationId: string, reason: string){
+  private reject(applicationId: string, reason: string){
 
     this.rejectDetails = {
       reviewerId: this.currentAdmin.id,

@@ -60,7 +60,7 @@ export class UserAdminFacade {
    */
   approveApplication(userApp: UserApplication, approvalDetails: ApprovalDetails): Promise<void> {
 
-
+        console.log("Approving application", userApp);
         const updatedApplication: UserApplication = {
           ...userApp,
           status: ApplicationStatus.Approved,
@@ -72,18 +72,20 @@ export class UserAdminFacade {
 
         // Generate username if not already set
         if (!updatedApplication.username) {
+          console.log("Generating username");
           return this.generateUsername(
             userApp.firstname,
             userApp.lastname,
             new Date()
           ).then((username) => {
+            console.log("Generated username", username);
             this.userProfileFacade.createProfile({
               ...updatedApplication,
               username: username
-            }as UserApplication);
+            }as UserApplication).then(() => {console.log("Created profile")});
           })
         }else{
-          this.userProfileFacade.createProfile(updatedApplication);
+          this.userProfileFacade.createProfile(updatedApplication).then(() => {console.log("Created profile")});
           return this.userAdminService.updateApplication(updatedApplication);
         }
 

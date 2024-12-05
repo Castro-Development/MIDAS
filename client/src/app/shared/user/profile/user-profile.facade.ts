@@ -41,6 +41,7 @@ export class UserProfileFacade{
                                 //----------------------------------------//
     // // Basic Info
     createProfile(user: UserApplication) {
+        console.log('createProfile');
         return this.userProfileState.createProfile(user);
     }
     // updatePersonalInfo(userId: string, info: PersonalInfoUpdate): Observable<void>;
