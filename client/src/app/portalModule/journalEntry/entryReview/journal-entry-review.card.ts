@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { Observable } from "rxjs";
 import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
+import { Timestamp } from "firebase/firestore";
 
 @Component({
     selector: 'journal-review-card',
@@ -156,8 +157,9 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
       this.chosenJournalEntry.emit(journalEntry);
     }
 
-    convertTimestamp(timestamp: any): Date {
-      return timestamp?.toDate?.() || timestamp;
+    convertTimestamp(timestamp: Date | Timestamp): Date {
+      if (timestamp instanceof Date) return timestamp;
+      return timestamp.toDate();
     }
 
     ngOnInit(): void {

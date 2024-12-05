@@ -48,14 +48,32 @@ export class JournalEntryFirestoreService {
 
   getAllEntries(): Observable<JournalEntry[]> {
     return new Observable(subscriber => {
+      // Log the collection path to verify
+      console.log('Collection path:', this.COLLECTION_NAME);
+      
       const unsubscribe = onSnapshot(
         collection(this.firestore, this.COLLECTION_NAME),
         (snapshot) => {
-          const entries = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          } as JournalEntry));
-          console.log(entries);
+          // Add debugging for each document
+          snapshot.docs.forEach(doc => {
+            console.log('Document ID:', doc.id);
+            console.log('Document data:', doc.data());
+          });
+          
+          const entries = snapshot.docs.map(doc => {
+            // Create the object more explicitly for debugging
+            const data = doc.data();
+            const entry = {
+              ...data,
+              id: doc.id,  // This should never be empty if doc exists
+              
+            } as JournalEntry;
+            
+            // Log each transformed entry
+            console.log('Transformed entry:', entry);
+            return entry;
+          });
+          
           subscriber.next(entries);
         },
         error => {
@@ -94,6 +112,8 @@ export class JournalEntryFirestoreService {
       await updateDoc(entryRef, {
         ...changes,
         updatedAt: serverTimestamp()
+      }).then(() => {
+        console.log('Document successfully updated!');
       });
     } catch (error) {
       this.errorHandlingService.handleError('Failed to update journal entry', error);
