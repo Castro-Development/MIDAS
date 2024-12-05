@@ -10,14 +10,15 @@ import {
   deleteDoc,
   addDoc
 } from '@angular/fire/firestore';
-import { Observable, switchMap } from 'rxjs';
+import { Observable, map, switchMap } from 'rxjs';
 import { ErrorHandlingService } from '../error-handling/error-handling.service';
-import { Message } from '../dataModels/messageModel/message.model';
+import { Message, MessageStatus } from '../dataModels/messageModel/message.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationFirestoreService {
+  
   private readonly COLLECTION_NAME = 'notifications';
   
 
@@ -182,5 +183,11 @@ export class NotificationFirestoreService {
       this.errorHandlingService.handleError('Failed to delete notification', error);
       throw error;
     }
+  }
+
+  markAsRead(userId$: Observable<string>, message: string) {
+    userId$.pipe(
+      map(userId => this.updateNotification(userId, message, {status: MessageStatus.READ}))
+    )
   }
 }

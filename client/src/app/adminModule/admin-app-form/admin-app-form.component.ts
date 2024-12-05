@@ -180,10 +180,13 @@ export class AdminAppFormComponent implements OnInit{
   updateApp(){
 
     this.user = Object.assign(this.user, this.applicationForm.value);
-    this.userAdminFirestoreService.updateApplication(this.user);
-    alert(this.user.username +" has been updated. Navigating back to applications");
-    //this.applicationForm.reset();
-    this.router.navigate(['/admin-user-applications']);
+    console.log(this.user);
+    this.userAdminFirestoreService.updateApplication(this.user).then(() => {
+      alert(this.user.username +" has been updated. Navigating back to applications");
+      //this.applicationForm.reset();
+      this.router.navigate(['/admin-user-applications']);
+    });
+    
   }
 
   createUser(){
