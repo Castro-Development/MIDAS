@@ -13,19 +13,19 @@
     <div class="notification-menu">
 
       <div class="menu-item" (click)="showMessageList = true; showAll()">
-        <mat-icon>report_problem</mat-icon>All <div class="floating-icon">{{lengthOfMessageList(messageList)}}</div>
+        <mat-icon>report_problem</mat-icon>All <div class="floating-icon">{{lengthOfMessageList((userMessages$ | async)!)}}</div>
       </div>
 
       <div class="menu-item" (click)="showMessageList = true; showEmails()">
-        <mat-icon>report_problem</mat-icon>Emails
+        <mat-icon>report_problem</mat-icon>Emails <div class="floating-icon">{{lengthOfMessageList((userEmails$ | async)!)}}</div>
       </div>
 
       <div class="menu-item" (click)="showMessageList = true; showAlerts()">
-        <mat-icon>mail</mat-icon>Received Messages
+        <mat-icon>mail</mat-icon>Received Messages <div class="floating-icon">{{lengthOfMessageList((userAlerts$ | async)!)}}</div>
       </div>
 
       <div class="menu-item"  (click)="showMessageList = true; showWorkflow()">
-        <mat-icon>outgoing_mail</mat-icon>Workflow Messages
+        <mat-icon>outgoing_mail</mat-icon>Workflow Messages <div class="floating-icon">{{lengthOfMessageList((userWorkflow$ | async)!)}}</div>
       </div>
 
       <div class="menu-item"  (click)="showMessageSend = true">

@@ -35,13 +35,19 @@ export class MessagingComponent implements OnInit{
   unreadCount$ = this.notificationState.unreadCount$;
   filteredMessages$ = this.notificationState.filteredNotifications$;
 
+  userMessages$ = this.currentMessages$;
+
   userEmails$ = this.currentMessages$.pipe(
     map((notifications) => notifications.filter((notification) => notification.category === MessageCategory.USER_MESSAGE))
   )
   userAlerts$ = this.currentMessages$.pipe(
     map((notifications) => notifications.filter((notification) => notification.category === MessageCategory.SYSTEM_ALERT))
   )
+  userWorkflow$ = this.currentMessages$.pipe(
+    map((notifications) => notifications.filter((notification) => notification.category === MessageCategory.WORKFLOW))
+  )
   userSentMessages$!: Observable<Notification[]>
+
 
 
 
@@ -85,6 +91,7 @@ export class MessagingComponent implements OnInit{
   selectedMessageContent = this.selectedMessage.pipe(
     map((message) => message?.content)
   )
+
 
 
 
@@ -181,7 +188,7 @@ export class MessagingComponent implements OnInit{
   }
 
   lengthOfMessageList(arg0: Message[]): number {
-    if(arg0 === undefined) return 0;
+    if(arg0 === undefined || arg0 === null) return 0;
     
     return arg0.length;
   }
