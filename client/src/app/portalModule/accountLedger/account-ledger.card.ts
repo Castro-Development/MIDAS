@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, inject } from "@angular/core";
 import { AccountLedger, LedgerEntry } from "../../shared/dataModels/financialModels/account-ledger.model";
 import { JournalEntryFacade } from "../journalEntry/journal-entries.facade";
 import { ErrorHandlingService } from "../../shared/error-handling/error-handling.service";
+import { Timestamp } from "@angular/fire/firestore";
 
 @Component({
     selector: 'account-ledger-card',
@@ -67,7 +68,7 @@ import { ErrorHandlingService } from "../../shared/error-handling/error-handling
               <!-- Table Body -->
               <tbody class="bg-white divide-y divide-gray-200">
                 <tr *ngFor="let entry of paginatedEntries" class="hover:bg-gray-50">
-                  <td class="px-6 py-4 whitespace-nowrap">{{entry.date | date:'shortDate'}}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">{{convertTimestamp(entry.date) | date:'shortDate'}}</td>
                   <td class="px-6 py-4">{{entry.description}}</td>
                   <td class="px-6 py-4 text-right">{{entry.debitAmount | currency:'USD':'symbol':'1.2-2'}}</td>
                   <td class="px-6 py-4 text-right">{{entry.creditAmount | currency:'USD':'symbol':'1.2-2'}}</td>
@@ -166,5 +167,10 @@ export class AccountLedgerCard {
         if (postReference) {
             this.journalEntryFacade.selectEntry(postReference);
         }
+    }
+    
+    convertTimestamp(timestamp: Date | Timestamp): Date {
+      if (timestamp instanceof Date) return timestamp;
+      return timestamp.toDate();
     }
 }
