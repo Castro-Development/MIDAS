@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatFormField, MatInputModule } from '@angular/material/input';
 import { map } from 'rxjs/operators';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 
 //import { AdminRoutingModule } from './adminModule/admin-routing.module';
@@ -81,6 +82,7 @@ import { NotificationBubble } from './userModule/splash-screen-component/utils/n
 
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -144,6 +146,8 @@ import { NotificationBubble } from './userModule/splash-screen-component/utils/n
     FormsModule,
     HttpClientModule,
     MatFormField,
+    MatTooltipModule,
+
     //AdminModule,
     AdminSVG,
     CalendarSVG,

@@ -24,10 +24,10 @@
         <th>Password</th>
         <th>Submit Date</th>
         <th>Date Approved</th>
-        <th>Assigned GL?</th>
-        <th>Assigned Accounts?</th>
+        <!-- <th>Assigned GL?</th>
+        <th>Assigned Accounts?</th> -->
         <th>Requested Role</th>
-        <th>Edit Request</th>
+        <!-- <th>Edit Request</th> -->
         <th>View Application</th>
       </tr>
     </thead>
@@ -43,11 +43,11 @@
         <td>{{user.password}}</td>
         <td>{{user.dateRequested}}</td>
         <td>{{user.dateApproved}}</td>
-        <td>{{user.assignedGL}}</td>
-        <td>{{user.assignedAccounts}}</td>
+        <!-- <td>{{user.assignedGL}}</td>
+        <td>{{user.assignedAccounts}}</td> -->
         <td>{{user.requestedRole}}</td>
         <!-- <td><button class="edit">User</button></td> -->
-        <td><mat-icon>edit</mat-icon></td>
+        <!-- <td><mat-icon>edit</mat-icon></td> -->
         <td><button class="edit" (click)="decideUser(user)">{{user.username}}</button></td>
       </tr>
     </tbody>

@@ -16,6 +16,9 @@ import { UserFirestoreService } from '../../shared/user/user-firestore.service';
 import { UserProfileStateService } from '../../shared/user/profile/user-profile-state.service';
 import { NotificationFilter } from '../../shared/dataModels/messageModel/message.model';
 import { Timestamp } from '@angular/fire/firestore';
+import { CommonService } from '../../shared/common.service';
+import { CommonModule, formatDate } from '@angular/common';
+import { UserAdminFirestoreService } from '../../shared/user/admin/user-admin-firestore.service';
 
 @Component({
   selector: 'app-admin-app-form',
@@ -25,9 +28,12 @@ import { Timestamp } from '@angular/fire/firestore';
 
 export class AdminAppFormComponent implements OnInit{
 
+  public common = inject(CommonService); // contains date manipulation methods
+
   user!: UserApplication;
   currentAdmin!: UserModel;
   userAdminFacade = inject(UserAdminFacade);
+  userAdminFirestoreService = inject(UserAdminFirestoreService);
   userProfileState = inject(UserProfileStateService);
   userFirestore = inject(UserFirestoreService);
   router = inject(Router);
@@ -38,6 +44,9 @@ export class AdminAppFormComponent implements OnInit{
 
   approveDetails!: ApprovalDetails;
   rejectDetails!: RejectionDetails;
+
+  tempUser!: UserApplication;
+
 
   @Output() formSubmit = new EventEmitter<any>();
 
@@ -50,10 +59,34 @@ export class AdminAppFormComponent implements OnInit{
 
 
   public createForm() {
+    // this.tempUser = {
+    //   id: this.user.id,
+    //   username: this.user.username,
+    //   firstname: this.user.firstname,
+    //   lastname: this.user.lastname,
+    //   phone: this.user.phone,
+    //   street: this.user.street,
+    //   zip: this.user.zip,
+    //   state: this.user.state,
+    //   password: this.user.password,
+    //   requestedRole: this.user.requestedRole,
+    //   dateRequested: this.user.dateRequested,
+    //   status: this.user.status,
+
+    //   //numDenied: this.user.numDenied,
+    //   //dateApproved: this.user.dateApproved,
+    //   //assignedGL: this.user.assignedGL,
+    //   //assignedAccounts: this.user.assignedAccounts,
+    //   role: this.user.role,
+    //   notificationFilter: this.user.notificationFilter,
+    //   lastPWUpdate: new Date,
+    // }
+
+
     this.userProfileState.activeProfile$.subscribe((admin) => {
       this.currentAdmin = admin;
       this.applicationForm = this.fb.group({
-        userId: [this.user.id, Validators.required],
+        id: [this.user.id, Validators.required],
         username: [this.user.username, Validators.required],
         firstname: [this.user.firstname, Validators.required],
         lastname: [this.user.lastname, Validators.required],
@@ -62,15 +95,15 @@ export class AdminAppFormComponent implements OnInit{
         zip: [this.user.zip, Validators.required],
         state: [this.user.state, Validators.required],
         password: [this.user.password, Validators.required],
-        role: [this.user.requestedRole, Validators.required],
-        dateRequested: [this.user.dateRequested, Validators.required],
-        status: ['', Validators.required],
-        dateUpdated: [new Date().toISOString().split('T')[0], Validators.required],
+        requestedRole: [this.user.requestedRole, ],
+        //dateRequested: [this.user.dateRequested, ],
+        status: ['', ],
+        //dateUpdated: [new Date().toISOString().split('T')[0], ],
         //dateApproved: [new Date().toISOString().split('T')[0], Validators.required],
         reason: ['', Validators.required],
         //reviewedBy: [this.user.reviewedBy, Validators.required],
         chosenRole: [0, Validators.required],
-        reviewedBy: [this.currentAdmin.username, Validators.required],
+        reviewedBy: [this.currentAdmin.username,],
       });
     });
 
@@ -97,9 +130,10 @@ export class AdminAppFormComponent implements OnInit{
   onAccept() {
     this.accept(this.user.id, this.applicationForm.value.chosenRole, this.applicationForm.value.reason);
     //this.securityFacade.requestSystemAccess(this.user);
-    this.applicationForm.reset();
+
     console.log("On Accept compiled");
     alert(this.user.username +" has been accepted! Navigating back to applications");
+    this.applicationForm.reset();
     this.router.navigate(['/admin-user-applications']);
 
   }
@@ -107,9 +141,10 @@ export class AdminAppFormComponent implements OnInit{
   onReject() {
 
     this.reject(this.user.id, this.applicationForm.value.reason);
-    this.applicationForm.reset();
+
     console.log("On reject compiled");
     alert(this.user.username +" has been rejected. Navigating back to applications");
+    this.applicationForm.reset();
     this.router.navigate(['/admin-user-applications']);
   }
 
@@ -122,6 +157,8 @@ export class AdminAppFormComponent implements OnInit{
       notes: reason,
       assignedRole: role,
     }
+    //this.user.role = this.applicationForm.value.
+
     console.log(this.approveDetails.reviewerId);
     this.userAdminFacade.approveApplication(this.user, this.approveDetails);
   }
@@ -135,6 +172,15 @@ export class AdminAppFormComponent implements OnInit{
     }
     console.log(this.rejectDetails.reviewerId);
     this.userAdminFacade.rejectApplication(applicationId, this.rejectDetails);
+  }
+
+  updateApp(){
+
+    this.user = Object.assign(this.user, this.applicationForm.value);
+    this.userAdminFirestoreService.updateApplication(this.user);
+    alert(this.user.username +" has been updated. Navigating back to applications");
+    //this.applicationForm.reset();
+    this.router.navigate(['/admin-user-applications']);
   }
 
   createUser(){
@@ -176,6 +222,17 @@ export class AdminAppFormComponent implements OnInit{
     this.applicationForm.reset();
     this.router.navigate(['/admin-user-applications']);
 
+  }
+
+  convertDate(date: Date | undefined){
+    //let latest_date = this.datepipe.transform(date, 'MMMM dd, yyyy');
+    if(date != undefined){
+      let latest_date = formatDate(date,'MM/dd/yyyy', "en-US");
+      return latest_date
+    }
+    else{
+      return "No date to convert"
+    }
   }
 
 }

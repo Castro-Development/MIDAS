@@ -1,6 +1,6 @@
-<!-- {{user.username}}
-{{currentAdmin.username}}
-{{currentAdmin.id}} -->
+
+
+
 
 
 <div class="main-container">
@@ -26,13 +26,13 @@
       <div class="transaction-box">
         <div class="form-grid">
           <div class="grid-item-3-span">
-            <label for="userId" class="form-label">
+            <label for="id" class="form-label">
               User Id (Read Only)
             </label>
-            <input id="userId" type="text" formControlName="userId" class="form-input" placeholder="Enter User ID"
+            <input id="id" type="text" formControlName="id" class="form-input" placeholder="Enter User ID"
               readonly>
-            <div *ngIf="applicationForm.get('userId')?.touched &&
-                        applicationForm.get('userId')?.invalid" class="invalid-container">
+            <div *ngIf="applicationForm.get('id')?.touched &&
+                        applicationForm.get('id')?.invalid" class="invalid-container">
               User ID is required
             </div>
           </div>
@@ -132,12 +132,12 @@
 
 
           <div class="grid-item-3-span">
-            <label for="role" class="form-label">
+            <label for="requestedRole" class="form-label">
               Requested Role
             </label>
-            <input id="role" type="text" formControlName="role" class="form-input" placeholder="Edit User's Role">
-            <div *ngIf="applicationForm.get('role')?.touched &&
-                        applicationForm.get('role')?.invalid" class="invalid-container">
+            <input id="requestedRole" type="text" formControlName="requestedRole" class="form-input" placeholder="Edit User's Role">
+            <div *ngIf="applicationForm.get('requestedRole')?.touched &&
+                        applicationForm.get('requestedRole')?.invalid" class="invalid-container">
               Role required
             </div>
           </div>
@@ -242,6 +242,9 @@
         </button>
         <button type="submit" (click)="onReject()" class="reject clickable button">
           Reject Application Decision
+        </button>
+        <button type="submit" (click)="updateApp()" class="gold-button">
+          Update Application
         </button>
         <button type="submit" (click)="onAccept()" class="gold-button">
           Accept Application Decision
