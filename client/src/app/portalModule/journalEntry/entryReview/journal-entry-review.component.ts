@@ -1,6 +1,6 @@
 import { Component, OnDestroy, inject } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
+import { BehaviorSubject, map } from "rxjs";
+import { JournalEntry, JournalEntryStatus } from "../../../shared/dataModels/financialModels/account-ledger.model";
 import { JournalEntryFacade } from "../journal-entries.facade";
 import { Router } from "@angular/router";
 
@@ -28,7 +28,10 @@ export class JournalEntryReviewComponent implements OnDestroy {
     private journalFacade = inject(JournalEntryFacade);
     private router = inject(Router);
 
-    journalEntries$ = this.journalFacade.loadEntries();
+
+    journalEntries$ = this.journalFacade.loadEntries().pipe(
+        map(entries => entries.filter(entry => entry.status !== JournalEntryStatus.APPROVED))
+    );
     selectedEntry: JournalEntry | null = null;
 
     private destroySubject = new BehaviorSubject<void>(undefined);
