@@ -137,8 +137,6 @@ export class AdminAppFormComponent implements OnInit{
 
   }
 
-  git config --global user.email "you@example.com"
-  git config --global user.name "Your Name"
 
   onReject() {
 
