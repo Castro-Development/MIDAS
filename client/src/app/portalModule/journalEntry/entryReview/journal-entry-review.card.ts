@@ -24,7 +24,8 @@ import { Timestamp } from "firebase/firestore";
             <th class="">Entry ID</th>
             <th class="">Total Debits</th>
             <th class="">Total Credits</th>
-            <th class="">Status</th>
+            <th class="">Balanced?</th>
+            <th class="">Approval Status</th>
             <th class="">Review Entry</th>
           </tr>
         </thead>
@@ -51,11 +52,13 @@ import { Timestamp } from "firebase/firestore";
                   {{entry.isBalanced ? 'Balanced' : 'Unbalanced'}}
                 </span>
               </td>
+              <td>{{entry.status}}</td>
               <td class="">
                 <button (click)="chosenJournalEntry.emit(entry)"
-                  class="">
+                  class="" *ngIf="entry.status == 'DRAFT'">
                   <span class="material-icons">edit</span>
                 </button>
+                <mat-icon *ngIf="entry.status != 'DRAFT'">block</mat-icon>
               </td>
             </tr>
             <tr *ngIf="entries.length === 0" class="text-center">
