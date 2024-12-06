@@ -49,7 +49,7 @@ import { Router } from "@angular/router";
                 <span [ngClass]="entry.isBalanced ?
                   'balanced' :
                   'unbalanced'"
-                  class="status">
+                  class="status"  matTooltip="Journal Entry Status">
                   {{entry.isBalanced ? 'Balanced' : 'Unbalanced'}}
                 </span>
               </td>
@@ -57,12 +57,12 @@ import { Router } from "@angular/router";
               <td class="">
                 <!-- <button (click)="chosenJournalEntry.emit(entry)"
                   class="" *ngIf="entry.status == 'DRAFT'"> -->
-                  <button (click)="reviewJournal(entry)"
-                  class="" *ngIf="entry.status == 'DRAFT'">
+                  <button (click)="chosenJournalEntry.emit(entry)"
+                  class="" *ngIf="entry.status == 'DRAFT'"  matTooltip="Verify Journal">
 
                   <span class="material-icons">edit</span>
                 </button>
-                <mat-icon *ngIf="entry.status != 'DRAFT'">block</mat-icon>
+                <mat-icon *ngIf="entry.status != 'DRAFT'" (click)="chosenJournalEntry.emit(entry)"  matTooltip="View journal (cannot edit)">visibility</mat-icon>
               </td>
             </tr>
             <tr *ngIf="entries.length === 0" class="text-center">

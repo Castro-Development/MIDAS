@@ -12,7 +12,7 @@ import { ActivatedRoute } from "@angular/router";
 
       </div>
       <div class="header">
-        <button class="button return" routerLink="/journal-entry-review"><mat-icon
+        <button class="button return" routerLink="/portal-dashboard"><mat-icon
             class="mat-icon">arrow_back</mat-icon> Return to Journal Review</button>
       </div>
 
@@ -89,20 +89,25 @@ import { ActivatedRoute } from "@angular/router";
           </div>
 
           <!-- Approval Actions -->
-          <div class="approval">
+          <div class="approval" *ngIf="journalEntry?.status == 'DRAFT'">
             <button
               (click)="denyEntry()"
               class="slate-button"
+              [disabled]="journalEntry?.status != 'DRAFT'"
             >
               Deny Entry
             </button>
             <button
               (click)="approveEntry()"
-              [disabled]="!journalEntry?.isBalanced"
+              [disabled]="!journalEntry?.isBalanced || journalEntry?.status != 'DRAFT'"
               class="gold-button"
             >
               Approve Entry
             </button>
+          </div>
+
+          <div class="approval" *ngIf="journalEntry?.status != 'DRAFT'">
+            <h2 class="title red"  matTooltip="See admin to reverse decision">Journal entry has already been verified.</h2>
           </div>
         </div>
 
@@ -181,10 +186,10 @@ import { ActivatedRoute } from "@angular/router";
     }
 
     ngOnInit(): void {
-      this.route.queryParams.subscribe(params => {
-        if (params['data']) {
-          this.journalEntry = JSON.parse(params['data']);
-        }
-      });
+      // this.route.queryParams.subscribe(params => {
+      //   if (params['data']) {
+      //     this.journalEntry = JSON.parse(params['data']);
+      //   }
+      // });
     }
   }

@@ -246,6 +246,12 @@ $client-theme: mat.define-theme((
   .slate{
     color: var(--button-slate);
   }
+  .red{
+    color: var(--red);
+  }
+  .alert-red{
+    color: var(--auth-error-text);
+  }
 
 
 }

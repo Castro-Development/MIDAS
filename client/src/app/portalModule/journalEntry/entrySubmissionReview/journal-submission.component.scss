@@ -193,7 +193,7 @@
   left: 0;
   justify-content: center;
   align-items: center;
-  background-color: #000000;
+  background-color: #0a0a0a;
   --bg-opacity: 0.5;
   .denial-content{
     padding: 1.5rem;
@@ -227,9 +227,9 @@
 
   }
   .cancel-button{
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding: 0.5rem;
     border-radius: 0.375rem;
+    margin-right: 10px;
     border-width: 1px;
     color: #374151;
     &:hover {
@@ -252,4 +252,8 @@
       cursor: not-allowed;
     }
   }
+}
+
+.red{
+  color: var(--red);
 }
