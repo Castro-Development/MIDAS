@@ -24,6 +24,7 @@ import { ProfileComponent } from './userModule/profile/profile.component';
 import { RequestSystemAccessComponent } from './userModule/requestSystemAccess/request-system-access.component';
 import { SplashScreenComponent } from './userModule/splash-screen-component/splash-screen-component.component';
 import { MessagingComponent } from './userModule/messaging/messaging.component';
+import { JournalSubmissionCard } from './portalModule/journalEntry/entrySubmissionReview/journal-submission.card';
 
 export const routes: Routes = [
 
@@ -140,6 +141,11 @@ export const routes: Routes = [
       path: 'fiscal-period',
       component: FiscalPeriodManagementComponent
   },
+  {
+    path: 'journal-detail-card',
+    component: JournalSubmissionCard
+},
+
 // {
 //     path: 'journal-entry-review/:id',
 //     component: JournalEntrySubmissionReviewComponent

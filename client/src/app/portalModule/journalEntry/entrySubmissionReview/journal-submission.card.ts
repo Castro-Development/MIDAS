@@ -1,10 +1,21 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter, inject, OnInit } from "@angular/core";
 import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
+import { ActivatedRoute } from "@angular/router";
 
 // journal-entry-detail.component.ts
 @Component({
     selector: 'journal-detail-card',
     template: `
+    <div class="main-container">
+      <div class="title-header">
+        <h2 class="section-header-global">Review Journal Entry Details</h2>
+
+      </div>
+      <div class="header">
+        <button class="button return" routerLink="/journal-entry-review"><mat-icon
+            class="mat-icon">arrow_back</mat-icon> Return to Journal Review</button>
+      </div>
+
       <div class="review-container">
         <!-- Header -->
         <div class="title-container">
@@ -40,7 +51,7 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
           </div>
 
           <!-- Transactions Table -->
-          <div>
+          <div class="transaction-container">
             <h3 class="transaction-header">Transactions</h3>
             <table class="min-w-full table-split">
               <thead>
@@ -54,7 +65,7 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
               <tbody class="table-split">
                 <tr *ngFor="let transaction of journalEntry?.transactions">
                   <td class="transaction-info">{{transaction.accountId}}</td>
-                  <td class="px-6 py-4 date">{{transaction.description}}</td>
+                  <td class="transaction-info">{{transaction.description}}</td>
                   <td class="transaction-info text-right">
                     {{transaction.debitAmount | currency}}
                   </td>
@@ -81,14 +92,14 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
           <div class="approval">
             <button
               (click)="denyEntry()"
-              class="approve"
+              class="slate-button"
             >
               Deny Entry
             </button>
             <button
               (click)="approveEntry()"
               [disabled]="!journalEntry?.isBalanced"
-              class="deny"
+              class="gold-button"
             >
               Approve Entry
             </button>
@@ -128,13 +139,21 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
           </div>
         </div>
       </div>
+    </div>
+
     `,
     styleUrl: './journal-submission.component.scss',
   })
-  export class JournalSubmissionCard {
+  export class JournalSubmissionCard implements OnInit{
+
+
+
+
     @Input() journalEntry: JournalEntry | null = null;
     @Output() approved = new EventEmitter<JournalEntry>();
     @Output() denied = new EventEmitter<string>();
+
+    route = inject(ActivatedRoute);
 
     showDenialDialog = false;
     denialReason = '';
@@ -159,5 +178,13 @@ import { JournalEntry } from "../../../shared/dataModels/financialModels/account
         this.showDenialDialog = false;
         this.denialReason = '';
       }
+    }
+
+    ngOnInit(): void {
+      this.route.queryParams.subscribe(params => {
+        if (params['data']) {
+          this.journalEntry = JSON.parse(params['data']);
+        }
+      });
     }
   }

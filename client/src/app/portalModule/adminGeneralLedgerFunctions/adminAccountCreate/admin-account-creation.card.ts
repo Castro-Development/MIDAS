@@ -5,173 +5,192 @@ import { AccountLedger, AccountCategory } from '../../../shared/dataModels/finan
 @Component({
   selector: 'account-creation-card',
   template: `
-    <div class="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow">
-      <h2 class="text-2xl font-bold mb-6">Create New Account</h2>
+    <div class="main-container">
+      <div class="title-header">
+        <h2 class="section-header-global">Create New Account</h2>
 
-      <form [formGroup]="accountForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      </div>
+      <div class="header">
+        <button class="button return" routerLink="/chart-of-accounts"><mat-icon
+            class="mat-icon">arrow_back</mat-icon> Return to Chart of Accounts
+        </button>
+      </div>
+
+      <form [formGroup]="accountForm" (ngSubmit)="onSubmit()" class="form-container space-y-6">
         <!-- Account Number -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="form-group">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Account Number*
-            </label>
-            <input
-              type="text"
-              formControlName="accountNumber"
-              class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-              [class.border-red-500]="isFieldInvalid('accountNumber')"
-            >
-            <div *ngIf="isFieldInvalid('accountNumber')" class="text-red-500 text-sm mt-1">
-              Account number is required and must be unique
-            </div>
-          </div>
+        <h3 class="form-section-header">Account Details</h3>
+        <div class="transaction-box">
+          <div class="form-grid">
 
-          <!-- Account Name -->
-          <div class="form-group">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Account Name*
-            </label>
-            <input
-              type="text"
-              formControlName="accountName"
-              class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-              [class.border-red-500]="isFieldInvalid('accountName')"
-            >
-            <div *ngIf="isFieldInvalid('accountName')" class="text-red-500 text-sm mt-1">
-              Account name is required
-            </div>
-          </div>
-        </div>
-
-        <!-- Description -->
-        <div class="form-group">
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            Description*
-          </label>
-          <textarea
-            formControlName="description"
-            rows="3"
-            class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-            [class.border-red-500]="isFieldInvalid('description')"
-          ></textarea>
-          <div *ngIf="isFieldInvalid('description')" class="text-red-500 text-sm mt-1">
-            Description is required
-          </div>
-        </div>
-
-        <!-- Category and Subcategory -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="form-group">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Category*
-            </label>
-            <select
-              formControlName="category"
-              class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-              [class.border-red-500]="isFieldInvalid('category')"
-              (change)="onCategoryChange()"
-            >
-              <option value="">Select Category</option>
-              <option *ngFor="let category of categories" [value]="category">
-                {{category}}
-              </option>
-            </select>
-            <div *ngIf="isFieldInvalid('category')" class="text-red-500 text-sm mt-1">
-              Category is required
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Subcategory*
-            </label>
-            <select
-              formControlName="subcategory"
-              class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-              [class.border-red-500]="isFieldInvalid('subcategory')"
-            >
-              <option value="">Select Subcategory</option>
-              <option *ngFor="let subcategory of subcategories" [value]="subcategory">
-                {{subcategory}}
-              </option>
-            </select>
-            <div *ngIf="isFieldInvalid('subcategory')" class="text-red-500 text-sm mt-1">
-              Subcategory is required
-            </div>
-          </div>
-        </div>
-
-        <!-- Normal Side and Initial Balance -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="form-group">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Normal Side*
-            </label>
-            <select
-              formControlName="normalSide"
-              class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-              [class.border-red-500]="isFieldInvalid('normalSide')"
-            >
-              <option value="">Select Normal Side</option>
-              <option value="Debit">Debit</option>
-              <option value="Credit">Credit</option>
-            </select>
-            <div *ngIf="isFieldInvalid('normalSide')" class="text-red-500 text-sm mt-1">
-              Normal side is required
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Initial Balance*
-            </label>
-            <input
-              type="number"
-              formControlName="initialBalance"
-              class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-              [class.border-red-500]="isFieldInvalid('initialBalance')"
-              step="0.01"
-            >
-            <div *ngIf="isFieldInvalid('initialBalance')" class="text-red-500 text-sm mt-1">
-              Initial balance is required and must be a valid number
-            </div>
-          </div>
-        </div>
-
-        <!-- Status and Date -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="form-group">
-            <label class="flex items-center space-x-2 text-sm font-medium text-gray-700">
+            <div class="grid-item-3-span">
+              <label class="form-label">
+                Account Number*
+              </label>
               <input
-                type="checkbox"
-                formControlName="isActive"
-                class="rounded text-blue-600 focus:ring-blue-500"
+                type="text"
+                formControlName="accountNumber"
+                class="form-input"
+                [class.border-red-500]="isFieldInvalid('accountNumber')">
+              <div *ngIf="isFieldInvalid('accountNumber')" class="text-red-500 text-sm mt-1">
+                Account number is required and must be unique
+              </div>
+            </div>
+
+            <!-- Account Name -->
+            <div class="grid-item-3-span">
+              <label class="form-label">
+                Account Name*
+              </label>
+              <input
+                type="text"
+                formControlName="accountName"
+                class="form-input"
+                [class.border-red-500]="isFieldInvalid('accountName')"
               >
-              <span>Account Active</span>
-            </label>
+              <div *ngIf="isFieldInvalid('accountName')" class="text-red-500 text-sm mt-1">
+                Account name is required
+              </div>
+            </div>
+
           </div>
 
-          <div class="form-group">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Date Added
-            </label>
-            <input
-              type="date"
-              formControlName="dateAdded"
-              class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-            >
+          <!-- Description -->
+          <div class="form-grid">
+            <div class="grid-item-3-span">
+              <label class="form-label">
+                Description*
+              </label>
+              <textarea
+                formControlName="description"
+                rows="3"
+                class="form-input"
+                [class.border-red-500]="isFieldInvalid('description')"
+              ></textarea>
+              <div *ngIf="isFieldInvalid('description')" class="text-red-500 text-sm mt-1">
+                Description is required
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+        <h3 class="form-section-header">Account Categories</h3>
+        <div class="transaction-box">
+          <!-- Category and Subcategory -->
+          <div class="form-grid">
+            <div class="grid-item-3-span">
+              <label class="form-label">
+                Category*
+              </label>
+              <select
+                formControlName="category"
+                class="form-input"
+                [class.border-red-500]="isFieldInvalid('category')"
+                (change)="onCategoryChange()"
+              >
+                <option value="">Select Category</option>
+                <option *ngFor="let category of categories" [value]="category">
+                  {{category}}
+                </option>
+              </select>
+              <div *ngIf="isFieldInvalid('category')" class="text-red-500 text-sm mt-1">
+                Category is required
+              </div>
+            </div>
+
+            <div class="grid-item-3-span">
+              <label class="form-label">
+                Subcategory*
+              </label>
+              <select
+                formControlName="subcategory"
+                class="form-input"
+                [class.border-red-500]="isFieldInvalid('subcategory')"
+              >
+                <option value="">Select Subcategory</option>
+                <option *ngFor="let subcategory of subcategories" [value]="subcategory">
+                  {{subcategory}}
+                </option>
+              </select>
+              <div *ngIf="isFieldInvalid('subcategory')" class="text-red-500 text-sm mt-1">
+                Subcategory is required
+              </div>
+            </div>
+          </div>
+
+          <!-- Normal Side and Initial Balance -->
+          <div class="form-grid">
+            <div class="grid-item-3-span">
+              <label class="form-label">
+                Normal Side*
+              </label>
+              <select
+                formControlName="normalSide"
+                class="form-input"
+                [class.border-red-500]="isFieldInvalid('normalSide')"
+              >
+                <option value="">Select Normal Side</option>
+                <option value="Debit">Debit</option>
+                <option value="Credit">Credit</option>
+              </select>
+              <div *ngIf="isFieldInvalid('normalSide')" class="text-red-500 text-sm mt-1">
+                Normal side is required
+              </div>
+            </div>
+
+            <div class="grid-item-3-span">
+              <label class="form-label">
+                Initial Balance*
+              </label>
+              <input
+                type="number"
+                formControlName="initialBalance"
+                class="form-input"
+                [class.border-red-500]="isFieldInvalid('initialBalance')"
+                step="0.01"
+              >
+              <div *ngIf="isFieldInvalid('initialBalance')" class="text-red-500 text-sm mt-1">
+                Initial balance is required and must be a valid number
+              </div>
+            </div>
+          </div>
+
+          <!-- Status and Date -->
+          <div class="form-grid">
+            <div class="grid-item-3-span">
+              <label class="flex items-center space-x-2 text-sm font-medium text-gray-700">
+                <input
+                  type="checkbox"
+                  formControlName="isActive"
+                  class="rounded text-blue-600 focus:ring-blue-500"
+                >
+                <span>Account Active</span>
+              </label>
+            </div>
+
+            <div class="grid-item-3-span">
+              <label class="form-label">
+                Date Added
+              </label>
+              <input
+                type="date"
+                formControlName="dateAdded"
+                class="form-input"
+              >
+            </div>
           </div>
         </div>
 
         <!-- Comments -->
-        <div class="form-group">
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+        <div class="grid-item-3-span">
+          <label class="form-label">
             Comments
           </label>
           <textarea
             formControlName="comments"
-            rows="2"
-            class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+            rows="4"
+            class="form-input"
           ></textarea>
         </div>
 
@@ -180,21 +199,22 @@ import { AccountLedger, AccountCategory } from '../../../shared/dataModels/finan
           <button
             type="button"
             (click)="onReset()"
-            class="px-4 py-2 border rounded text-gray-600 hover:bg-gray-100"
+            class="slate-button"
           >
             Reset
           </button>
           <button
             type="submit"
             [disabled]="!accountForm.valid"
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400"
+            class="gold-button"
           >
             Create Account
           </button>
         </div>
       </form>
     </div>
-  `
+  `,
+  styleUrl: './admin-account-creation.component.scss'
 })
 export class AccountCreationCard implements OnInit {
   accountForm: FormGroup = new FormGroup({

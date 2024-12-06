@@ -147,7 +147,7 @@
             <label for="dateRequested" class="form-label">
               Date Requested
             </label>
-            <input id="dateRequested" type="text" formControlName="dateRequested" class="form-input"
+            <input id="dateRequested" type="date" formControlName="dateRequested" class="form-input"
               placeholder="Edit User's dateRequested">
             <div *ngIf="applicationForm.get('dateRequested')?.touched &&
                         applicationForm.get('dateRequested')?.invalid" class="invalid-container">
@@ -174,12 +174,12 @@
 
       <div class="form-grid">
         <div class="grid-item-3-span">
-          <label for="dateUpdated" class="form-label">
+          <label for="dateApproved" class="form-label">
             Date Approved / Rejected
           </label>
-          <input id="dateUpdated" type="date" formControlName="dateUpdated" class="form-input">
-          <div *ngIf="applicationForm.get('dateUpdated')?.touched &&
-                      applicationForm.get('dateUpdated')?.invalid" class="invalid-container">
+          <input id="dateApproved" type="date" formControlName="dateApproved" class="form-input">
+          <div *ngIf="applicationForm.get('dateApproved')?.touched &&
+                      applicationForm.get('dateApproved')?.invalid" class="invalid-container">
             Date is required
           </div>
         </div>

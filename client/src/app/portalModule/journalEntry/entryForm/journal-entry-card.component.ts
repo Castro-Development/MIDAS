@@ -349,7 +349,7 @@ export class JournalEntryFormCard {
       console.log(journalEntry);
       this.formSubmit.emit(journalEntry);
     }
-    alert('Journal Entry Approved');
+    alert('Journal Entry Submitted');
     this.router.navigate(['/portal-dashboard']);
   }
 }

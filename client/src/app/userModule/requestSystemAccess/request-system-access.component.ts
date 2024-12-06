@@ -41,7 +41,7 @@ export class RequestSystemAccessComponent {
   constructor(private formbuilder: FormBuilder, private router: Router, private adminFacade: UserAdminFacade, private securityFacade: UserSecurityFacade) {
     this.formValue = new FormGroup({
       username: new FormControl("",),
-      password: new FormControl("", [Validators.required, Validators.minLength(8)]),
+      password: new FormControl("", [Validators.required, Validators.minLength(8),]),
       confirmPassword: new FormControl("", [Validators.required],),
       firstname: new FormControl("", [Validators.required]),
       lastname: new FormControl("", [Validators.required]),
@@ -52,6 +52,40 @@ export class RequestSystemAccessComponent {
       role: new FormControl(UserRole,),
     },)
   }
+
+  passCheck(){
+    if(this.hasNonAlpha() && this.hasNum() && this.hasCaps()){
+      return true;
+    }
+    else return false;
+  }
+
+  hasNonAlpha(){
+    if(!this.formValue.value.password.match(/^[0-9A-Za-z]+$/)){
+      return true;
+    }
+    else return false;
+  }
+
+  hasNum(){
+    const regex = /\d/;
+    if(regex.test(this.formValue.value.password)){
+      return true;
+    }
+    else return false;
+  }
+
+  hasCaps(){
+    if(this.hasUpperCase(this.formValue.value.password)){
+      return true;
+    }
+    else return false;
+  }
+
+  hasUpperCase(str: string) {
+    return str !== str.toLowerCase();
+  }
+
 
 
 

@@ -130,9 +130,15 @@
 
           <div class="grid-item-3-span">
             <label for="role" class="form-label">
-              Requested Role
+              User Role
             </label>
-            <input id="role" type="text" formControlName="role" class="form-input" placeholder="Edit User's Role">
+            <!-- <input id="role" type="text" formControlName="role" class="form-input" placeholder="Edit User's Role"> -->
+             <select id="role" formControlName="role" class="form-input" >
+              <option value="0">Guest</option>
+              <option value="1">Accountant</option>
+              <option value="2">Manager</option>
+              <option value="3">Administrator</option>
+             </select>
             <div *ngIf="applicationForm.get('role')?.touched &&
                         applicationForm.get('role')?.invalid" class="invalid-container">
               Role required
@@ -140,7 +146,7 @@
           </div>
 
 
-          <div class="grid-item-3-span">
+          <!-- <div class="grid-item-3-span">
             <label for="dateRequested" class="form-label">
               Date Requested
             </label>
@@ -150,7 +156,7 @@
                         applicationForm.get('dateRequested')?.invalid" class="invalid-container">
               Date Requested required
             </div>
-          </div>
+          </div> -->
 
 
           <div class="grid-item-3-span">
@@ -163,6 +169,25 @@
                         applicationForm.get('password')?.invalid" class="invalid-container">
               Password required
             </div>
+          </div>
+
+          <!-- <div class="grid-item-3-span">
+            <label for="numDenied" class="form-label">
+              Failed Password Attempts
+            </label>
+            <input id="numDenied" type="number" formControlName="numDenied" class="form-input"
+              placeholder="">
+          </div> -->
+
+          <div class="grid-item-3-span">
+            <label for="lastPWUpdate" class="form-label">
+              Date of Last Password Update
+            </label>
+            <input id="lastPWUpdate" type="date" formControlName="lastPWUpdate" class="form-input">
+            <!-- <div *ngIf="applicationForm.get('lastPWUpdate')?.touched &&
+                        applicationForm.get('lastPWUpdate')?.invalid" class="invalid-container">
+              PW Date is required
+            </div> -->
           </div>
 
         </div>

@@ -1,5 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, inject, Input, OnInit, Output } from "@angular/core";
 import { AccountLedger } from "../../shared/dataModels/financialModels/account-ledger.model";
+import { CommonService } from "../../shared/common.service";
+
 
 // chart-of-accounts-card.component.ts
 @Component({
@@ -25,6 +27,8 @@ import { AccountLedger } from "../../shared/dataModels/financialModels/account-l
           <th class="">Name</th>
           <th class="">Category</th>
           <th class="">Subcategory</th>
+          <th class="">Description</th>
+          <th class="">Date Created</th>
           <th class="">Balance</th>
           <th class="">Normal Side</th>
           <th class="">Status</th>
@@ -38,6 +42,8 @@ import { AccountLedger } from "../../shared/dataModels/financialModels/account-l
           <td class="">{{account.accountName}}</td>
           <td class="">{{account.category}}</td>
           <td class="">{{account.subcategory}}</td>
+          <td class="">{{account.description}}</td>
+          <td class="">{{common.convertTimestamp(account.createdAt)}}</td>
           <td class="">
             {{account.currentBalance | currency}}
           </td>
@@ -46,8 +52,8 @@ import { AccountLedger } from "../../shared/dataModels/financialModels/account-l
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-center">
             <span [class]="account.isActive ?
-              'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800' :
-              'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800'">
+              'balanced' :
+              'unbalanced'">
               {{account.isActive ? 'Active' : 'Inactive'}}
             </span>
           </td>
@@ -76,6 +82,10 @@ export class ChartOfAccountsCard implements OnInit {
     @Output() editAccount = new EventEmitter<AccountLedger>();
     @Output() viewHistory = new EventEmitter<AccountLedger>();
 
+
+
+    public common = inject(CommonService);
+
     constructor() {}
 
     ngOnInit(): void {
@@ -90,4 +100,6 @@ export class ChartOfAccountsCard implements OnInit {
     handleViewHistory(account: AccountLedger): void {
         this.selectedAccount.emit(account);
     }
+
+
 }

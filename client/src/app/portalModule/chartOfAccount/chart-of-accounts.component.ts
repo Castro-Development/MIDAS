@@ -84,4 +84,14 @@ export class ChartOfAccountsComponent {
   createNewAccount() {
     this.router.navigate(['/add-account']);
   }
+
+  sortByName(){
+    this.accounts$ = this.accounts$.pipe(
+      map(account => account.sort())
+    );
+  }
 }
+function sortBy(arg0: (accounts: any) => any): import("rxjs").OperatorFunction<AccountLedger[], AccountLedger[]> {
+  throw new Error('Function not implemented.');
+}
+

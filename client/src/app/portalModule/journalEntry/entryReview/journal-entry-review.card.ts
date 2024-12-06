@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter, inject } from "@angular/core";
 import { Observable } from "rxjs";
 import { JournalEntry } from "../../../shared/dataModels/financialModels/account-ledger.model";
 import { Timestamp } from "firebase/firestore";
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'journal-review-card',
@@ -46,16 +47,19 @@ import { Timestamp } from "firebase/firestore";
               </td>
               <td class="">
                 <span [ngClass]="entry.isBalanced ?
-                  'bg-green-100 text-green-800' :
-                  'bg-red-100 text-red-800'"
-                  class="px-3 py-1 rounded-full text-xs">
+                  'balanced' :
+                  'unbalanced'"
+                  class="status">
                   {{entry.isBalanced ? 'Balanced' : 'Unbalanced'}}
                 </span>
               </td>
               <td>{{entry.status}}</td>
               <td class="">
-                <button (click)="chosenJournalEntry.emit(entry)"
+                <!-- <button (click)="chosenJournalEntry.emit(entry)"
+                  class="" *ngIf="entry.status == 'DRAFT'"> -->
+                  <button (click)="reviewJournal(entry)"
                   class="" *ngIf="entry.status == 'DRAFT'">
+
                   <span class="material-icons">edit</span>
                 </button>
                 <mat-icon *ngIf="entry.status != 'DRAFT'">block</mat-icon>
@@ -150,6 +154,8 @@ import { Timestamp } from "firebase/firestore";
     @Input() journalEntries$?: Observable<JournalEntry[]> = undefined;
     @Output() chosenJournalEntry = new EventEmitter<JournalEntry>();
 
+    router = inject(Router);
+
     // Pagination properties
     currentPage = 1;
     itemsPerPage = 10;
@@ -214,5 +220,9 @@ import { Timestamp } from "firebase/firestore";
     private updatePaginationState(): void {
       const totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
       this.isLastPage = this.currentPage >= totalPages;
+    }
+
+    reviewJournal(journal: JournalEntry) {
+      this.router.navigate(['/journal-detail-card'], { queryParams: { data: JSON.stringify(journal)} });
     }
   }

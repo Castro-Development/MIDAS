@@ -12,6 +12,14 @@ import interactionPlugin from '@fullcalendar/interaction';
   styleUrl: './calendar.component.scss'
 })
 export class CalendarComponent {
+  transActionEvents: any = [
+    {
+      title: '',
+      date: '',
+      url:'',
+    },
+  ];
+
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, interactionPlugin],
@@ -21,9 +29,21 @@ export class CalendarComponent {
       { title: 'event 2', date: '2024-11-02', url: 'https://www.google.com' }
     ],
 
+
+
   };
 
   handleDateClick(arg: any) {
     //alert('date click! ' + arg.dateStr)
+  }
+
+  addEvent(title: string, date: Date, url: string){
+    const event = {
+      title: title,
+      start: date,
+      url: url,
+    }
+    //this.calendarOptions.eve
+
   }
 }

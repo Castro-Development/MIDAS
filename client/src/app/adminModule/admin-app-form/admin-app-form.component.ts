@@ -37,10 +37,11 @@ export class AdminAppFormComponent implements OnInit{
   userProfileState = inject(UserProfileStateService);
   userFirestore = inject(UserFirestoreService);
   router = inject(Router);
+  route = inject(ActivatedRoute);
 
   fb = inject(FormBuilder);
   applicationForm!: FormGroup;
-  route = inject(ActivatedRoute);
+
 
   approveDetails!: ApprovalDetails;
   rejectDetails!: RejectionDetails;
@@ -96,10 +97,10 @@ export class AdminAppFormComponent implements OnInit{
         state: [this.user.state, Validators.required],
         password: [this.user.password, Validators.required],
         requestedRole: [this.user.requestedRole, ],
-        //dateRequested: [this.user.dateRequested, ],
+        dateRequested: [this.user.dateRequested, ],
         status: ['', ],
         //dateUpdated: [new Date().toISOString().split('T')[0], ],
-        //dateApproved: [new Date().toISOString().split('T')[0], Validators.required],
+        dateApproved: [new Date().toISOString().split('T')[0], Validators.required],
         reason: ['', Validators.required],
         //reviewedBy: [this.user.reviewedBy, Validators.required],
         chosenRole: [0, Validators.required],
@@ -161,6 +162,9 @@ export class AdminAppFormComponent implements OnInit{
       assignedRole: role,
     }
     //this.user.role = this.applicationForm.value.
+    this.user.lastPWUpdate = new Date;
+    this.user.status = 2;
+    this.user.numDenied = 0;
 
     console.log(this.approveDetails.reviewerId);
     return this.userAdminFacade.approveApplication(this.user, this.approveDetails);
@@ -173,6 +177,9 @@ export class AdminAppFormComponent implements OnInit{
       notes: reason,
       reason: reason,
     }
+
+    this.user.status = 3;
+    this.user.datesDenied?.push(new Date);
     console.log(this.rejectDetails.reviewerId);
     this.userAdminFacade.rejectApplication(applicationId, this.rejectDetails);
   }

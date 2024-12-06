@@ -1,15 +1,26 @@
+.main-container{
+  //background-color: var(--form-black);
+  padding-bottom: 50px;
+  width: 60%;
+}
+
 .review-container{
+  display: flex;
+  flex-direction: column;
   padding: 1.5rem;
   border-radius: 0.5rem;
-  max-width: 56rem;
-  background-color: #ffffff;
+  //max-width: 56rem;
+  width: 100%;
+  background-color: var(--form-black);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  margin: 5% auto 0 auto;
+  margin: 0 auto 0 auto;
+  color: var(--text);
+  //margin-bottom: 20px;
 }
 
 .title-container{
   padding-bottom: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: .5rem;
   border-bottom-width: 1px;
 }
 
@@ -17,12 +28,12 @@
   font-size: 1.5rem;
   line-height: 2rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--bright-text);
 }
 .date{
   font-size: 0.875rem;
   line-height: 1.25rem;
-  color: #6B7280;
+  color: var(--text);
 }
 
 .entry-details{
@@ -38,8 +49,8 @@
 .info-label{
   font-size: 0.875rem;
   line-height: 1.25rem;
-  font-weight: 500;
-  color: #374151;
+  font-weight: 700;
+  color: var(--bright-text);
 }
 
 .journal-entry{
@@ -53,34 +64,34 @@
 }
 .entry-desc{
   margin-top: 0.25rem;
-  color: #111827;
+  color: var(--text);
 }
 
-.balanced{
-  color: #065F46;
-  background-color: #D1FAE5;
-}
+// .balanced{
+//   color: #065F46;
+//   background-color: #D1FAE5;
+// }
 
-.unbalanced{
-  color: #991B1B;
-  background-color: #FEE2E2;
-}
+// .unbalanced{
+//   color: #991B1B;
+//   background-color: #FEE2E2;
+// }
 
 .transaction-header{
   margin-bottom: 0.75rem;
   font-size: 1.125rem;
   line-height: 1.75rem;
-  font-weight: 500;
-  color: #111827;
+  font-weight: 700;
+  color: var(--bright-text);
 }
 .transaction-info{
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: .5rem;
+  padding-bottom: .5rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  color: #111827;
+  color: var(--text);
 }
 
 .account-label, .debit-label{
@@ -90,9 +101,9 @@
   padding-right: 1.5rem;
   font-size: 0.75rem;
   line-height: 1rem;
-  font-weight: 500;
+  font-weight: 700;
   text-align: left;
-  color: #6B7280;
+  color: var(--bright-text);
   text-transform: uppercase;
 }
 .debit-label{
@@ -100,13 +111,18 @@
 }
 
 .transaction-container{
-  border-top-width: 1px;
-  border-color: #E5E7EB;
+  //border-top-width: 1px;
+  //border-color: #E5E7EB;
+  //margin-bottom: 10px;
 }
 
 .table-split{
   border-top-width: 1px;
   border-color: #E5E7EB;
+}
+
+.last{
+  margin-bottom: 10px;
 }
 
 .totals{
@@ -116,12 +132,15 @@
   padding-right: 1.5rem;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  font-weight: 500;
+  font-weight: 700;
   text-align: right;
-  color: #111827;
+  color: var(--main-black)
+  //border-radius: 5px;
 }
 .totals-highlight{
-  background-color: #F9FAFB;
+  margin-top: 10px;
+  background-color: var(--button-gold);
+  border-radius: 5px;
 }
 
 .approval{

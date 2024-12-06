@@ -1,3 +1,7 @@
+option{
+  color: var(--main-black);
+}
+
 .main-form-container {
   //display: flex;
   //overflow-y: auto;
@@ -112,4 +116,11 @@
   }
 
 
+}
+
+.error{
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: .75rem;
+  color: var(--auth-error-text);
 }

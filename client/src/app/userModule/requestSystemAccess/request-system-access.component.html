@@ -45,7 +45,7 @@
               placeholder="Enter First Name" required="">
 
               <div class="col-span-6 mt-1" *ngIf="formValue.controls['firstname'].invalid && formValue.controls['firstname'].touched || formValue.controls['firstname'].dirty">
-                <span class="text-red-600" *ngIf="formValue.controls['firstname'].errors?.['required']">
+                <span class="error" *ngIf="formValue.controls['firstname'].errors?.['required']">
                   You must enter your first name!
                 </span>
 
@@ -61,7 +61,7 @@
               placeholder="Enter Last Name" required="">
 
               <div class="col-span-6 mt-1" *ngIf="formValue.controls['lastname'].invalid && formValue.controls['lastname'].touched || formValue.controls['lastname'].dirty">
-                <span class="text-red-600" *ngIf="formValue.controls['lastname'].errors?.['required']">
+                <span class="error" *ngIf="formValue.controls['lastname'].errors?.['required']">
                   You must enter your last name!
                 </span>
               </div>
@@ -77,10 +77,10 @@
               placeholder="Enter Your E-mail Address" required="">
 
               <div class="col-span-6 mt-1" *ngIf="formValue.controls['email'].invalid && formValue.controls['email'].touched || formValue.controls['email'].dirty">
-                <span class="text-red-600" *ngIf="formValue.controls['email'].errors?.['required']">
+                <span class="error" *ngIf="formValue.controls['email'].errors?.['required']">
                   You must enter your email!
                 </span>
-                <span class="text-red-600" *ngIf="formValue.controls['email'].errors?.['email']">
+                <span class="error" *ngIf="formValue.controls['email'].errors?.['email']">
                   You must a valid e-mail address!
                 </span>
               </div>    Damien: Commented this out as the user should only provide first/last name and password, then the username is created from that.
@@ -101,11 +101,20 @@
               'visibility_off':'visibility'}}</mat-icon>
           </div>
           <div class="col-span-6" *ngIf="formValue.controls['password'].invalid && formValue.controls['password'].touched || formValue.controls['password'].dirty">
-            <span class="text-red-600" *ngIf="formValue.controls['password'].errors?.['required']">
-              Your must enter a password
+            <span class="error" *ngIf="formValue.controls['password'].errors?.['required']">
+              Your must enter a password<br>
             </span>
-            <span class="text-red-600" *ngIf="formValue.controls['password'].errors?.['minlength']">
-              Your must be 8 characters long!
+            <span class="error" *ngIf="formValue.controls['password'].errors?.['minlength']">
+              Your must be 8 characters long!<br>
+            </span>
+            <span class="error" *ngIf="!hasCaps()">
+              Your password must contain an uppercase letter!<br>
+            </span>
+            <span class="error" *ngIf="!hasNum()">
+              Your password must contain a number!<br>
+            </span>
+            <span class="error" *ngIf="!hasNonAlpha()">
+              Your password must contain a special character!<br>
             </span>
           </div>
 
@@ -126,8 +135,11 @@
               'visibility_off':'visibility'}}</mat-icon>
           </div>
           <div class="col-span-6" *ngIf="formValue.controls['confirmPassword'].invalid && formValue.controls['confirmPassword'].touched || formValue.controls['confirmPassword'].dirty">
-            <span class="text-red-600" *ngIf="formValue.controls['confirmPassword'].errors?.['required']">
+            <span class="error" *ngIf="formValue.controls['confirmPassword'].errors?.['required']">
               Your must enter a password confirmation!
+            </span>
+            <span class="error" *ngIf="formValue.value.password != formValue.value.confirmPassword">
+              Your passwords must match!
             </span>
           </div>
 
@@ -213,13 +225,13 @@
 
         </div>
 
-        <div *ngIf="authState.error$"
+        <!-- <div *ngIf="authState.error$"
           class="auth-error" data-testid="register-box-error-messsage">
           {{ authState.error$ | async}}
-        </div>
+        </div> -->
 
 
-        <button type="submit" [disabled]="!formValue.valid" (click)="submitApplication()"
+        <button type="submit" [disabled]="!formValue.valid || !passCheck()" (click)="submitApplication()"
           class="gold-button">
           Register
         </button>

@@ -9,6 +9,17 @@
   padding-bottom: 50px;
 }
 
+mat-card{
+  background-color: var(--form-black);
+}
+
+.round-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
 .header, .title-header{
   display: flex;
   flex-direction: row;
@@ -45,6 +56,56 @@
 .return{
   background-color: var(--button-slate);
   color: white;
+}
+
+.balance-window{
+  display: flex;
+  margin-bottom: 1.5rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.balance-card{
+  margin-bottom: 1.5rem;
+
+  .balance-content{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+}
+
+.balance-header{
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  //color: #4B5563;
+}
+
+.balance-value{
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+}
+
+.transaction-table{
+  //border-top-width: 1px;
+  //border-color: #E5E7EB;
+  width: 100%;
+  min-width: 100%;
+}
+
+.transaction-header{
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  font-size: 0.75rem;
+  //line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  //color: #6B7280;
+  text-transform: uppercase;
 }
 
 
@@ -93,8 +154,12 @@ table{
         padding: .5rem;
         border-bottom: solid;
         border-color: #333333;
-        border-radius: 5px;
+        //border-radius: 5px;
         padding: 1rem 0.75rem 1rem 0.75rem;
+      }
+      &:hover{
+        filter: brightness(120%);
+        background-color: var(--form-black);
       }
     }
 
@@ -108,16 +173,6 @@ table{
     tr:last-of-type td{
       border-bottom: none;
     }
-  }
-
-
-  .expired{
-    background-color: var(--alert-gold);
-    //color: white;
-  }
-  .current{
-    background-color: var(--button-slate);
-    color: white;
   }
 }
 

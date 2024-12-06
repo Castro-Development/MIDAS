@@ -22,7 +22,7 @@
         <th>Zip</th>
         <th>State</th>
         <th>Password</th>
-        <th>Login Attemps</th>
+        <!-- <th>Login Attemps</th> -->
         <th>Date Approved</th>
         <th>Assigned GL?</th>
         <th>Assigned Accounts?</th>
@@ -41,8 +41,8 @@
         <td>{{user.zip}}</td>
         <td>{{user.state}}</td>
         <td>{{user.password}}</td>
-        <td>{{user.numDenied}}</td>
-        <td>{{user.dateApproved}}</td>
+        <!-- <td>{{user.numDenied}}</td> -->
+        <td>{{common.convertTimestamp(user.dateApproved)}}</td>
         <td>{{user.assignedGL}}</td>
         <td>{{user.assignedAccounts}}</td>
         <td>{{user.role}}</td>

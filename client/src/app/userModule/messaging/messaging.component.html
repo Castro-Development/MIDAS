@@ -1,6 +1,6 @@
 <div class="main-container">
   <div class="title-header">
-    <h2 class="section-header-global">Messages and Notifications</h2>
+    <h2 class="section-header-global">Messages and Notifications for {{currentUser.id}}</h2>
 
   </div>
   <div class="header">
@@ -21,11 +21,11 @@
       </div>
 
       <div class="menu-item" (click)="showMessageList = true; showAlerts()">
-        <mat-icon>mail</mat-icon>Received Messages <div class="floating-icon">{{lengthOfMessageList((userAlerts$ | async)!)}}</div>
+        <mat-icon>mail</mat-icon>Notifications <div class="floating-icon">{{lengthOfMessageList((userAlerts$ | async)!)}}</div>
       </div>
 
       <div class="menu-item"  (click)="showMessageList = true; showWorkflow()">
-        <mat-icon>outgoing_mail</mat-icon>Workflow Messages <div class="floating-icon">{{lengthOfMessageList((userWorkflow$ | async)!)}}</div>
+        <mat-icon>outgoing_mail</mat-icon>Account Alerts <div class="floating-icon">{{lengthOfMessageList((userWorkflow$ | async)!)}}</div>
       </div>
 
       <div class="menu-item"  (click)="showMessageSend = true">
@@ -73,7 +73,7 @@
 
               <mat-icon class="view-delete clickable"
                         (click)="deleteMessage(message.id)">
-                delete_forever
+
               </mat-icon>
             </div>
         </div>
@@ -173,8 +173,9 @@
         <div class="row-item send">
           <mat-icon>topic</mat-icon>Category :
           <select formControlName="type">
-            <option value="Notification">Notification</option>
-            <option value="UserMessage">Message</option>
+            <option value="MessageCategory.SYSTEM_ALERT">System Notification</option>
+            <option value="MessageCategory.USER_MESSAGE">User Message</option>
+            <option value="MessageCategory.WORKFLOW">Accounting Notification</option>
           </select>
           <mat-icon class="dropdown">arrow_drop_down</mat-icon>
         </div>
@@ -188,7 +189,11 @@
           <mat-icon></mat-icon>Sender : <input>
         </div> -->
         <div class="row-item send">
-          <mat-icon>contact_mail</mat-icon>Recipient(s): <input type="text" formControlName="recipientUid" placeholder="Enter recipients User ID"/>
+          <mat-icon>contact_mail</mat-icon>Recipient(s):
+          <!-- <input type="text" formControlName="recipientUid" placeholder="Enter recipients User ID"/> -->
+          <select formControlName="recipientUid">
+            <option *ngFor="let user of allUsers$ | async" value="{{user.id}}">{{user.firstname}} {{user.lastname}} ({{user.username}})</option>
+          </select>
         </div>
       </div>
 

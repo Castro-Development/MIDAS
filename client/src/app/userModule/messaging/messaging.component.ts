@@ -8,6 +8,7 @@ import { NotificationStateService } from '../../shared/notification/notification
 import { Message, MessageCategory, MessagePriority, MessageStatus } from '../../shared/dataModels/messageModel/message.model';
 import { UserFirestoreService } from '../../shared/user/user-firestore.service';
 import { Timestamp } from '@angular/fire/firestore';
+import { CommonService } from '../../shared/common.service';
 
 @Component({
   selector: 'app-messaging',
@@ -21,6 +22,8 @@ export class MessagingComponent implements OnInit{
   notificationState = inject(NotificationStateService);
   userProfileState = inject(UserProfileStateService);
   userService = inject(UserFirestoreService);
+
+  public common = inject(CommonService);
 
   currentUser!: UserModel;
 
@@ -95,6 +98,9 @@ export class MessagingComponent implements OnInit{
 
 
 
+
+
+
   constructor(){
 
 
@@ -123,12 +129,13 @@ export class MessagingComponent implements OnInit{
 
     this.notificationFacade.sendUserMessage(this.messageForm.value.recipientUid, {
       id: '',
-      category: MessageCategory.USER_MESSAGE,
+      //category: MessageCategory.USER_MESSAGE,
+      category: this.messageForm.value.type,
       priority: MessagePriority.MEDIUM,
       status: MessageStatus.UNREAD,
       sender: this.currentUser.id,
       //recipients: [this.messageForm.value.recipientUid],
-      recipients: [this.currentUser.id],
+      recipients: this.messageForm.value.recipientUid,
       subject: this.messageForm.value.title,
       content: this.messageForm.value.message,
       } as Message);
@@ -189,8 +196,23 @@ export class MessagingComponent implements OnInit{
 
   lengthOfMessageList(arg0: Message[]): number {
     if(arg0 === undefined || arg0 === null) return 0;
-    
+
     return arg0.length;
+  }
+
+  displayUser(id: string){
+    //const name: string = "";
+    const user = this.userService.getUserObservable(id);
+    const senderName = user.pipe(
+      map((user) => user.firstname + " "+ user.lastname)
+    )
+    // senderName.subscribe(
+    //   (info)=>{
+    //     const name: string = info;
+    //     return name;
+    //   }
+    // )
+    return senderName;
   }
 
 

@@ -3,6 +3,8 @@ import { Observable, map, pipe } from 'rxjs';
 import { UserFirestoreService } from '../../shared/user/user-firestore.service';
 import { UserModel } from '../../shared/dataModels/userModels/user.model';
 import { Router } from '@angular/router';
+import { Timestamp } from 'firebase/firestore';
+import { CommonService } from '../../shared/common.service';
 
 @Component({
   selector: 'app-admin-users-chart',
@@ -18,6 +20,7 @@ export class AdminUsersChartComponent {
   router = inject(Router);
   users$ = this.userService.getAllUsers();
   userCount$ = this.users$.pipe(map(users => users.length));
+  common = inject(CommonService);
 
   constructor(){
 
@@ -26,6 +29,8 @@ export class AdminUsersChartComponent {
   editUser(user: any) {
     this.router.navigate(['/admin-edit-user'], { queryParams: { data: JSON.stringify(user) } });
   }
+
+
 
 
 }

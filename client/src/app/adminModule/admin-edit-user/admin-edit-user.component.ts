@@ -58,9 +58,11 @@ export class AdminEditUserComponent  implements OnInit{
       state: [this.user.state, Validators.required],
       password: [this.user.password, Validators.required],
       role: [this.user.role, Validators.required],
-      //dateRequested: [this.user.dateRequested, Validators.required],
-      //status: ['', Validators.required],
-      //dateUpdated: [new Date().toISOString().split('T')[0], Validators.required],
+      numDenied: [this.user.numDenied || '0', Validators.required],
+      lastPWUpdate: [new Date().toISOString().split('T')[0], Validators.required],
+      //lastPWUpdate: [this.user.lastPWUpdate || new Date().toISOString().split('T')[0], Validators.required],
+
+      dateUpdated: [new Date().toISOString().split('T')[0], Validators.required],
     });
 
   }

@@ -8,11 +8,11 @@ import { Timestamp } from "@angular/fire/firestore";
     selector: 'account-ledger-card',
     template: `
     <!-- Header Section -->
-    <div class="p-6 bg-white">
-      <div class="flex justify-between items-center mb-6">
+    <div class="main-container">
+      <div class="balance-window">
         <div>
-          <h1 class="text-2xl font-semibold">Account Ledger</h1>
-          <p class="text-gray-600">Account #{{accountLedger.accountNumber}} - {{accountLedger.accountName}}</p>
+          <h1 class="header">Account Ledger</h1>
+          <p class="">Account #{{accountLedger.accountNumber}} - {{accountLedger.accountName}}</p>
         </div>
 
         <div class="flex gap-2">
@@ -28,20 +28,20 @@ import { Timestamp } from "@angular/fire/firestore";
       </div>
 
       <!-- Balance Cards -->
-      <mat-card class="mb-6">
+      <mat-card class="balance-card">
         <mat-card-content>
-          <div class="grid grid-cols-3 gap-4">
+          <div class="balance-content">
             <div>
-              <p class="text-sm text-gray-600">Opening Balance</p>
-              <p class="text-lg font-semibold">{{accountLedger.openingBalance | currency}}</p>
+              <p class="header">Opening Balance</p>
+              <p class="balance-value">{{accountLedger.openingBalance | currency}}</p>
             </div>
             <div>
-              <p class="text-sm text-gray-600">Current Balance</p>
-              <p class="text-lg font-semibold">{{accountLedger.currentBalance | currency}}</p>
+              <p class="header">Current Balance</p>
+              <p class="balance-value">{{accountLedger.currentBalance | currency}}</p>
             </div>
             <div>
-              <p class="text-sm text-gray-600">Pending Transactions</p>
-              <p class="text-lg font-semibold text-blue-600">{{pendingCount}}</p>
+              <p class="header">Pending Transactions</p>
+              <p class="balance-value gold">{{pendingCount}}</p>
             </div>
           </div>
         </mat-card-content>
@@ -51,23 +51,23 @@ import { Timestamp } from "@angular/fire/firestore";
       <mat-card>
         <mat-card-content>
           <ng-container *ngIf="accountLedger?.transaction?.length">
-            <table class="w-full min-w-full divide-y divide-gray-200">
+            <table class="transaction-table">
               <!-- Table Header -->
-              <thead class="bg-gray-50">
+              <thead class="">
                 <tr>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Debit</th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Credit</th>
-                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
-                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">PR</th>
-                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Docs</th>
+                  <th class="transaction-header text-left">Date</th>
+                  <th class="transaction-header text-left">Description</th>
+                  <th class="transaction-header text-right">Debit</th>
+                  <th class="transaction-header text-right">Credit</th>
+                  <th class="transaction-header text-right">Balance</th>
+                  <th class="transaction-header text-center">PR</th>
+                  <th class="transaction-header text-center">Docs</th>
                 </tr>
               </thead>
-              
+
               <!-- Table Body -->
-              <tbody class="bg-white divide-y divide-gray-200">
-                <tr *ngFor="let entry of paginatedEntries" class="hover:bg-gray-50">
+              <tbody class="">
+                <tr *ngFor="let entry of paginatedEntries" class="">
                   <td class="px-6 py-4 whitespace-nowrap">{{convertTimestamp(entry.date) | date:'shortDate'}}</td>
                   <td class="px-6 py-4">{{entry.description}}</td>
                   <td class="px-6 py-4 text-right">{{entry.debitAmount | currency:'USD':'symbol':'1.2-2'}}</td>
@@ -86,7 +86,7 @@ import { Timestamp } from "@angular/fire/firestore";
                     </button>
                   </td>
                 </tr>
-                
+
                 <!-- Empty State -->
                 <tr *ngIf="!accountLedger?.transaction?.length">
                   <td colspan="7" class="px-6 py-4 text-center text-gray-500">
@@ -98,17 +98,17 @@ import { Timestamp } from "@angular/fire/firestore";
 
             <!-- Pagination Controls -->
             <div class="flex justify-between items-center mt-4 px-6">
-              <div class="text-sm text-gray-700">
-                Showing {{currentPage * pageSize + 1}} to {{Math.min((currentPage + 1) * pageSize, accountLedger.transaction?.length || 0)}} 
+              <div class="">
+                Showing {{currentPage * pageSize + 1}} to {{Math.min((currentPage + 1) * pageSize, accountLedger.transaction?.length || 0)}}
                 of {{accountLedger.transaction?.length || 0}} entries
               </div>
               <div class="flex gap-2">
-                <button mat-button 
+                <button mat-button
                         [disabled]="currentPage === 0"
                         (click)="currentPage = currentPage - 1">
                   Previous
                 </button>
-                <button mat-button 
+                <button mat-button
                         [disabled]="(accountLedger.transaction?.length || 0) <= (currentPage + 1) * pageSize"
                         (click)="currentPage = currentPage + 1">
                   Next
@@ -120,6 +120,7 @@ import { Timestamp } from "@angular/fire/firestore";
       </mat-card>
     </div>
     `,
+    styleUrl:'./account-ledger.component.scss',
 })
 export class AccountLedgerCard {
     @Input() accountLedger!: AccountLedger;
@@ -129,7 +130,7 @@ export class AccountLedgerCard {
 
     journalEntryFacade = inject(JournalEntryFacade);
     Math = Math;
-    
+
     pageSize = 10;
     currentPage = 0;
 
@@ -168,7 +169,7 @@ export class AccountLedgerCard {
             this.journalEntryFacade.selectEntry(postReference);
         }
     }
-    
+
     convertTimestamp(timestamp: Date | Timestamp): Date {
       if (timestamp instanceof Date) return timestamp;
       return timestamp.toDate();

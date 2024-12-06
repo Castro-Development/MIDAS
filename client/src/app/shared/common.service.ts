@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
+import { Timestamp } from 'firebase/firestore';
 
 @Injectable({
 
@@ -14,6 +15,16 @@ export class CommonService {
 
   constructor(){
 
+  }
+
+  convertTimestamp(timestamp: Date | Timestamp | undefined) {
+    if(timestamp == undefined){
+      return;
+    }
+    else if (timestamp instanceof Date){
+      return timestamp;
+    }
+    return timestamp.toDate();
   }
 
   convertDate(date: Date | undefined){
