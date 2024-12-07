@@ -7,13 +7,11 @@
   </div>
   <div class="header">
     <button class="button return" routerLink="/admin-dashboard"><mat-icon class="mat-icon">arrow_back</mat-icon> Return to Admin Dashboard</button>
-    <button class="button create-user" routerLink="/request-system-access">Create New User</button>
+    <button class="button create-user"  (click)="showAll = !showAll">Hide / Show All</button>
   </div>
 
   <div *ngFor="let account of accounts$ | async">
-    <div>{{account.accountName}}</div>
-    <div *ngFor="let transaction of account.transaction">{{transaction.date}}</div>
-
+    <account-ledger-fiscal-card [accountLedger]="account" [show]="showAll"/>
   </div>
 
 </div>

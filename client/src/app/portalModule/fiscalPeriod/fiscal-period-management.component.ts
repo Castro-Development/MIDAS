@@ -13,6 +13,7 @@ import { ChartOfAccountsFacade } from '../chartOfAccount/back-end/chart-of-accou
 export class FiscalPeriodManagementComponent {
 
   @Input() accounts: AccountLedger[] | null = [];
+  showAll = true;
   accountFacade = inject(ChartOfAccountsFacade);
   accounts$ = this.accountFacade.getAllAccountsWhere(null);
   filter$ = this.accountFacade.getFilter();

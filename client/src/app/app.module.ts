@@ -80,6 +80,7 @@ import { AppPhoneInputComponent } from './userModule/requestSystemAccess/utils/a
 import { SplashScreenComponent } from './userModule/splash-screen-component/splash-screen-component.component';
 import { MessagingComponent } from './userModule/messaging/messaging.component';
 import { NotificationBubble } from './userModule/splash-screen-component/utils/notification-bubble.svg';
+import { AccountLedgerFiscalCard } from './portalModule/accountLedger/account-ledger-fiscal.card';
 
 
 
@@ -114,6 +115,7 @@ import { NotificationBubble } from './userModule/splash-screen-component/utils/n
     JournalSubmissionComponent,
     JournalSubmissionCard,
     FiscalPeriodManagementComponent,
+    AccountLedgerFiscalCard,
 
     // User Module
     CalendarComponent,
