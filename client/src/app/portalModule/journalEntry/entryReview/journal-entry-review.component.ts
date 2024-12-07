@@ -64,4 +64,10 @@ export class JournalEntryReviewComponent implements OnDestroy {
         this.destroySubject.next();
         this.destroySubject.complete();
     }
+
+    sort(){
+      this.journalEntries$ = this.journalEntries$.pipe(
+        map(results => results.sort())
+      );
+    }
 }

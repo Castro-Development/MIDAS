@@ -225,4 +225,6 @@ import { Router } from "@angular/router";
     reviewJournal(journal: JournalEntry) {
       this.router.navigate(['/journal-detail-card'], { queryParams: { data: JSON.stringify(journal)} });
     }
+
+
   }

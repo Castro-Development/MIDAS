@@ -23,14 +23,14 @@ import { CommonService } from "../../shared/common.service";
     <table *ngIf="accounts?.length" class=".main-container">
       <thead>
         <tr class="">
-          <th class="">Account #</th>
-          <th class="">Name</th>
-          <th class="">Category</th>
+          <th class="arrow" (click)="sortByAccount()">Account # <mat-icon>arrow_drop_down_circle</mat-icon></th>
+          <th class="arrow" (click)="sortByName()">Name <mat-icon class="mat-icon">arrow_drop_down_circle</mat-icon></th>
+          <th class="arrow" (click)="sortByCategory()">Category <mat-icon>arrow_drop_down_circle</mat-icon></th>
           <th class="">Subcategory</th>
           <th class="">Description</th>
-          <th class="">Date Created</th>
-          <th class="">Balance</th>
-          <th class="">Normal Side</th>
+          <th class=""  (click)="sortByDate()">Date Created <mat-icon>arrow_drop_down_circle</mat-icon></th>
+          <th class="arrow" (click)="sortByBalance()">Balance <mat-icon>arrow_drop_down_circle</mat-icon></th>
+          <th class="arrow"(click)="sortByNormalSide()">Normal <mat-icon>arrow_drop_down_circle</mat-icon></th>
           <th class="">Status</th>
           <th class="">Actions</th>
         </tr>
@@ -99,6 +99,30 @@ export class ChartOfAccountsCard implements OnInit {
 
     handleViewHistory(account: AccountLedger): void {
         this.selectedAccount.emit(account);
+    }
+
+    sortByAccount(){
+      this.accounts!.sort((a, b) => (a.accountNumber < b.accountNumber ? -1 : 1));
+    }
+
+    sortByName(){
+      this.accounts!.sort((a, b) => (a.accountName < b.accountName ? -1 : 1));
+    }
+
+    sortByCategory(){
+      this.accounts!.sort((a, b) => (a.category< b.category ? -1 : 1));
+    }
+
+    sortByDate(){
+      this.accounts!.sort((a, b) => (a.createdAt< b.createdAt ? -1 : 1));
+    }
+
+    sortByBalance(){
+      this.accounts!.sort((a, b) => (a.currentBalance! < b.currentBalance! ? -1 : 1));
+    }
+
+    sortByNormalSide(){
+      this.accounts!.sort((a, b) => (a.normalSide < b.normalSide ? -1 : 1));
     }
 
 
