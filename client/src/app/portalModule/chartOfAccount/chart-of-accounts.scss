@@ -22,6 +22,14 @@
   margin-bottom: 1rem;
 }
 
+.filter-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  gap: 20px;
+  margin-bottom: 1rem;
+}
+
 
 .edit, .create-user, .general-button, .return{
   //background-color: var(--button-gold);

@@ -34,7 +34,12 @@ export class LoginComponent {
   login() {
     console.log(this.formValue.value.username); console.log(this.formValue.value.password);
     this.securityFacade.login(this.formValue.value.username, this.formValue.value.password);
-    
+
+      console.log("On Accept compiled");
+      alert("Login Successful");
+
+      this.router.navigate(['']);
+
   }
 
 
