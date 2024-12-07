@@ -1,0 +1,26 @@
+
+
+<div class="main-container">
+
+  <div class="title-header">
+    <h2 class="section-header-global">Fiscal Period</h2>
+  </div>
+  <div class="header">
+    <button class="button return" routerLink="/admin-dashboard"><mat-icon class="mat-icon">arrow_back</mat-icon> Return to Admin Dashboard</button>
+    <button class="button create-user" routerLink="/request-system-access">Create New User</button>
+  </div>
+
+  <div *ngFor="let account of accounts$ | async">
+    <div>{{account.accountName}}</div>
+    <div *ngFor="let transaction of account.transaction">{{transaction.date}}</div>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+

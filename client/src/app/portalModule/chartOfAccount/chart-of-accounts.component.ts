@@ -36,7 +36,23 @@ import { ChartOfAccountsFacade } from './back-end/chart-of-accounts.facade';
             </button>
             
           </div>
+
+
+
         </div>
+
+        <div class="filter-container">
+              <div class="flex gap-2">
+                <button mat-stroked-button (click)="false">
+                  <mat-icon>filter_list</mat-icon>
+                  Filters
+                </button>
+                <button mat-stroked-button (click)="false">
+                  <mat-icon>download</mat-icon>
+                  Export
+                </button>
+              </div>
+          </div>
 
         <div *ngIf="showFilter">
           <filter-card
