@@ -114,7 +114,7 @@ export class JournalEntryFacade {
    */
   approveEntry(entry: JournalEntry) {
     this.loadingSubject.next(true);
-    if(entry.status !== JournalEntryStatus.PENDING) { throw new Error("Entry is not pending approval") }
+    if(entry.status === JournalEntryStatus.APPROVED || entry.status === JournalEntryStatus.POSTED) { throw new Error("Entry is not pending approval") }
 
     firstValueFrom(this.userProfileState.userProfile$).then(user => {
       console.log('Current user ID:', user.id);
