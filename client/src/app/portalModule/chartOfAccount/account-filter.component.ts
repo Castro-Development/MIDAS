@@ -1,56 +1,75 @@
-import { Component, EventEmitter, Inject, Output } from "@angular/core";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { AccountFilter } from "../../shared/dataModels/financialModels/account-ledger.model";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { AccountCategory, AccountFilter } from "../../shared/dataModels/financialModels/account-ledger.model";
 
-
-// First, create a separate component for the filter dialog
 @Component({
-    selector: 'filter-card',
-    template: `
-      <!-- <h2 mat-dialog-title>Filters</h2>
-      <mat-dialog-content>
-        <div class="space-y-4">
-          <mat-form-field class="w-full">
-            <mat-label>Category</mat-label>
-            <mat-select [(ngModel)]="data.categoryFilter">
-              <mat-option value="">All Categories</mat-option>
-              <mat-option *ngFor="let category of data.categories" [value]="category">
-                {{category}}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+  selector: 'filter-card',
+  template: `
+    <div class="filter-card p-4 bg-white rounded shadow">
+      <h2 class="text-xl mb-4">Filters</h2>
+      <div class="space-y-4">
+        <mat-form-field class="w-full">
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="filter.category">
+            <mat-option [value]="null">All Categories</mat-option>
+            <mat-option *ngFor="let category of categoryOptions | keyvalue" 
+                       [value]="category.value">
+              {{category.key}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-          <mat-form-field class="w-full">
-            <mat-label>Search</mat-label>
-            <input matInput [(ngModel)]="data.searchTerm" placeholder="Search accounts...">
-          </mat-form-field>
-        </div>
-      </mat-dialog-content>
-      <mat-dialog-actions align="end">
+        <mat-form-field class="w-full">
+          <mat-label>Search</mat-label>
+          <input matInput [(ngModel)]="filter.searchTerm" 
+                 placeholder="Search by account name or number">
+          <button mat-icon-button matSuffix *ngIf="filter.searchTerm"
+                  (click)="filter.searchTerm = ''">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-4">
         <button mat-button (click)="clearFilters()">Clear</button>
-        <button mat-button [mat-dialog-close]="data">Apply</button>
-      </mat-dialog-actions> -->
-    `,
-    styleUrl: './chart-of-accounts.scss'
-  })
-  export class FilterDialogComponent {
-    constructor(
-      @Inject(MAT_DIALOG_DATA) public data: {
-        categoryFilter: string;
-        searchTerm: string;
-        categories: string[];
-      }
-    ) {}
+        <button mat-raised-button color="primary" 
+                (click)="applyFilters()">Apply</button>
+      </div>
+    </div>
+  `,
+  styleUrl: './chart-of-accounts.scss'
+})
+export class FilterDialogComponent implements OnInit {
+  @Input() currentFilter: AccountFilter | undefined = undefined;
+  @Output() applyFilter = new EventEmitter<AccountFilter>();
 
-    
-    @Output() viewHistory = new EventEmitter<AccountFilter>();
+  filter: AccountFilter = {
+    category: undefined,
+    searchTerm: ''
+  };
 
-    clearFilters() {
-      this.data.categoryFilter = '';
-      this.data.searchTerm = '';
-    }
+  categoryOptions = {
+    'Asset': AccountCategory.ASSET,
+    'Liability': AccountCategory.LIABILITY,
+    'Equity': AccountCategory.EQUITY,
+    'Revenue': AccountCategory.REVENUE,
+    'Expense': AccountCategory.EXPENSE
+  };
 
-    applyFilters() {
-      this.viewHistory.emit(this.data as AccountFilter);
+  ngOnInit() {
+    if (this.currentFilter) {
+      this.filter = { ...this.currentFilter };
     }
   }
+
+  clearFilters() {
+    this.filter = {
+      category: undefined,
+      searchTerm: ''
+    };
+    this.applyFilter.emit(this.filter);
+  }
+
+  applyFilters() {
+    this.applyFilter.emit(this.filter);
+  }
+}
