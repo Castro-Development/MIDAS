@@ -3,6 +3,10 @@ import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { CommonModule, formatDate } from '@angular/common';
 import { Timestamp } from 'firebase/firestore';
+import { UserProfileFacade } from './user/profile/user-profile.facade';
+import { AuthStateService } from './user/auth/auth-state.service';
+import { UserRole } from './dataModels/userModels/userRole.model';
+import { distinctUntilChanged, map } from 'rxjs';
 
 @Injectable({
 
@@ -16,6 +20,31 @@ export class CommonService {
   constructor(){
 
   }
+
+  public profileFacade = inject(UserProfileFacade);
+  public authState = inject(AuthStateService);
+
+  isAny(){
+    if(this.isAdmin$ || this.isAccountant$ || this.isManager$){
+      return true;
+    }
+    else return false;
+  }
+
+  readonly isAdmin$ = this.profileFacade.userProfile$.pipe(
+    map((profile) => profile?.role === UserRole.Administrator),
+    distinctUntilChanged()
+  );
+
+  readonly isManager$ = this.profileFacade.userProfile$.pipe(
+    map((profile) => profile?.role === UserRole.Manager),
+    distinctUntilChanged()
+  );
+
+  readonly isAccountant$ = this.profileFacade.userProfile$.pipe(
+    map((profile) => profile?.role === UserRole.Accountant),
+    distinctUntilChanged()
+  );
 
   convertTimestamp(timestamp: Date | Timestamp | undefined) {
     if(timestamp == undefined){
@@ -67,5 +96,7 @@ export class CommonService {
       return "No date to convert"
     }
   }
+
+
 
 }

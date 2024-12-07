@@ -110,6 +110,7 @@ export class MessagingComponent implements OnInit{
     this.createForm();
     this.messageByCategory.subscribe((messages) =>{
       this.messageList = messages;
+
     });
   }
 

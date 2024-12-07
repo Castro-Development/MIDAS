@@ -170,6 +170,7 @@ import { ActivatedRoute } from "@angular/router";
     approveEntry(): void {
       if (this.journalEntry?.isBalanced) {
         this.approved.emit(this.journalEntry);
+        alert("Journal entry was approved!");
       }
     }
 
@@ -182,6 +183,7 @@ import { ActivatedRoute } from "@angular/router";
         this.denied.emit(this.denialReason);
         this.showDenialDialog = false;
         this.denialReason = '';
+        alert("Journal entry was denied");
       }
     }
 

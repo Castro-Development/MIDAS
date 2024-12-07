@@ -13,13 +13,13 @@
 
     <div class="user-content">
       <div class="user-menu">
-        <button class="section-button"  routerLink="/messaging" matTooltip="View your notifications" *ngIf="isAdmin$">
-          <div class="floating-icon">1</div>
+        <button class="section-button"  routerLink="/messaging" matTooltip="View your notifications">
+          <div class="floating-icon">{{lengthOfMessageList((userMessages$ | async)!)}}</div>
           <div class="svg"><journal-entry-svg></journal-entry-svg></div>
           Notifications / Messages
         </button>
 
-        <button [matMenuTriggerFor]="admin" class="section-button" matTooltip="Admin User Controls" *ngIf="isAdmin$">
+        <button [matMenuTriggerFor]="admin" class="section-button" matTooltip="Admin User Controls" *ngIf="isAny()">
           <admin-svg></admin-svg>
           Admin Content <mat-icon>expand_more</mat-icon>
         </button>
@@ -49,7 +49,7 @@
           Calendar
         </button>
 
-        <button [matMenuTriggerFor]="accounting" class="section-button" matTooltip="Admin accounting controls" *ngIf="isAdmin$">
+        <button [matMenuTriggerFor]="accounting" class="section-button" matTooltip="Admin accounting controls" *ngIf="isAny()">
           <portal-svg></portal-svg>
           Accounting <mat-icon>expand_more</mat-icon>
         </button>

@@ -5,6 +5,7 @@ import { UserApplicationWithMetaData, UserApplication, UserModel } from '../../s
 import { Router } from '@angular/router';
 import { Message, MessageCategory, MessagePriority, MessageStatus, MessageMetadata, MessageTemplates} from '../../shared/dataModels/messageModel/message.model';
 import { NotificationFacade } from '../../shared/notification/notification.facade';
+import { CommonService } from '../../shared/common.service';
 
 
 
@@ -21,6 +22,7 @@ export class AdminExpiredPasswordReportComponent {
 
   notificationFacade = inject(NotificationFacade);
   expiredNotification = MessageTemplates.PASSWORD_EXPIRY;
+  common = inject(CommonService)
 
   constructor(){
 

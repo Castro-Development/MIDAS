@@ -47,7 +47,8 @@
         <td>{{user.assignedAccounts}}</td>
         <td>{{user.role}}</td>
         <!-- <td><button class="edit">User</button></td> -->
-        <td class="icon-button" (click)="editUser(user)"><mat-icon>edit</mat-icon></td>
+        <td class="icon-button" (click)="editUser(user)" *ngIf="common.isAdmin$"><mat-icon>edit</mat-icon></td>
+        <td class="icon-button" *ngIf="!common.isAdmin$"><mat-icon>block</mat-icon></td>
       </tr>
     </tbody>
   </table>

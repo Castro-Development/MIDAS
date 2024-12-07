@@ -48,7 +48,8 @@
         <td>{{user.requestedRole}}</td>
         <!-- <td><button class="edit">User</button></td> -->
         <!-- <td><mat-icon>edit</mat-icon></td> -->
-        <td><button class="edit" (click)="decideUser(user)">{{user.username}}</button></td>
+        <td><button class="edit" (click)="decideUser(user)" *ngIf="common.isAdmin$">{{user.username}}</button></td>
+        <td><button class="edit" *ngIf="!common.isAdmin$"><mat-icon class="mat-icon">block</mat-icon> {{user.username}}</button></td>
       </tr>
     </tbody>
   </table>
