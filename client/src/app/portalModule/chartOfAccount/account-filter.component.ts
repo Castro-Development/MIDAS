@@ -1,5 +1,6 @@
-import { Component, Inject } from "@angular/core";
+import { Component, EventEmitter, Inject, Output } from "@angular/core";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { AccountFilter } from "../../shared/dataModels/financialModels/account-ledger.model";
 
 
 // First, create a separate component for the filter dialog
@@ -41,8 +42,15 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
       }
     ) {}
 
+    
+    @Output() viewHistory = new EventEmitter<AccountFilter>();
+
     clearFilters() {
       this.data.categoryFilter = '';
       this.data.searchTerm = '';
+    }
+
+    applyFilters() {
+      this.viewHistory.emit(this.data as AccountFilter);
     }
   }

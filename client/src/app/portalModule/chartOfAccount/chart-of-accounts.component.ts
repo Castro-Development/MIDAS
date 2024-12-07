@@ -34,9 +34,16 @@ import { ChartOfAccountsFacade } from './back-end/chart-of-accounts.facade';
               <span class="material-icons mr-2">add</span>
               Create New Account
             </button>
+            
           </div>
         </div>
 
+        <div *ngIf="showFilter">
+          <filter-card
+            (applyFilter)="applyFilter($event)"
+          >
+          </filter-card>
+        </div>
 
 
         <!-- Main Content -->
@@ -58,14 +65,35 @@ export class ChartOfAccountsComponent {
   //Create subjects to hold the most up to date information from chart of account service
   accountFacade = inject(ChartOfAccountsFacade);
 
-  accounts$ = this.accountFacade.getAllAccountsWhere(null);
+  accounts$ = this.accountFacade.getAllAccountsWhere(null).pipe(
+    map(accounts => accounts.filter(account => this.filterAccount(account)))
+  );
 
-  filter$ = this.accountFacade.getFilter();
+  filterSubject = new BehaviorSubject<AccountFilter | null>(null);
 
+  filter$ = this.filterSubject.asObservable();
+  
   router = inject(Router);
-
+  
   constructor(
   ) {
+  }
+
+  showFilter: boolean = false;
+
+  applyFilter(filter: AccountFilter) {
+    this.filterSubject.next(filter);
+  }
+
+  filterAccount(account: AccountLedger) {
+    this.filter$.pipe(
+      map(filter => {
+        if(!filter) return true;
+        if(filter.category && filter.category !== account.category) return false;
+        if(filter.name && !account.accountName.toLowerCase().includes(filter.name.toLowerCase())) return false;
+        return true;
+      })
+    )
   }
 
 
@@ -85,13 +113,6 @@ export class ChartOfAccountsComponent {
     this.router.navigate(['/add-account']);
   }
 
-  sortByName(){
-    this.accounts$ = this.accounts$.pipe(
-      map(account => account.sort())
-    );
-  }
-}
-function sortBy(arg0: (accounts: any) => any): import("rxjs").OperatorFunction<AccountLedger[], AccountLedger[]> {
-  throw new Error('Function not implemented.');
+  
 }
 

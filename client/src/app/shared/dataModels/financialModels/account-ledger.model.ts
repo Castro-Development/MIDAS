@@ -145,6 +145,7 @@ export  enum JournalEntryStatus {
   }
 
   export interface AccountFilter {
+    name?: string;
     category?: AccountCategory;
     subcategory?: AccountSubcategories[AccountCategory];
     isActive?: boolean;
