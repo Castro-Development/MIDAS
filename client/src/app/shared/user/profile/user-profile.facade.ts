@@ -5,6 +5,7 @@ import { SecurityStatus } from "../auth/user-security.facade";
 import { User } from "firebase/auth";
 import { Observable, catchError, distinctUntilChanged, filter, from, map, tap } from "rxjs";
 import { ErrorHandlingService } from "../../error-handling/error-handling.service";
+import { NotificationFilter } from "../../dataModels/messageModel/message.model";
 
 
 @Injectable({
@@ -42,7 +43,22 @@ export class UserProfileFacade{
     // // Basic Info
     createProfile(user: UserApplication) {
         console.log('createProfile');
-        return this.userProfileState.createProfile(user);
+        let userModel = {
+            id: user.id,
+            username: user.username,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            phone: user.phone,
+            street: user.street,
+            zip: user.zip,
+            state: user.state,
+            dateApproved: new Date(),
+            assignedAccounts: [],
+            role: user.role,
+            notificationFilter: {} as NotificationFilter,
+            password: '',
+        } as UserModel;
+        return this.userProfileState.createProfile(userModel);
     }
     // updatePersonalInfo(userId: string, info: PersonalInfoUpdate): Observable<void>;
     // getPersonalInfo(userId: string): Observable<PersonalInfo>;

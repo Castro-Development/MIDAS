@@ -18,8 +18,9 @@ export class AuthGuardService {
     return this.authState.userProfile$.pipe(
       take(1),
       map(user => {
+        console.log('Checking user authorization', user);
         // If no user or role is guest, allow access
-        if (!user || user.role === UserRole.Guest) {
+        if (!user || user.role > 2) {
           console.log('User is not authorized');
           return false;
         }

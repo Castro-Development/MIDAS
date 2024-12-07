@@ -50,7 +50,7 @@ import { UserAdminFirestoreService } from "../admin/user-admin-firestore.service
       return this.tempUser;
     }
 
-    createProfile(user: UserApplication): Promise<void> {
+    createProfile(user: UserModel): Promise<void> {
         return this.firestoreService.createProfile(user);
     }
 
